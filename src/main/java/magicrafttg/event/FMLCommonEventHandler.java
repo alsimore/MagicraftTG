@@ -71,12 +71,20 @@ public class FMLCommonEventHandler {
 	@SubscribeEvent
 	public void onPlayerLoggedOut(PlayerLoggedOutEvent event)
 	{
+		EntityPlayer player = event.player;
 		System.out.println("Player has logged out. There are " + --playerCount + " players on the server");
 		if(playerCount == 0)
 		{
 			System.out.println("Stoping manaTimer");
 			//MagicraftTG.manaTimer.stop();
 			this.manaTimerRunning = false;
+		}
+		
+		// Handle the player's controlled creatures
+		MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
+		if(mctg != null) // Probably an unnecessary check
+		{
+			mctg.removeAllControlled();
 		}
 	}
 	

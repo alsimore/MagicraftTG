@@ -659,6 +659,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 					// Creature was summoned by the player, kill it
 					creature.setDead();
 					System.out.println("Killing");
+					
 				}
 				else
 				{
