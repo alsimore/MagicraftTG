@@ -759,7 +759,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	// IExtendedEntityProperties interface methods
 	@Override
 	public void saveNBTData(NBTTagCompound compound) {
-		//System.out.println("Save NBT " + compound.toString());
+		System.out.println("Save NBT ");
 		
 		// We need to create a new tag compound that will save everything for our Extended Properties
 		NBTTagCompound properties = new NBTTagCompound();
@@ -789,7 +789,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 
 	@Override
 	public void loadNBTData(NBTTagCompound compound) {
-		//System.out.println("Load NBT " + compound.toString());
+		System.out.println("Load NBT ");
 		
 		// Here we fetch the unique tag compound we set for this class of Extended Properties
 		NBTTagCompound properties = (NBTTagCompound) compound.getTag(EXT_PROP_NAME);

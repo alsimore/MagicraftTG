@@ -21,6 +21,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -63,8 +64,7 @@ public class ForgeEventHandler {
 
 		EntityPlayer player = (EntityPlayer) event.entity;
 		
-		//System.out.println(String.format("[MCTG] ^^^ %s joined dimension %d, isRemote:%b", 
-		//		player.getUniqueID().toString(), player.dimension, event.world.isRemote));
+		System.out.println(String.format("onEntityJoinWorld for %s", player.getDisplayNameString()));
 		if(player.getGameProfile() != null) 
 		{
 			// Notify client of loaded ManaSources
@@ -87,9 +87,31 @@ public class ForgeEventHandler {
 						0);
 				MCTGPacketHandler.net.sendTo(msg, (EntityPlayerMP) player);
 			}
+			else // Otherwise set the client's mana gui countdown
+			{
+				System.out.println("Setting mana gui countdown");
+				FMLCommonClientHandler.resetManaGuiCountdown();
+			}
 		}	
 	}
 	
+	
+	/**
+	 * When the player respawns make sure that the mana gui is shown.
+	 * @param event
+	 */
+	@SubscribeEvent
+	public void onPlayerRespawn(PlayerRespawnEvent event)
+	{
+		EntityPlayer player = event.player;
+		
+		System.out.println(String.format("player respawn for %s", player.getDisplayNameString()));
+		
+		if(player.worldObj.isRemote)
+		{
+			FMLCommonClientHandler.resetManaGuiCountdown(); 
+		}
+	}
 	
 	
 	

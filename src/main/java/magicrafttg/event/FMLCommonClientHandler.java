@@ -29,8 +29,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 public class FMLCommonClientHandler {
 	
+	// Runs on the client side so making it static shouuldn't mess with
+	// other clients.
+	private static final int MANA_GUI_COUNTDOWN = 60;
+	private static int guiTickCountdown = MANA_GUI_COUNTDOWN;
 	
-	int guiTickCountdown = 60;
+	
 	/**
 	 * Display a ManaSourceGui after a certain number of ticks.
 	 */
@@ -47,6 +51,11 @@ public class FMLCommonClientHandler {
 				Minecraft.getMinecraft().displayGuiScreen(new ManaSourceGui());
 			}
 		}
+	}
+	
+	public static void resetManaGuiCountdown()
+	{
+		guiTickCountdown = MANA_GUI_COUNTDOWN;
 	}
 	
 	

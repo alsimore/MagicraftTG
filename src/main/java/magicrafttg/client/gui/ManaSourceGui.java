@@ -87,6 +87,7 @@ public class ManaSourceGui extends GuiScreen {
 		for(int i = 0; i < 5; ++i)
 		{
 			chosen[i] = sources[i];
+			totalChosen += chosen[i]; 
 		}
 		
 		buttonWhite.displayString = "White " + chosen[0];
