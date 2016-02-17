@@ -5,9 +5,11 @@ import java.util.UUID;
 import com.google.common.base.Predicate;
 
 import magicrafttg.entity.IMCTGEntity;
+import magicrafttg.entity.MagicraftTGPlayer;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.player.EntityPlayer;
 
 public class EntityMCTGAIAttackEnemy extends EntityAINearestAttackableTarget {
 
@@ -121,6 +123,31 @@ public class EntityMCTGAIAttackEnemy extends EntityAINearestAttackableTarget {
 			UUID thisController = ((IMCTGEntity)this.taskOwner).getControllerUUID();
 	        return targetsController == null || thisController == null ||
 	        		!thisController.equals(targetsController);
+		}
+		else if (this.taskOwner instanceof IMCTGEntity && potentialTarget instanceof EntityPlayer) {
+			//System.out.println("Potential player target");
+			//System.out.println(potentialTarget);
+			IMCTGEntity itself = ((IMCTGEntity)this.taskOwner);
+			
+			// See if the player is an MagicraftTGPlayer
+			try
+			{
+				MagicraftTGPlayer castedTarget = MagicraftTGPlayer.get((EntityPlayer)potentialTarget);
+			}
+			catch (Exception e)
+			{
+				System.out.println("Error in isSuitableTarget: " + e.toString());
+				return false;
+			}
+			
+			if (potentialTarget.getUniqueID() == itself.getControllerUUID()) {
+				// The potential target is the controller
+				return false;
+			}
+			
+			UUID target = potentialTarget.getUniqueID();
+			UUID thisController = ((IMCTGEntity)this.taskOwner).getControllerUUID();
+	        return thisController == null || !thisController.equals(target);
 		}
 		return false;
     }

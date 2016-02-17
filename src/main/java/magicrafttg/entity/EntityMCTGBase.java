@@ -34,6 +34,7 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 	private UUID owner;
 	private UUID controller;
 	
+	
 	// AI for avoiding Creeper, from EntityMob
 	protected final EntityAIBase avoidCreeper = new EntityAIAvoidEntity(this, new Predicate()
     {
