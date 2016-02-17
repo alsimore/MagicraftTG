@@ -1,6 +1,0 @@
-{
-    "parent": "block/cube_all",
-    "textures": {
-        "all": "magicrafttg:blocks/mana_block"
-    }
-}
