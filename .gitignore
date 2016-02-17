@@ -1,4 +1,7 @@
-.gradle
-.metadata
-*.class
-eclipse
+/*
+!/src
+!build.gradle
+!*.project
+!/gradle
+!gradlew
+!gradlew.bat
