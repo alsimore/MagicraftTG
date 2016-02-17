@@ -641,6 +641,36 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		updateCreatureToClient(MCTGPacketHandler.REMOVE_CREATURE_INT, creature.getEntityId());
 	}
 	
+	/**
+	 * Kill owned creatures and return controlled creatures to their original owners.
+	 */
+	public void removeAllControlled()
+	{
+		for(WeakReference<Entity> creatureRef : controlledCreatures)
+		{
+			Entity creature = creatureRef.get();
+			System.out.println("Creature: " + creature);
+			if(creature instanceof EntityMCTGBase)
+			{
+				UUID controllerId = ((EntityMCTGBase) creature).getControllerUUID();
+				UUID ownerId = ((EntityMCTGBase) creature).getOwnerUUID();
+				if(controllerId.equals(ownerId))
+				{
+					// Creature was summoned by the player, kill it
+					creature.setDead();
+					System.out.println("Killing");
+				}
+				else
+				{
+					// Return control to the owner (summoner)
+					((EntityMCTGBase) creature).setControllerUUID(ownerId);
+					System.out.println("Revert to owner: " + ownerId);
+				}
+			}
+			
+		}
+	}
+	
 	public int numControlledCreatures()
 	{
 		return controlledCreatures.size();

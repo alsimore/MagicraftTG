@@ -17,6 +17,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -112,6 +113,23 @@ public class ForgeEventHandler {
 			FMLCommonClientHandler.resetManaGuiCountdown(); 
 		}
 	}
+	
+	/**
+	 * When a player dies, kill all of their owned creatures.
+	 * @param event
+	 */
+	@SubscribeEvent
+	public void onLivingDeath(LivingDeathEvent event)
+	{
+		//System.out.println("Entity has died " + event.entity);
+		if(event.entity instanceof EntityPlayer)
+		{
+			System.out.println("Player has died " + event.entity);
+			MagicraftTGPlayer mctg = MagicraftTGPlayer.get((EntityPlayer)event.entity);
+			mctg.removeAllControlled();
+		}
+	}
+	
 	
 	
 	

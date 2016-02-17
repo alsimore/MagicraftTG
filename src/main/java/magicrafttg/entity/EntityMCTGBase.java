@@ -54,8 +54,10 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 		super(world);
 		if(owner != null)
 		{
-			this.owner = owner.getUniqueID();
-			this.controller = this.owner;
+			/*this.owner = owner.getUniqueID();
+			this.controller = this.owner;*/
+			this.controller = owner.getUniqueID();
+			this.owner = null;
 		}
 		else
 		{
