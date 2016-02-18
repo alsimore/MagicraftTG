@@ -84,6 +84,7 @@ public class ManaSourceGui extends GuiScreen {
 	{
 		MagicraftTGPlayer mctg = MagicraftTGPlayer.get(Minecraft.getMinecraft().thePlayer);
 		int[] sources = mctg.getGlobalSourceNumbers();
+		//System.out.println("Mana amounts: " + sources.length);
 		for(int i = 0; i < 5; ++i)
 		{
 			chosen[i] = sources[i];
@@ -115,16 +116,20 @@ public class ManaSourceGui extends GuiScreen {
 	{
 		if (button == this.buttonDone)
 	    {
-			//System.out.println("Sending chosen mana to server");
-			//for(int m : chosen)
-			//{
-			//	System.out.println(m);
-			//}
+			System.out.println("Sending chosen mana to server");
+			for(int m : chosen)
+			{
+				System.out.println(m);
+			}
 			
 			IMessage msg = new MCTGManaPacket.MCTGManaMessage(MCTGPacketHandler.MANA_GLOBAL_SOURCE_SET, 
 					// The order is white, blue, black, red, green, colourless.
 					this.chosen[0], this.chosen[1], this.chosen[2], this.chosen[3], this.chosen[4], 0);
 	        MCTGPacketHandler.net.sendToServer(msg);
+	        
+	        MagicraftTGPlayer mctg = MagicraftTGPlayer.get(Minecraft.getMinecraft().thePlayer);
+	        mctg.setGlobalManaSources(this.chosen[0], this.chosen[1], this.chosen[2], this.chosen[3], this.chosen[4]);
+	        
 	        this.mc.displayGuiScreen(null);
 	        if (this.mc.currentScreen == null)
 	            this.mc.setIngameFocus();

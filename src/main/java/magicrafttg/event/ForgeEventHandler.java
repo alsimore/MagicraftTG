@@ -5,6 +5,7 @@ import java.util.List;
 import magicrafttg.MagicraftTG;
 import magicrafttg.client.gui.ManaSourceGui;
 import magicrafttg.entity.MagicraftTGPlayer;
+import magicrafttg.items.ModItems;
 import magicrafttg.mana.ManaColour;
 import magicrafttg.network.MCTGGuiHandler;
 import magicrafttg.network.MCTGManaPacket;
@@ -12,6 +13,7 @@ import magicrafttg.network.MCTGPacketHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -58,8 +60,16 @@ public class ForgeEventHandler {
 	 * @param event
 	 */
 	@SubscribeEvent
-	public void OnEntityJoinWorld(EntityJoinWorldEvent event) {
+	public void OnEntityJoinWorld(EntityJoinWorldEvent event) 
+	{
 		if (!(event.entity instanceof EntityPlayer)) {
+			return;
+		}
+
+		EntityPlayer player = (EntityPlayer) event.entity;
+		player.replaceItemInInventory(0, new ItemStack(ModItems.manaPicker));
+		
+		/*if (!(event.entity instanceof EntityPlayer)) {
 			return;
 		}
 
@@ -95,7 +105,7 @@ public class ForgeEventHandler {
 				System.out.println(player.getDisplayNameString() + " has joined world, resetting manaGuiCountdown");
 				mctg.manaGuiCountdown = MCTGGuiHandler.MANA_GUI_COUNTDOWN;
 			}
-		}	
+		}	*/
 	}
 	
 	
@@ -106,7 +116,7 @@ public class ForgeEventHandler {
 	@SubscribeEvent
 	public void onPlayerRespawn(PlayerRespawnEvent event)
 	{
-		EntityPlayer player = event.player;
+		/*EntityPlayer player = event.player;
 		MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
 		
 		System.out.println(String.format("player respawn for %s", player.getDisplayNameString()));
@@ -115,7 +125,7 @@ public class ForgeEventHandler {
 		{
 			System.out.println(player.getDisplayNameString() + " has respawned, resetting manaGuiCountdown");
 			mctg.manaGuiCountdown = MCTGGuiHandler.MANA_GUI_COUNTDOWN;
-		}
+		}*/
 	}
 	
 	/**

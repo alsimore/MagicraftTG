@@ -17,5 +17,6 @@ public class ItemRenderRegister {
 	
 	public static void registerItemRenderer() {
 		reg(ModItems.summonItem);
+		reg(ModItems.manaPicker);
     }
 }

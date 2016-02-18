@@ -40,7 +40,7 @@ public class FMLCommonClientHandler {
 	/**
 	 * Display a ManaSourceGui after a certain number of ticks.
 	 */
-	@SubscribeEvent
+	/*@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void onTick(TickEvent.PlayerTickEvent event) 
 	{
@@ -73,18 +73,18 @@ public class FMLCommonClientHandler {
 					return;
 				}
 				
-				/*System.out.println(player.getDisplayNameString() + " player: " + player);
+				System.out.println(player.getDisplayNameString() + " player: " + player);
 				System.out.println(player.getDisplayNameString() + " mctg: " + mctg);
 				player.openGui(MagicraftTG.instance, 
 						MCTGGuiHandler.MANA_SOURCE_GUI, 
 						world, 
 						0,
 						0,
-						0);*/
-				Minecraft.getMinecraft().displayGuiScreen(new ManaSourceGui());
+						0);
+				//Minecraft.getMinecraft().displayGuiScreen(new ManaSourceGui());
 			}
 		}
-	}
+	}*/
 	
 	/*public void resetManaGuiCountdown()
 	{
