@@ -49,8 +49,6 @@ public class CommonProxy {
     }
 
     public void init(FMLInitializationEvent e) {
-    	
-    	
     	MCTGPacketHandler.initPackets();
     	NetworkRegistry.INSTANCE.registerGuiHandler(MagicraftTG.instance, new MCTGGuiHandler());
     }

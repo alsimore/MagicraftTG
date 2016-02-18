@@ -20,8 +20,8 @@ public class MCTGSorceryInstant extends MCTGSpellItem {
 			// Test, cast fireball
 			double d1 = 1.0D;
 	        Vec3 vec3 = playerIn.getLook(1.0F);
-	        System.out.println(String.format("[MCTG] Look: %f %f %f", 
-	        		vec3.xCoord, vec3.yCoord, vec3.zCoord));
+	        //System.out.println(String.format("[MCTG] Look: %f %f %f", 
+	        //		vec3.xCoord, vec3.yCoord, vec3.zCoord));
 			EntityLargeFireball fireball = new EntityLargeFireball(worldIn, 
 					playerIn, vec3.xCoord, vec3.yCoord, vec3.zCoord);
 	        fireball.explosionPower = 1;

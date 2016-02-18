@@ -44,7 +44,7 @@ public class ForgeEventHandler {
 		if (event.entity instanceof EntityPlayer && MagicraftTGPlayer.get((EntityPlayer) event.entity) == null) {
 			// This is how extended properties are registered using our convenient method from earlier
 			MagicraftTGPlayer.register((EntityPlayer) event.entity);
-			System.out.println(String.format("[MCTG] Player: %s",event.entity.getUniqueID().toString()));
+			//System.out.println(String.format("[MCTG] Player: %s",event.entity.getUniqueID().toString()));
 			//System.out.println("[MCTG] ### " + ((EntityPlayer)event.entity).getGameProfile().getId().toString() + "\n");
 			//System.out.println(String.format("[MCTG] Player: %s",((EntityPlayer)event.entity).getGameProfile().getName()));
 			// That will call the constructor as well as cause the init() method
@@ -64,15 +64,17 @@ public class ForgeEventHandler {
 		}
 
 		EntityPlayer player = (EntityPlayer) event.entity;
+		MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
 		
 		System.out.println(String.format("onEntityJoinWorld for %s", player.getDisplayNameString()));
+		System.out.println(event.world.toString());
 		if(player.getGameProfile() != null) 
 		{
 			// Notify client of loaded ManaSources
 			if(event.world.isRemote == false)
 			{
 				// Server side
-				MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
+				
 				//System.out.println("Notify client of mana sources");
 				int[] sources = mctg.getGlobalSourceNumbers();
 				for(int src : sources)
@@ -90,8 +92,8 @@ public class ForgeEventHandler {
 			}
 			else // Otherwise set the client's mana gui countdown
 			{
-				System.out.println("Setting mana gui countdown");
-				FMLCommonClientHandler.resetManaGuiCountdown();
+				System.out.println(player.getDisplayNameString() + " has joined world, resetting manaGuiCountdown");
+				mctg.manaGuiCountdown = MCTGGuiHandler.MANA_GUI_COUNTDOWN;
 			}
 		}	
 	}
@@ -105,12 +107,14 @@ public class ForgeEventHandler {
 	public void onPlayerRespawn(PlayerRespawnEvent event)
 	{
 		EntityPlayer player = event.player;
+		MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
 		
 		System.out.println(String.format("player respawn for %s", player.getDisplayNameString()));
 		
 		if(player.worldObj.isRemote)
 		{
-			FMLCommonClientHandler.resetManaGuiCountdown(); 
+			System.out.println(player.getDisplayNameString() + " has respawned, resetting manaGuiCountdown");
+			mctg.manaGuiCountdown = MCTGGuiHandler.MANA_GUI_COUNTDOWN;
 		}
 	}
 	

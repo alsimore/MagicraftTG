@@ -62,22 +62,22 @@ public class MCTGCreaturePacket implements IMessageHandler<MCTGCreatureMessage, 
 		}
 		else if(msg.type == MCTGPacketHandler.REMOVE_CREATURE)
 		{
-			System.out.println("Remove creature received: " + msg.id);
-			System.out.println("or " + msg.index);
+			//System.out.println("Remove creature received: " + msg.id);
+			//System.out.println("or " + msg.index);
 			MagicraftTGPlayer player = MagicraftTGPlayer.get(mc.thePlayer);
 			player.removeCreatureByUUID(msg.id);
 		}
 		else if(msg.type == MCTGPacketHandler.ADD_CREATURE_INT)
 		{
 			// update player data
-			System.out.println("Client add " + msg.index);
+			//System.out.println("Client add " + msg.index);
 			MagicraftTGPlayer player = MagicraftTGPlayer.get(mc.thePlayer);
 			player.addCreatureById(msg.index);
 		}
 		else if(msg.type == MCTGPacketHandler.REMOVE_CREATURE_INT)
 		{
-			System.out.println("Remove creature received: " + msg.id);
-			System.out.println("or " + msg.index);
+			//System.out.println("Remove creature received: " + msg.id);
+			//System.out.println("or " + msg.index);
 			MagicraftTGPlayer player = MagicraftTGPlayer.get(mc.thePlayer);
 			player.removeCreatureById(msg.index);
 		}

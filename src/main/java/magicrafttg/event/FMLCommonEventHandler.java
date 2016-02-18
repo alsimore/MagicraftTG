@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -51,7 +52,7 @@ public class FMLCommonEventHandler {
 		{
 			this.manaTickCountdown = MagicraftTG.MANA_TICK_DELAY_INITIAL;
 			this.manaTimerRunning = true;
-			System.out.println("[MCTG] Mana tick countdown started");
+			//System.out.println("[MCTG] Mana tick countdown started");
 		}
 		
 		++playerCount;
@@ -88,7 +89,49 @@ public class FMLCommonEventHandler {
 		}
 	}
 	
-	
+	/*@SubscribeEvent
+	public void onTick(TickEvent.PlayerTickEvent event) 
+	{
+		EntityPlayer player = (EntityPlayer) event.player;
+		MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
+		if(player.worldObj.isRemote == false && mctg.manaGuiCountdown > 0) 
+		{
+			World world = null;
+			
+			--(mctg.manaGuiCountdown);
+			
+			if(mctg.manaGuiCountdown == 0)
+			{
+				System.out.println("Mana gui countdown zero for " + player.getDisplayNameString());
+				System.out.println(player.getUniqueID().toString());
+				// See if the remote world is loaded yet
+				try
+				{
+					world = player.worldObj; //MinecraftServer.getServer().getEntityWorld();// MinecraftServer.getServer().worldServerForDimension(0);
+				}
+				catch (ArrayIndexOutOfBoundsException e)
+				{
+					System.out.println("Server world not loaded");
+					mctg.manaGuiCountdown = MCTGGuiHandler.MANA_GUI_COUNTDOWN;
+				}
+				
+				if (world == null)
+				{
+					System.out.println("World is null");
+					return;
+				}
+				
+				System.out.println(player.getDisplayNameString() + " player: " + player);
+				System.out.println(player.getDisplayNameString() + " mctg: " + mctg);
+				player.openGui(MagicraftTG.instance, 
+						MCTGGuiHandler.MANA_SOURCE_GUI, 
+						world, 
+						(int) player.posX, 
+						(int) player.posY, 
+						(int) player.posZ);
+			}
+		}
+	}*/
 	
 	/**
 	 * If enough ticks have passed, notify clients of their updated mana from ManaSources.

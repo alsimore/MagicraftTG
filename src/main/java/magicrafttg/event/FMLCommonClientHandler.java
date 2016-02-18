@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -27,12 +28,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * @author Adam
  *
  */
+@SideOnly(Side.CLIENT)
 public class FMLCommonClientHandler {
 	
 	// Runs on the client side so making it static shouuldn't mess with
 	// other clients.
-	private static final int MANA_GUI_COUNTDOWN = 60;
-	private static int guiTickCountdown = MANA_GUI_COUNTDOWN;
+	
+	//private int guiTickCountdown = MANA_GUI_COUNTDOWN;
 	
 	
 	/**
@@ -40,23 +42,54 @@ public class FMLCommonClientHandler {
 	 */
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void onTick(TickEvent.PlayerTickEvent event) {
+	public void onTick(TickEvent.PlayerTickEvent event) 
+	{
 		EntityPlayer player = (EntityPlayer) event.player;
-		if(player.worldObj.isRemote && guiTickCountdown > 0) 
+		MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
+		if(player.worldObj.isRemote == true && mctg.manaGuiCountdown > 0) 
 		{
-			--guiTickCountdown;
-			//System.out.println("Countdown " + tickCountdown);
-			if(guiTickCountdown == 0)
+			World world = null;
+			
+			--(mctg.manaGuiCountdown);
+			
+			if(mctg.manaGuiCountdown == 0)
 			{
+				System.out.println("Mana gui countdown zero for " + player.getDisplayNameString());
+				System.out.println(player.getUniqueID().toString());
+				// See if the remote world is loaded yet
+				try
+				{
+					world = player.worldObj; //MinecraftServer.getServer().getEntityWorld();// MinecraftServer.getServer().worldServerForDimension(0);
+				}
+				catch (ArrayIndexOutOfBoundsException e)
+				{
+					System.out.println("Server world not loaded");
+					mctg.manaGuiCountdown = MCTGGuiHandler.MANA_GUI_COUNTDOWN;
+				}
+				
+				if (world == null)
+				{
+					System.out.println("World is null");
+					return;
+				}
+				
+				/*System.out.println(player.getDisplayNameString() + " player: " + player);
+				System.out.println(player.getDisplayNameString() + " mctg: " + mctg);
+				player.openGui(MagicraftTG.instance, 
+						MCTGGuiHandler.MANA_SOURCE_GUI, 
+						world, 
+						0,
+						0,
+						0);*/
 				Minecraft.getMinecraft().displayGuiScreen(new ManaSourceGui());
 			}
 		}
 	}
 	
-	public static void resetManaGuiCountdown()
+	/*public void resetManaGuiCountdown()
 	{
 		guiTickCountdown = MANA_GUI_COUNTDOWN;
-	}
+	}*/
 	
 	
 }

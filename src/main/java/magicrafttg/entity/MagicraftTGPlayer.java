@@ -6,9 +6,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import magicrafttg.event.FMLCommonClientHandler;
 import magicrafttg.mana.ManaColour;
 import magicrafttg.mana.ManaSource;
 import magicrafttg.network.MCTGCreaturePacket;
+import magicrafttg.network.MCTGGuiHandler;
 import magicrafttg.network.MCTGManaPacket;
 import magicrafttg.network.MCTGPacketHandler;
 import net.minecraft.client.Minecraft;
@@ -61,6 +63,10 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	private WeakReference<Entity> selectedCreature;
 	private int selectedIndex = -1;
 	
+	public int manaGuiCountdown;
+	
+	
+	
 	public MagicraftTGPlayer(EntityPlayer player)
 	{
 		//System.out.println("[MCTG] Creating MagicraftTGPlayer for " 
@@ -78,6 +84,8 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		globalSources = new ArrayList<ManaSource>();
 
 		controlledCreatures = new ArrayList<WeakReference<Entity>>();
+		
+		manaGuiCountdown = MCTGGuiHandler.MANA_GUI_COUNTDOWN;
 	}
 	
 	/**
@@ -607,8 +615,8 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		//System.out.println("[MCTG] " + creature.getUniqueID() + "(" + System.identityHashCode(creature) + ")\n");
 		
 		Entity test = MinecraftServer.getServer().getEntityFromUuid(creature.getUniqueID());
-		System.out.println("Before send client: " + creature.getUniqueID() + " returns");
-		System.out.println(test);
+		//System.out.println("Before send client: " + creature.getUniqueID() + " returns");
+		//System.out.println(test);
 		
 		updateCreatureToClient(MCTGPacketHandler.ADD_CREATURE_INT, creature.getEntityId());
 	}
@@ -649,7 +657,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		for(WeakReference<Entity> creatureRef : controlledCreatures)
 		{
 			Entity creature = creatureRef.get();
-			System.out.println("Creature: " + creature);
+			//System.out.println("Creature: " + creature);
 			if(creature instanceof EntityMCTGBase)
 			{
 				UUID controllerId = ((EntityMCTGBase) creature).getControllerUUID();
@@ -658,14 +666,14 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 				{
 					// Creature was summoned by the player, kill it
 					creature.setDead();
-					System.out.println("Killing");
+					//System.out.println("Killing");
 					
 				}
 				else
 				{
 					// Return control to the owner (summoner)
 					((EntityMCTGBase) creature).setControllerUUID(ownerId);
-					System.out.println("Revert to owner: " + ownerId);
+					//System.out.println("Revert to owner: " + ownerId);
 				}
 			}
 			
