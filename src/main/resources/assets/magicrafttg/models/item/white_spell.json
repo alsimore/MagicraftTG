@@ -1,0 +1,6 @@
+{
+    "parent":"magicrafttg:item/summon_item",
+    "textures": {
+        "layer0":"magicrafttg:items/white_spell"
+    }
+}

@@ -2,22 +2,40 @@ package magicrafttg.event;
 
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
 import magicrafttg.MagicraftTG;
 import magicrafttg.client.gui.ManaSourceGui;
+import magicrafttg.entity.EntityMCTGBase;
 import magicrafttg.entity.MagicraftTGPlayer;
 import magicrafttg.items.ModItems;
 import magicrafttg.mana.ManaColour;
 import magicrafttg.network.MCTGGuiHandler;
 import magicrafttg.network.MCTGManaPacket;
 import magicrafttg.network.MCTGPacketHandler;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.entity.DataWatcher;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.World;
+import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.client.event.RenderWorldEvent;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -28,6 +46,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.client.event.MouseEvent;
 
 /**
  * For handling events that occur on MinecraftForge.EVENT_BUS.
@@ -46,13 +65,20 @@ public class ForgeEventHandler {
 		if (event.entity instanceof EntityPlayer && MagicraftTGPlayer.get((EntityPlayer) event.entity) == null) {
 			// This is how extended properties are registered using our convenient method from earlier
 			MagicraftTGPlayer.register((EntityPlayer) event.entity);
-			//System.out.println(String.format("[MCTG] Player: %s",event.entity.getUniqueID().toString()));
-			//System.out.println("[MCTG] ### " + ((EntityPlayer)event.entity).getGameProfile().getId().toString() + "\n");
-			//System.out.println(String.format("[MCTG] Player: %s",((EntityPlayer)event.entity).getGameProfile().getName()));
-			// That will call the constructor as well as cause the init() method
-			// to be called automatically
 			
+			// Add datawatcher objects
+			//DataWatcher dw = event.entity.getDataWatcher();
+			//dw.addObject(20, ""); // owner UUID as string
+			//dw.addObject(21, ""); // controller UUID as string
 		} 
+		
+		if (event.entity instanceof EntityMCTGBase)
+		{
+			// Add datawatcher objects
+			DataWatcher dw = event.entity.getDataWatcher();
+			dw.addObject(20, ""); // owner UUID as string
+			dw.addObject(21, ""); // controller UUID as string
+		}
 	}
 	
 	/**
@@ -109,6 +135,43 @@ public class ForgeEventHandler {
 	}
 	
 	
+	/*@SubscribeEvent
+	public void onRenderWorldPre(RenderWorldEvent.Post event)
+	{
+		System.out.println("onREnderWorld");
+		Minecraft mc = Minecraft.getMinecraft();
+		MovingObjectPosition objectMouseOver = mc.objectMouseOver;
+		// makes a variable for where you look
+		System.out.println(objectMouseOver);
+		if(mc.objectMouseOver != null && mc.objectMouseOver.entityHit != null) {
+		    // checks if you hit an Entity
+		    Entity Target = objectMouseOver.entityHit;
+		    // make a variable: Target(just so I can use it easier) AND makes it "select the Entity"
+		    if(Target instanceof EntityMCTGBase) // or whatever you want recognised
+		        System.out.println("Mouse over base");
+		    }
+		}
+	}*/
+	
+	/*@SubscribeEvent
+	public void onRenderLiving(RenderLivingEvent.Post e)
+	{
+		Minecraft mc = Minecraft.getMinecraft();
+		MovingObjectPosition objectMouseOver = mc.objectMouseOver;
+		// makes a variable for where you look
+		//System.out.println(objectMouseOver);
+		if(mc.objectMouseOver != null && mc.objectMouseOver.entityHit != null) {
+		    // checks if you hit an Entity
+			//System.out.println("mouseover");
+		    Entity Target = objectMouseOver.entityHit;
+		    // make a variable: Target(just so I can use it easier) AND makes it "select the Entity"
+		    if(Target instanceof EntityMCTGBase) { // or whatever you want recognised
+		        System.out.println("Mouse over base");
+		    }
+		}
+	}*/
+	
+	
 	/**
 	 * When the player respawns make sure that the mana gui is shown.
 	 * @param event
@@ -146,6 +209,9 @@ public class ForgeEventHandler {
 	
 	
 	
+   
+	
+	
 	
 	/**
 	 * When a player logs in, open the mana source screen.
@@ -169,12 +235,13 @@ public class ForgeEventHandler {
 	
 	
 	/*@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public void onMouseEvent(MouseEvent event)
 	{
 		if(event.button == 1 && event.buttonstate == false)
 		{
 			System.out.println("MouseEvent button " + event.button + ": " + event.buttonstate);
-			Minecraft.getMinecraft().displayGuiScreen(new ManaSourceGui());
+			//Minecraft.getMinecraft().displayGuiScreen(new ManaSourceGui());
 		}
 		
 	}*/

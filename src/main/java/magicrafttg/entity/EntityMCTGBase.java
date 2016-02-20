@@ -22,6 +22,7 @@ import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
@@ -48,6 +49,9 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
             return this.func_179911_a((Entity)p_apply_1_);
         }
     }, 4.0F, 1.0D, 2.0D);
+	
+	
+	
 	
 	public EntityMCTGBase (World world, EntityPlayer owner, int power, int toughness) 
 	{
@@ -82,6 +86,19 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 		// Watch closest and look tasks 
 		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
+        //System.out.println("Try datawatcher " + this.dataWatcher);
+        // data watcher
+        
+        /*if(this.owner != null)
+        	this.getDataWatcher().addObject(20, this.owner.toString()); // owner UUID as string
+        if(this.controller != null)
+        	this.getDataWatcher().addObject(21, this.controller.toString()); // controller UUID as string
+        */
+        if(this.owner != null)
+        	this.getDataWatcher().updateObject(20, this.owner.toString()); // owner UUID as string
+        if(this.controller != null)
+        	this.getDataWatcher().updateObject(21, this.controller.toString()); // controller UUID as string
+        	
 	}
 	
 	// All subclasses should include this as well
@@ -194,7 +211,7 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
     {
     	// Cannot be leashed
     }
-
+    
 
 	///////////////////////////////////////////////////////////////
 	// IMCTGEntity methods

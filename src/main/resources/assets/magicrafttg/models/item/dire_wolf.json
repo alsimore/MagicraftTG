@@ -1,0 +1,6 @@
+{
+    "parent":"magicrafttg:item/black_spell",
+    "textures": {
+        "layer0":"magicrafttg:items/black_spell"
+    }
+}

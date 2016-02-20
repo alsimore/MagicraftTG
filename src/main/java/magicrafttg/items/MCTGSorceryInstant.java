@@ -19,18 +19,18 @@ public class MCTGSorceryInstant extends MCTGSpellItem {
 		if (!worldIn.isRemote) {
 			// Test, cast fireball
 			double d1 = 1.0D;
-	        Vec3 vec3 = playerIn.getLook(1.0F);
+	        Vec3 look = playerIn.getLook(1.0F);
 	        //System.out.println(String.format("[MCTG] Look: %f %f %f", 
 	        //		vec3.xCoord, vec3.yCoord, vec3.zCoord));
 			EntityLargeFireball fireball = new EntityLargeFireball(worldIn, 
-					playerIn, vec3.xCoord, vec3.yCoord, vec3.zCoord);
+					playerIn, look.xCoord, look.yCoord, look.zCoord);
 	        fireball.explosionPower = 1;
-	        fireball.posX = playerIn.posX + vec3.xCoord * d1;
+	        fireball.posX = playerIn.posX + look.xCoord * d1;
 	        fireball.posY = playerIn.posY + (double)(playerIn.height / 2.0F) + 0.5D;
-	        fireball.posZ = playerIn.posZ + vec3.zCoord * d1;
-	        fireball.accelerationX = vec3.xCoord;
-	        fireball.accelerationY = vec3.yCoord;
-	        fireball.accelerationZ = vec3.zCoord;
+	        fireball.posZ = playerIn.posZ + look.zCoord * d1;
+	        fireball.accelerationX = look.xCoord;
+	        fireball.accelerationY = look.yCoord;
+	        fireball.accelerationZ = look.zCoord;
 	        
 	        MagicraftTGPlayer mctg = MagicraftTGPlayer.get(playerIn);
 			if(mctg.consumeMana(this.costColour, this.costAmt)) {

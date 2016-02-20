@@ -57,6 +57,11 @@ public final class ModItems {
 						new int[] {1}), "fireball");
 		
 		
+		GameRegistry.registerItem(
+				new MCTGTargetedSpell("mind_control", new ManaColour[] {ManaColour.COLOURLESS, ManaColour.BLUE}, 
+						new int[] {3,2}), "mind_control");
+		
+		
 		GameRegistry.registerItem(manaPicker = new MCTGManaItem("mana_picker"), "mana_picker");
 		
 		/*GameRegistry.registerItem(summonZombie2 = 

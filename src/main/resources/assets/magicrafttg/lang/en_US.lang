@@ -1,2 +1,7 @@
 item.tutorial_item.name=Tutorial Item
 tile.mana_block.name=Mana Block
+item.mana_picker.name=Mana Picker
+item.zombie.name=Summon Zombie
+item.troll.name=Summon Troll
+item.dire_wolf.name=Summon Dire Wolf
+item.fireball.name=Fireball

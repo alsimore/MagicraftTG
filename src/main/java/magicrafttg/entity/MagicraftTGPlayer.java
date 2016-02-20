@@ -493,6 +493,10 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	public void addCreatureById(int id)
 	{
 		Entity creature = findByIdClient(id);
+		//System.out.println("addclient " + ((EntityMCTGBase)creature).getOwnerUUID());
+		//System.out.println(((EntityMCTGBase)creature).getControllerUUID());
+		//System.out.println("add client " + creature.getDataWatcher().getWatchableObjectString(20));
+		//System.out.println(creature.getDataWatcher().getWatchableObjectString(21));
 		//System.out.println("[MCTG] Add creature " + id + "(" + System.identityHashCode(creature) + ")");
 		controlledCreatures.add(new WeakReference<Entity>(creature));
 	}
@@ -617,7 +621,10 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		Entity test = MinecraftServer.getServer().getEntityFromUuid(creature.getUniqueID());
 		//System.out.println("Before send client: " + creature.getUniqueID() + " returns");
 		//System.out.println(test);
-		
+		//System.out.println("add " + ((EntityMCTGBase)creature).getOwnerUUID());
+		//System.out.println(((EntityMCTGBase)creature).getControllerUUID());
+		//System.out.println("add " + creature.getDataWatcher().getWatchableObjectString(20));
+		//System.out.println(creature.getDataWatcher().getWatchableObjectString(21));
 		updateCreatureToClient(MCTGPacketHandler.ADD_CREATURE_INT, creature.getEntityId());
 	}
 	
