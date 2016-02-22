@@ -37,12 +37,12 @@ public class MCTGManaPacket implements IMessageHandler<MCTGManaMessage, IMessage
 	    else if (ctx.side.isServer())
 	    {
 	    	//System.out.println("Server message received");
-	    	EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+	    	final EntityPlayerMP player = ctx.getServerHandler().playerEntity;
 	    	final MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
 	    	player.getServerForPlayer().addScheduledTask(new Runnable()
 	    	{
 	    	  public void run() {
-	    	    serverReceivedMessage(msg, mctg);
+	    	    serverReceivedMessage(msg, mctg, player);
 	    	  }
 	    	});
 	    }
@@ -65,17 +65,34 @@ public class MCTGManaPacket implements IMessageHandler<MCTGManaMessage, IMessage
 		}
 		else if(msg.type == MCTGPacketHandler.MANA_GLOBAL_SOURCE_SET)
 		{
+			System.out.println("Received mana update");
+			System.out.println(msg.w);
+			System.out.println(msg.u);
+			System.out.println(msg.b);
+			System.out.println(msg.r);
+			System.out.println(msg.g);
 			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 			MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
 			mctg.setGlobalManaSources(msg.w, msg.u, msg.b, msg.r, msg.g);
 		}
 	}
 	
-	private void serverReceivedMessage(MCTGManaMessage msg, MagicraftTGPlayer mctg)
+	private void serverReceivedMessage(MCTGManaMessage msg, MagicraftTGPlayer mctg, EntityPlayer player)
 	{
 		if(msg.type == MCTGPacketHandler.MANA_GLOBAL_SOURCE_SET)
 		{
 			mctg.setGlobalManaSources(msg.w, msg.u, msg.b, msg.r, msg.g);
+		}
+		else if(msg.type == MCTGPacketHandler.MANA_SRC_REQUEST)
+		{
+			MagicraftTGPlayer serverMctg = MagicraftTGPlayer.get(player);
+			System.out.println("Server player " + player);
+			int[] sources = serverMctg.getGlobalSourceNumbers();
+			for(int s : sources)
+				System.out.println(s);
+			IMessage reply = new MCTGManaPacket.MCTGManaMessage(MCTGPacketHandler.MANA_GLOBAL_SOURCE_SET,
+					sources[0], sources[1], sources[2], sources[3], sources[4], 0);
+			MCTGPacketHandler.net.sendTo(reply, (EntityPlayerMP)player);
 		}
 	}
 

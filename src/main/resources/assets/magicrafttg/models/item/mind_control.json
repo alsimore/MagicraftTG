@@ -1,5 +1,5 @@
 {
-    "parent":"magicrafttg:item/spell_item",
+    "parent":"magicrafttg:item/blue_spell",
     "textures": {
         "layer0":"magicrafttg:items/blue_spell"
     }

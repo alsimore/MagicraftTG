@@ -1,12 +1,18 @@
 package magicrafttg.items;
 
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
+
+import magicrafttg.entity.EntityMCTGBase;
 import magicrafttg.entity.EntityMCTGDireWolf;
 import magicrafttg.entity.EntityMCTGSkeleton;
 import magicrafttg.entity.EntityMCTGTroll;
 import magicrafttg.entity.EntityMCTGZombie;
 import magicrafttg.entity.ZZEntityMCTGZombie;
 import magicrafttg.mana.ManaColour;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -22,11 +28,38 @@ public final class ModItems {
 	public static Item fireball;
 	public static Item summonZombie2;
 	public static Item manaPicker;
+	public static Item mindControl;
+	
+	
 
 	public static void createItems() {
-		GameRegistry.registerItem(summonItem = 
-				new MCTGCreatureSummon("summon_item", new ManaColour[] {ManaColour.WHITE}, 
-						new int[] {1}, 1, 1, 0, EntityVillager.class), "summon_item");
+		//-------------------------------------------------------------------------------
+		// Spell predicates
+		final BiPredicate<Entity, EntityPlayer> predMindControl = new BiPredicate<Entity, EntityPlayer>() { 
+			@Override
+			public boolean test(Entity target, EntityPlayer caster) {
+				// Set the controller of the target to the caster
+				if( caster.getUniqueID().equals(((EntityMCTGBase)target).getControllerUUID()) )
+				{
+					// Caster already controls target
+					return false;
+				}
+				else
+				{
+					// Set target's controller to caster
+					System.out.println("Before cast " + ((EntityMCTGBase)target).getControllerUUID());
+					((EntityMCTGBase)target).setControllerUUID(caster.getUniqueID());
+					System.out.println("After cast " + ((EntityMCTGBase)target).getControllerUUID());
+					return true;
+				}
+			}
+		};
+				
+		//-------------------------------------------------------------------------------
+		// Item registry
+		//GameRegistry.registerItem(summonItem = 
+		//		new MCTGCreatureSummon("summon_item", new ManaColour[] {ManaColour.WHITE}, 
+		//				new int[] {1}, 1, 1, 0, EntityVillager.class), "summon_item");
 		
 		GameRegistry.registerItem(summonZombie = 
 				new MCTGCreatureSummon("zombie", new ManaColour[] {ManaColour.BLACK},
@@ -57,9 +90,13 @@ public final class ModItems {
 						new int[] {1}), "fireball");
 		
 		
-		GameRegistry.registerItem(
-				new MCTGTargetedSpell("mind_control", new ManaColour[] {ManaColour.COLOURLESS, ManaColour.BLUE}, 
-						new int[] {3,2}), "mind_control");
+		GameRegistry.registerItem(mindControl =
+				new MCTGTargetedSpell(
+						"mind_control", // name
+						new ManaColour[] {ManaColour.COLOURLESS, ManaColour.BLUE}, // required colours 
+						new int[] {3,2}, // cost
+						predMindControl), // effect
+				"mind_control");
 		
 		
 		GameRegistry.registerItem(manaPicker = new MCTGManaItem("mana_picker"), "mana_picker");
@@ -67,5 +104,9 @@ public final class ModItems {
 		/*GameRegistry.registerItem(summonZombie2 = 
 				new MCTGCreatureSummon("mctg_zombie2", new ManaColour[] {ManaColour.BLACK},
 						new int[] {1}, 1, 1, 0, EntityMCTGZombie.class), "mctg_zombie2");*/
+		
     }
+	
+	
+	
 }

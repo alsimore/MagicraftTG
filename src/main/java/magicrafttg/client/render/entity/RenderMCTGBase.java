@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderZombie;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
@@ -55,8 +56,9 @@ public class RenderMCTGBase extends RenderLiving {
         	{
         		UUID owner = UUID.fromString(mctgEntity.getDataWatcher().getWatchableObjectString(20)); //mctgEntity.getOwnerUUID();
         		UUID controller = UUID.fromString(mctgEntity.getDataWatcher().getWatchableObjectString(21)); //mctgEntity.getControllerUUID();
-        		
-        		//System.out.println("Owner " + owner + "; Cont " + controller); 
+        		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        		System.out.println("Owner " + owner + "; Cont " + controller); 
+        		System.out.println("Player " + player.getUniqueID());
             	if(owner != null && controller != null && owner.equals(controller))
             	{
             		colour = 65280; // 0000 0000 1111 1111 0000 0000, green

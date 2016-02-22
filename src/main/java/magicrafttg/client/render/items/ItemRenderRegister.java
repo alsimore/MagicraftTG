@@ -16,11 +16,12 @@ public class ItemRenderRegister {
 	}
 	
 	public static void registerItemRenderer() {
-		reg(ModItems.summonItem);
+		//reg(ModItems.summonItem);
 		reg(ModItems.manaPicker);
 		reg(ModItems.summonZombie);
 		reg(ModItems.summonTroll);
 		reg(ModItems.summonDireWolf);
 		reg(ModItems.fireball);
+		reg(ModItems.mindControl);
     }
 }

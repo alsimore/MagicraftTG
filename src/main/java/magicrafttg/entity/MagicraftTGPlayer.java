@@ -14,6 +14,7 @@ import magicrafttg.network.MCTGGuiHandler;
 import magicrafttg.network.MCTGManaPacket;
 import magicrafttg.network.MCTGPacketHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -474,6 +475,15 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	}
 	
 	
+	public void updateManaFromServer()
+	{
+		System.out.println("Requesting mana update from server");
+		IMessage msg = new MCTGManaPacket.MCTGManaMessage(MCTGPacketHandler.MANA_SRC_REQUEST,
+				0, 0, 0, 0, 0, 0);
+		MCTGPacketHandler.net.sendToServer(msg);
+	}
+	
+	
 	public void addCreatureByUUID(UUID id)
 	{
 		//Entity creature = MinecraftServer.getServer().getEntityFromUuid(id);
@@ -866,11 +876,29 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 				ManaColour colour = ManaColour.colourFromIndex(s);
 				this.globalSources.add(new ManaSource(colour));
 				//System.out.println("s = " + s);
-				//System.out.println("Added " + colour.toString());
+				System.out.println("Added " + colour.toString());
 				//System.out.println("after, s = " + s);
 			}
 			
 		}
+		
+		//sources = getGlobalSourceNumbers();
+		//System.out.println("Send to player " + this.player.get());
+		//DataWatcher dw = this.player.get().getDataWatcher();
+		//dw.updateObject(20, sources[ManaColour.WHITE.ordinal()]);
+		//dw.updateObject(21, sources[ManaColour.BLUE.ordinal()]);
+		//dw.updateObject(22, sources[ManaColour.BLACK.ordinal()]);
+		//dw.updateObject(23, sources[ManaColour.RED.ordinal()]);
+		//dw.updateObject(24, sources[ManaColour.GREEN.ordinal()]);
+		
+		/*IMessage msg = new MCTGManaPacket.MCTGManaMessage(MCTGPacketHandler.MANA_GLOBAL_SOURCE_SET, 
+				sources[ManaColour.WHITE.ordinal()], 
+				sources[ManaColour.BLUE.ordinal()], 
+				sources[ManaColour.BLACK.ordinal()], 
+				sources[ManaColour.RED.ordinal()], 
+				sources[ManaColour.GREEN.ordinal()], 
+				0);
+		MCTGPacketHandler.net.sendTo(msg, (EntityPlayerMP)this.player.get());*/
 	}
 
 	@Override

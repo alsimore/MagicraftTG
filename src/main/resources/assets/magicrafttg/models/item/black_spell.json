@@ -1,5 +1,5 @@
 {
-    "parent":"magicrafttg:item/summon_item",
+    "parent":"magicrafttg:item/spell_item",
     "textures": {
         "layer0":"magicrafttg:items/black_spell"
     }

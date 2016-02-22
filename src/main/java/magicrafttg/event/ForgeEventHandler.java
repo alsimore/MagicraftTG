@@ -65,16 +65,21 @@ public class ForgeEventHandler {
 		if (event.entity instanceof EntityPlayer && MagicraftTGPlayer.get((EntityPlayer) event.entity) == null) {
 			// This is how extended properties are registered using our convenient method from earlier
 			MagicraftTGPlayer.register((EntityPlayer) event.entity);
+			System.out.println("Create MCTG");
 			
-			// Add datawatcher objects
+			// Add datawatcher objects, mana sources
 			//DataWatcher dw = event.entity.getDataWatcher();
-			//dw.addObject(20, ""); // owner UUID as string
-			//dw.addObject(21, ""); // controller UUID as string
+			// Each object represents the number of sources of a particular colour
+			//dw.addObject(20, 0); // White
+			//dw.addObject(21, 0); // Blue
+			//dw.addObject(22, 0); // Black
+			//dw.addObject(23, 0); // Red
+			//dw.addObject(24, 0); // Green
 		} 
 		
 		if (event.entity instanceof EntityMCTGBase)
 		{
-			// Add datawatcher objects
+			// Add datawatcher objects, owner and controller
 			DataWatcher dw = event.entity.getDataWatcher();
 			dw.addObject(20, ""); // owner UUID as string
 			dw.addObject(21, ""); // controller UUID as string
@@ -95,6 +100,12 @@ public class ForgeEventHandler {
 		EntityPlayer player = (EntityPlayer) event.entity;
 		player.replaceItemInInventory(0, new ItemStack(ModItems.manaPicker));
 		
+		
+		// Request mana sources from server
+		if(event.world.isRemote == true)
+		{
+			MagicraftTGPlayer.get(player).updateManaFromServer();
+		}
 		/*if (!(event.entity instanceof EntityPlayer)) {
 			return;
 		}

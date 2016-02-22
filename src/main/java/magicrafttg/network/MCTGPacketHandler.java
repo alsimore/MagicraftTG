@@ -11,6 +11,7 @@ public class MCTGPacketHandler {
 
 	public static final char MANA_GLOBAL_SOURCE_SET = '0';
 	public static final char MANA_UPDATE = '1';
+	public static final char MANA_SRC_REQUEST = '7';
 	
 	public static final char ADD_CREATURE = '2';
 	public static final char REMOVE_CREATURE = '3';

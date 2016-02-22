@@ -1,6 +1,7 @@
 package magicrafttg.client.gui;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import magicrafttg.entity.MagicraftTGPlayer;
 import magicrafttg.mana.ManaColour;
@@ -10,6 +11,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.DataWatcher;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class ManaSourceGui extends GuiScreen {
@@ -82,13 +86,17 @@ public class ManaSourceGui extends GuiScreen {
 	
 	private void displayAmounts()
 	{
+		
 		MagicraftTGPlayer mctg = MagicraftTGPlayer.get(Minecraft.getMinecraft().thePlayer);
+		//mctg.updateManaFromServer();
 		int[] sources = mctg.getGlobalSourceNumbers();
+		
 		//System.out.println("Mana amounts: " + sources.length);
 		for(int i = 0; i < 5; ++i)
 		{
 			chosen[i] = sources[i];
 			totalChosen += chosen[i]; 
+			System.out.println(sources[i]);
 		}
 		
 		buttonWhite.displayString = "White " + chosen[0];
