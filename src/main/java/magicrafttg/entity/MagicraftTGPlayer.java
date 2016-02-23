@@ -70,9 +70,9 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	
 	public MagicraftTGPlayer(EntityPlayer player)
 	{
-		//System.out.println("[MCTG] Creating MagicraftTGPlayer for " 
-		//		+ player.getUniqueID().toString() + "(" + System.identityHashCode(player) + ")");
-		//System.out.println("[MCTG] ### " + player.getGameProfile().getId().toString() + "\n");
+		//System.out.println("Creating MagicraftTGPlayer for " + player.getUniqueID().toString() );
+		//System.out.println("Game profile " + player.getGameProfile().getId().toString());
+		//System.out.println("ID " + player.getEntityId());
 		this.player = new WeakReference<EntityPlayer>(player);
 		this.setWhiteMana(0);	
 		this.setBlueMana(0);
@@ -477,7 +477,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	
 	public void updateManaFromServer()
 	{
-		System.out.println("Requesting mana update from server");
+		//System.out.println("Requesting mana update from server");
 		IMessage msg = new MCTGManaPacket.MCTGManaMessage(MCTGPacketHandler.MANA_SRC_REQUEST,
 				0, 0, 0, 0, 0, 0);
 		MCTGPacketHandler.net.sendToServer(msg);
@@ -508,6 +508,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		//System.out.println("add client " + creature.getDataWatcher().getWatchableObjectString(20));
 		//System.out.println(creature.getDataWatcher().getWatchableObjectString(21));
 		//System.out.println("[MCTG] Add creature " + id + "(" + System.identityHashCode(creature) + ")");
+		//System.out.println("Add creature for " + this.player.get() + "\n" + this.player.get().getUniqueID());
 		controlledCreatures.add(new WeakReference<Entity>(creature));
 	}
 	
@@ -612,8 +613,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	{
 		IMessage msg = new MCTGCreaturePacket.MCTGCreatureMessage(type, creatureId);
 		
-		//System.out.println("[MCTG] Send creatureUpdate to " + this.player.get().getUniqueID().toString()
-		//		 + "(" + System.identityHashCode(this.player.get()) + ")");
+		//System.out.println("Send creatureUpdate to " + this.player.get().getUniqueID().toString());
 		//System.out.println("[MCTG] theCreature: " + creatureId);
 		
 		MCTGPacketHandler.net.sendTo(msg, (EntityPlayerMP)this.player.get());

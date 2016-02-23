@@ -34,6 +34,8 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 	private int toughness;
 	private UUID owner;
 	private UUID controller;
+	private int ownerId;
+	private int controllerId;
 	
 	
 	// AI for avoiding Creeper, from EntityMob
@@ -60,12 +62,13 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 		{
 			this.owner = owner.getUniqueID();
 			this.controller = this.owner;
-			/*this.controller = owner.getUniqueID();
-			this.owner = null;*/
+			this.ownerId = this.controllerId = owner.getEntityId();
+			//System.out.println("Created MCTGBase " + this.owner.toString());
 		}
 		else
 		{
 			this.owner = this.controller = null;
+			this.ownerId = this.controllerId = -1;
 		}
 		this.power = power;
 		this.toughness = toughness;
@@ -94,10 +97,14 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
         if(this.controller != null)
         	this.getDataWatcher().addObject(21, this.controller.toString()); // controller UUID as string
         */
-        if(this.owner != null)
+        if(this.owner != null && this.ownerId >= 0)
+        {
         	this.getDataWatcher().updateObject(20, this.owner.toString()); // owner UUID as string
-        if(this.controller != null)
+        }
+        if(this.controller != null && this.controllerId >= 0)
+        {
         	this.getDataWatcher().updateObject(21, this.controller.toString()); // controller UUID as string
+        }
         	
 	}
 	

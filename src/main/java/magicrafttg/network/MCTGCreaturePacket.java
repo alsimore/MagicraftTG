@@ -56,7 +56,7 @@ public class MCTGCreaturePacket implements IMessageHandler<MCTGCreatureMessage, 
 		if(msg.type == MCTGPacketHandler.ADD_CREATURE)
 		{
 			// update player data
-			
+			//System.out.println("Add creature for " + mc.thePlayer + "\n" + mc.thePlayer.getUniqueID());
 			MagicraftTGPlayer player = MagicraftTGPlayer.get(mc.thePlayer);
 			player.addCreatureByUUID(msg.id);
 		}
@@ -71,6 +71,7 @@ public class MCTGCreaturePacket implements IMessageHandler<MCTGCreatureMessage, 
 		{
 			// update player data
 			//System.out.println("Client add " + msg.index);
+			//System.out.println("Add creature for " + mc.thePlayer + "\n" + mc.thePlayer.getUniqueID());
 			MagicraftTGPlayer player = MagicraftTGPlayer.get(mc.thePlayer);
 			player.addCreatureById(msg.index);
 		}

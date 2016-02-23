@@ -127,8 +127,8 @@ public class MCTGCreatureSummon extends MCTGSpellItem {
 					/*System.out.println("[MCTG] " + newEntity.toString());
 					System.out.println("[MCTG] " + newEntity.getUniqueID() + "(" + System.identityHashCode(newEntity) + ")");
 					System.out.println("[MCTG] Damage: " + ((EntityLivingBase)newEntity).getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue());
-					System.out.println("[MCTG] Health: " + ((EntityLivingBase)newEntity).getHealth());
-					System.out.println("[MCTG] Summoned by: " + playerIn.getUniqueID().toString() + "\n");*/
+					System.out.println("[MCTG] Health: " + ((EntityLivingBase)newEntity).getHealth());*/
+					System.out.println("[MCTG] Summoned by: " + playerIn.getUniqueID().toString() + "\n");
 					
 					if(worldIn.spawnEntityInWorld(newEntity))
 					{

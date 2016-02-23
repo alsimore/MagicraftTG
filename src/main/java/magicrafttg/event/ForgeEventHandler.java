@@ -65,7 +65,8 @@ public class ForgeEventHandler {
 		if (event.entity instanceof EntityPlayer && MagicraftTGPlayer.get((EntityPlayer) event.entity) == null) {
 			// This is how extended properties are registered using our convenient method from earlier
 			MagicraftTGPlayer.register((EntityPlayer) event.entity);
-			System.out.println("Create MCTG");
+			
+			//System.out.println("Create MCTG " + event.entity + "\n" + event.entity.getUniqueID());
 			
 			// Add datawatcher objects, mana sources
 			//DataWatcher dw = event.entity.getDataWatcher();
@@ -83,6 +84,8 @@ public class ForgeEventHandler {
 			DataWatcher dw = event.entity.getDataWatcher();
 			dw.addObject(20, ""); // owner UUID as string
 			dw.addObject(21, ""); // controller UUID as string
+			dw.addObject(22, -1); // owner entityId as int
+			dw.addObject(23, -1); // controller entityId as int
 		}
 	}
 	
@@ -100,7 +103,7 @@ public class ForgeEventHandler {
 		EntityPlayer player = (EntityPlayer) event.entity;
 		player.replaceItemInInventory(0, new ItemStack(ModItems.manaPicker));
 		
-		
+		//System.out.println("Player joined world " + player.getUniqueID());
 		// Request mana sources from server
 		if(event.world.isRemote == true)
 		{
