@@ -121,27 +121,27 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		for(int i = 0; i < w; ++i)
 		{
 			globalSources.add(new ManaSource(ManaColour.WHITE));
-			System.out.println("Added WHITE");
+			//System.out.println("Added WHITE");
 		}
 		for(int i = 0; i < u; ++i)
 		{
 			globalSources.add(new ManaSource(ManaColour.BLUE));
-			System.out.println("Added BLUE");
+			//System.out.println("Added BLUE");
 		}
 		for(int i = 0; i < b; ++i)
 		{
 			globalSources.add(new ManaSource(ManaColour.BLACK));
-			System.out.println("Added BLACK");
+			//System.out.println("Added BLACK");
 		}
 		for(int i = 0; i < r; ++i)
 		{
 			globalSources.add(new ManaSource(ManaColour.RED));
-			System.out.println("Added RED");
+			//System.out.println("Added RED");
 		}
 		for(int i = 0; i < g; ++i)
 		{
 			globalSources.add(new ManaSource(ManaColour.GREEN));
-			System.out.println("Added GREEN");
+			//System.out.println("Added GREEN");
 		}
 		//System.out.println("Client sources set: " + w + " "
 		//		+ u + " " + b + " " + r + " " + g + " ");

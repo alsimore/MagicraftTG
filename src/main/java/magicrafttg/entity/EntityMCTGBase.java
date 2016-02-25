@@ -8,6 +8,7 @@ import magicrafttg.MagicraftTG;
 import magicrafttg.entity.ai.EntityMCTGAIAttackEnemy;
 import magicrafttg.entity.ai.EntityMCTGAIFollowController;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,6 +18,8 @@ import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAITarget;
+import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -111,7 +114,7 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 	// All subclasses should include this as well
 	public EntityMCTGBase(World worldIn)
     {
-        super(worldIn);
+        this(worldIn, null, 0, 0);
     }
 	
 	
@@ -219,6 +222,19 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
     	// Cannot be leashed
     }
     
+    
+    public void updateDataWatcher()
+    {
+    	//System.out.println("Update DW");
+    	DataWatcher dw = this.getDataWatcher();
+    	String uuidStr = this.owner == null ? "" : this.owner.toString();
+    	dw.updateObject(20, uuidStr);
+    	uuidStr = this.controller == null ? "" : this.controller.toString();
+    	dw.updateObject(21, uuidStr);
+    }
+    
+    
+    
 
 	///////////////////////////////////////////////////////////////
 	// IMCTGEntity methods
@@ -242,6 +258,10 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 	@Override
 	public void setControllerEntity(EntityLivingBase controller) {
 		this.controller = controller.getUniqueID();
+		System.out.println("New controller " + this.controller.toString());
+		adjustTasksOnNewController();
+		
+		//((EntityAITarget)this.targetTasks.taskEntries.get(0)).resetTask();
 	}
 	
 	@Override
@@ -262,5 +282,16 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 	@Override
 	public void setControllerUUID(UUID controller) {
 		this.controller = controller;
+		System.out.println("New controller " + this.controller.toString());
+		
+		adjustTasksOnNewController();
+	}
+	
+	
+	private void adjustTasksOnNewController()
+	{
+		// Reset the current attack target
+		EntityAITaskEntry entry = (EntityAITaskEntry) this.targetTasks.taskEntries.get(0);
+		entry.action.resetTask();
 	}
 }

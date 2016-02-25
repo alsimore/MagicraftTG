@@ -88,7 +88,8 @@ public class EntityMCTGAIFollowController extends EntityAIBase {
      */
     public void resetTask()
     {
-        this.theController = null;
+        //this.theController = null;
+    	this.theController = ((IMCTGEntity)this.theCreature).getControllerEntity();
         this.pathfinder.clearPathEntity();
         ((PathNavigateGround)this.theCreature.getNavigator()).func_179690_a(true);
     }
@@ -98,6 +99,7 @@ public class EntityMCTGAIFollowController extends EntityAIBase {
      */
     public void updateTask()
     {
+    	this.theController = ((IMCTGEntity)this.theCreature).getControllerEntity();
         this.theCreature.getLookHelper().setLookPositionWithEntity(this.theController, 10.0F, (float)this.theCreature.getVerticalFaceSpeed());
 
         //if (!this.theCreature.isSitting())

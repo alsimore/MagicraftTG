@@ -48,8 +48,9 @@ public final class ModItems {
 				{
 					// Set target's controller to caster
 					System.out.println("Before cast " + ((EntityMCTGBase)target).getControllerUUID());
-					((EntityMCTGBase)target).setControllerUUID(caster.getUniqueID());
+					((EntityMCTGBase)target).setControllerEntity(caster);
 					System.out.println("After cast " + ((EntityMCTGBase)target).getControllerUUID());
+					((EntityMCTGBase)target).updateDataWatcher();
 					return true;
 				}
 			}

@@ -85,7 +85,7 @@ public class FMLCommonEventHandler {
 		MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
 		if(mctg != null) // Probably an unnecessary check
 		{
-			mctg.removeAllControlled();
+			//mctg.removeAllControlled();
 		}
 	}
 	

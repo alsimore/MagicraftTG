@@ -101,7 +101,7 @@ public class EntityMCTGAIAttackEnemy extends EntityAINearestAttackableTarget {
 //        }
 //    }
 
-	
+	private int countdown = 25;
 	@Override
 	/**
      * A method used to see if an entity is a suitable target through a number of checks. Args : entity,
@@ -111,6 +111,7 @@ public class EntityMCTGAIAttackEnemy extends EntityAINearestAttackableTarget {
      */
     protected boolean isSuitableTarget(EntityLivingBase potentialTarget, boolean canTargetInvinciblePlayer)
     {
+		--this.countdown;
 		if (this.taskOwner instanceof IMCTGEntity && potentialTarget instanceof IMCTGEntity) {
 			IMCTGEntity itself = ((IMCTGEntity)this.taskOwner);
 			IMCTGEntity castedTarget = (IMCTGEntity)potentialTarget;
@@ -147,6 +148,7 @@ public class EntityMCTGAIAttackEnemy extends EntityAINearestAttackableTarget {
 			
 			UUID target = potentialTarget.getUniqueID();
 			UUID thisController = ((IMCTGEntity)this.taskOwner).getControllerUUID();
+			System.out.println("Target: " + target + " Controller: " + thisController);
 	        return thisController == null || !thisController.equals(target);
 		}
 		return false;

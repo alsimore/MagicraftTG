@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import magicrafttg.MagicraftTG;
 import magicrafttg.entity.EntityMCTGBase;
+import magicrafttg.items.MCTGTargetedSpell;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
@@ -20,6 +21,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 
 public class RenderMCTGBase extends RenderLiving {
 
@@ -43,7 +45,11 @@ public class RenderMCTGBase extends RenderLiving {
         super.doRender(entity, x, y, z, p_76986_8_, partialTicks);
         AxisAlignedBB aabb = entity.getEntityBoundingBox();
         
-        Entity target = Minecraft.getMinecraft().objectMouseOver.entityHit;
+        //Entity target = Minecraft.getMinecraft().objectMouseOver.entityHit;
+        Minecraft mc = Minecraft.getMinecraft();
+        World worldIn = mc.theWorld;
+        EntityPlayer playerIn = mc.thePlayer;
+        Entity target = MCTGTargetedSpell.getMouseOverExtended(worldIn, playerIn, 6.0f).entityHit;
         if(entity instanceof EntityMCTGBase && entity.equals(target))
         {
         	int colour = 0;
@@ -52,14 +58,33 @@ public class RenderMCTGBase extends RenderLiving {
         	//EntityMCTGBase mctgEntity = (EntityMCTGBase) MinecraftServer.getServer().getEntityFromUuid(target.getUniqueID());
         	EntityMCTGBase mctgEntity = (EntityMCTGBase) entity;
         	//System.out.println("mctg " + mctgEntity);
-        	try
-        	{
-        		UUID owner = UUID.fromString(mctgEntity.getDataWatcher().getWatchableObjectString(20)); //mctgEntity.getOwnerUUID();
-        		UUID controller = UUID.fromString(mctgEntity.getDataWatcher().getWatchableObjectString(21)); //mctgEntity.getControllerUUID();
+        	//try
+        	//{
+        		UUID owner = null;
+        		try
+        		{
+        			owner = UUID.fromString(mctgEntity.getDataWatcher().getWatchableObjectString(20)); //mctgEntity.getOwnerUUID();
+        		}
+        		catch (IllegalArgumentException e)
+        		{
+        			
+        		}
+        		
+        		UUID controller = null;
+        		try
+        		{
+        			controller = UUID.fromString(mctgEntity.getDataWatcher().getWatchableObjectString(21)); //mctgEntity.getControllerUUID();
+        		}
+        		catch (IllegalArgumentException e)
+        		{
+        			
+        		}
+        		
         		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-        		System.out.println("Owner " + owner + "; Cont " + controller); 
-        		System.out.println("Player " + player.getUniqueID());
-            	if(owner != null && controller != null && owner.equals(controller))
+        		//System.out.println("Owner " + owner + "; Cont " + controller); 
+        		//System.out.println("Player " + player.getUniqueID());
+            	//if(owner != null && controller != null && owner.equals(controller))
+        		if(controller != null && player.getUniqueID().equals(controller))
             	{
             		colour = 65280; // 0000 0000 1111 1111 0000 0000, green
             	}
@@ -69,12 +94,13 @@ public class RenderMCTGBase extends RenderLiving {
             	}
             	
             	
-        	}
-        	catch (IllegalArgumentException e)
-        	{
+        	//}
+        	//catch (IllegalArgumentException e)
+        	//{
         		// failed to get owner or controller UUID, go with red (not controlled)
-        		colour = 16711680; // 1111 1111 0000 0000 0000 0000, red
-        	}
+        	//	System.out.println("Error: " + e);
+        	//	colour = 16711680; // 1111 1111 0000 0000 0000 0000, red
+        	//}
         	
         	renderControlBox(entity, x, y, z, p_76986_8_, partialTicks, colour);
         }
@@ -116,4 +142,7 @@ public class RenderMCTGBase extends RenderLiving {
         GlStateManager.disableBlend();
         GlStateManager.depthMask(true);
     }
+    
+    
+    
 }
