@@ -1,6 +1,7 @@
 package magicrafttg.client.render.hud;
 
 import magicrafttg.entity.MCTGPlayerProperties;
+import magicrafttg.mana.ManaColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
@@ -23,13 +24,16 @@ public class HUDRenderer {
     	if(event.type == RenderGameOverlayEvent.ElementType.TEXT)
     	{
     		MCTGPlayerProperties player = MCTGPlayerProperties.get(mc.thePlayer);
+    		int[] currentMana = player.getCurrentMana();
     		mc.fontRendererObj.drawStringWithShadow(getBiomeString(), 1, 200, 0xffffff);
-    		String currentMana = String.format(
-    				"White: %2d    Blue: %2d    Black: %2d    Red: %2d    Green: %2d    Colourless: %2d",
-    				player.getWhiteMana(), player.getBlueMana(), 
-    				player.getBlackMana(), player.getRedMana(), 
-    				player.getGreenMana(), player.getColourlessMana());
-    		mc.fontRendererObj.drawStringWithShadow(currentMana, 1, 208, 0xffffff);
+    		String str = String.format(
+    					"White: %2d    Blue: %2d    Black: %2d    Red: %2d    Green: %2d    Colourless: %2d",
+    					currentMana[ManaColor.WHITE.ordinal()], currentMana[ManaColor.BLUE.ordinal()], 
+    					currentMana[ManaColor.BLACK.ordinal()], currentMana[ManaColor.RED.ordinal()], 
+    					currentMana[ManaColor.GREEN.ordinal()], currentMana[ManaColor.COLORLESS.ordinal()]
+    				);
+    		
+    		mc.fontRendererObj.drawStringWithShadow(str, 1, 208, 0xffffff);
     		
     		mc.fontRendererObj.drawStringWithShadow(mc.thePlayer.getName(), 1, 1, 0xffffff);
     		

@@ -1,13 +1,13 @@
 package magicrafttg.network;
 
 import magicrafttg.MagicraftTG;
-import magicrafttg.network.MCTGCreaturePacket.MCTGCreatureMessage;
-import magicrafttg.network.MCTGManaPacket.MCTGManaMessage;
+import magicrafttg.network.CreaturePacket.MCTGCreatureMessage;
+import magicrafttg.network.ManaPacket.MCTGManaMessage;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class MCTGPacketHandler {
+public class PacketHandler {
 
 	public static final char MANA_GLOBAL_SOURCE_SET = '0';
 	public static final char MANA_UPDATE = '1';
@@ -25,8 +25,8 @@ public class MCTGPacketHandler {
 	{
 		net = NetworkRegistry.INSTANCE.newSimpleChannel(MagicraftTG.MODID.toUpperCase());
 		//System.out.println("[MCTG] Registering packets");
-		registerMessage(MCTGManaPacket.class, MCTGManaMessage.class);
-		registerMessage(MCTGCreaturePacket.class, MCTGCreatureMessage.class);
+		registerMessage(ManaPacket.class, MCTGManaMessage.class);
+		registerMessage(CreaturePacket.class, MCTGCreatureMessage.class);
 		    
 		//System.out.println("[MCTG] MCTGPacketHandler registered");
 	}

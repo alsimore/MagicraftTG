@@ -5,8 +5,8 @@ import java.util.UUID;
 
 import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.mana.ManaColor;
-import magicrafttg.network.MCTGManaPacket;
-import magicrafttg.network.MCTGPacketHandler;
+import magicrafttg.network.ManaPacket;
+import magicrafttg.network.PacketHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -130,10 +130,10 @@ public class ManaSourceGui extends GuiScreen {
 				System.out.println(m);
 			}
 			
-			IMessage msg = new MCTGManaPacket.MCTGManaMessage(MCTGPacketHandler.MANA_GLOBAL_SOURCE_SET, 
+			IMessage msg = new ManaPacket.MCTGManaMessage(PacketHandler.MANA_GLOBAL_SOURCE_SET, 
 					// The order is white, blue, black, red, green, colourless.
 					this.chosen[0], this.chosen[1], this.chosen[2], this.chosen[3], this.chosen[4], 0);
-	        MCTGPacketHandler.net.sendToServer(msg);
+	        PacketHandler.net.sendToServer(msg);
 	        
 	        MCTGPlayerProperties mctg = MCTGPlayerProperties.get(Minecraft.getMinecraft().thePlayer);
 	        mctg.setGlobalManaSources(this.chosen[0], this.chosen[1], this.chosen[2], this.chosen[3], this.chosen[4]);

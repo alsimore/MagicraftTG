@@ -1,7 +1,7 @@
 package magicrafttg.items;
 
 import magicrafttg.MagicraftTG;
-import magicrafttg.network.MCTGGuiHandler;
+import magicrafttg.network.GuiHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -25,7 +25,7 @@ public class MCTGManaItem extends Item {
 	{
 		System.out.println("Mana item right click");
 		playerIn.openGui(MagicraftTG.instance, 
-				MCTGGuiHandler.MANA_SOURCE_GUI, 
+				GuiHandler.MANA_SOURCE_GUI, 
 				worldIn, 
 				playerIn.getEntityId(), 
 				MathHelper.floor_double(playerIn.posY), 

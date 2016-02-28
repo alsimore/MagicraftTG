@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import io.netty.buffer.ByteBuf;
 import magicrafttg.entity.MCTGPlayerProperties;
-import magicrafttg.network.MCTGManaPacket.MCTGManaMessage;
+import magicrafttg.network.ManaPacket.MCTGManaMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -17,7 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 //The params of the IMessageHandler are <REQ, REPLY>
 //This means that the first param is the packet you are receiving, and the second is the packet you are returning.
 //The returned packet can be used as a "response" from a sent packet.
-public class MCTGManaPacket implements IMessageHandler<MCTGManaMessage, IMessage> {
+public class ManaPacket implements IMessageHandler<MCTGManaMessage, IMessage> {
 	
 	@Override
 	public IMessage onMessage(final MCTGManaMessage msg, MessageContext ctx) {
@@ -50,20 +50,22 @@ public class MCTGManaPacket implements IMessageHandler<MCTGManaMessage, IMessage
 		return null;
 	}
 	
-	@SideOnly(Side.CLIENT)
+	
 	private void clientReceivedMessage(MCTGManaMessage msg)
 	{
-		if(msg.type == MCTGPacketHandler.MANA_UPDATE)
+		if(msg.type == PacketHandler.MANA_UPDATE)
 		{
+			int[] manaAmounts = {msg.w, msg.u, msg.b, msg.r, msg.g, msg.c};
+			MCTGNetworkManager.updateManaServerToClient(Minecraft.getMinecraft().thePlayer, manaAmounts);
 			// update player data
-			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+			/*EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 			MCTGPlayerProperties mctg = MCTGPlayerProperties.get(player);
 			//System.out.println("[MCTG] Client message received by " + player.getUniqueID().toString()
 			//		 + "(" + System.identityHashCode(player) + ")");
 			//System.out.println("[MCTG] ### " + player.getGameProfile().getId().toString() + "\n");
-			mctg.updateMana(msg.w, msg.u, msg.b, msg.r, msg.g, msg.c);
+			mctg.updateMana(msg.w, msg.u, msg.b, msg.r, msg.g, msg.c);*/
 		}
-		else if(msg.type == MCTGPacketHandler.MANA_GLOBAL_SOURCE_SET)
+		else if(msg.type == PacketHandler.MANA_GLOBAL_SOURCE_SET)
 		{
 			System.out.println("Received mana update");
 			System.out.println(msg.w);
@@ -79,26 +81,28 @@ public class MCTGManaPacket implements IMessageHandler<MCTGManaMessage, IMessage
 	
 	private void serverReceivedMessage(MCTGManaMessage msg, MCTGPlayerProperties mctg, EntityPlayer player)
 	{
-		if(msg.type == MCTGPacketHandler.MANA_GLOBAL_SOURCE_SET)
+		if(msg.type == PacketHandler.MANA_GLOBAL_SOURCE_SET)
 		{
 			mctg.setGlobalManaSources(msg.w, msg.u, msg.b, msg.r, msg.g);
 		}
-		else if(msg.type == MCTGPacketHandler.MANA_SRC_REQUEST)
+		else if(msg.type == PacketHandler.MANA_SRC_REQUEST)
 		{
 			MCTGPlayerProperties serverMctg = MCTGPlayerProperties.get(player);
 			System.out.println("Server player " + player);
 			int[] sources = serverMctg.getGlobalSourceNumbers();
 			for(int s : sources)
 				System.out.println(s);
-			IMessage reply = new MCTGManaPacket.MCTGManaMessage(MCTGPacketHandler.MANA_GLOBAL_SOURCE_SET,
+			IMessage reply = new ManaPacket.MCTGManaMessage(PacketHandler.MANA_GLOBAL_SOURCE_SET,
 					sources[0], sources[1], sources[2], sources[3], sources[4], 0);
-			MCTGPacketHandler.net.sendTo(reply, (EntityPlayerMP)player);
+			PacketHandler.net.sendTo(reply, (EntityPlayerMP)player);
 		}
 	}
 
 	//////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////
 	public static class MCTGManaMessage implements IMessage {
-		//private long playerUUIDLeast, playerUUIDMost;
+		
 		private char type;
 		private int w, u, b, r, g, c;
 		

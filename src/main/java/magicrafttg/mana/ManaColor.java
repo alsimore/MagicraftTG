@@ -4,7 +4,7 @@ public enum ManaColor {
 	WHITE, BLUE, BLACK, RED, GREEN, COLORLESS, MULTI;
 	
 	public static ManaColor[] getColourArray() {
-		return new ManaColor[] {WHITE, BLUE, BLACK, RED, GREEN, COLORLESS, MULTI};
+		return new ManaColor[] {WHITE, BLUE, BLACK, RED, GREEN, COLORLESS};
 	}
 	
 	public static ManaColor colourFromIndex(int index)

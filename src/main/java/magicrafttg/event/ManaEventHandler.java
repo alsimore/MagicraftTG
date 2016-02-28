@@ -12,8 +12,8 @@ import magicrafttg.MagicraftTG;
 import magicrafttg.blocks.ManaBlock;
 import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.mana.ManaColor;
-import magicrafttg.network.MCTGManaPacket;
-import magicrafttg.network.MCTGPacketHandler;
+import magicrafttg.network.ManaPacket;
+import magicrafttg.network.PacketHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -40,7 +40,7 @@ public class ManaEventHandler {
 	 * mana to the player's pool.
 	 * @param event
 	 */
-	@SubscribeEvent
+	/*@SubscribeEvent
 	public void onBlockPlaced(BlockEvent.PlaceEvent event)
 	{
 		String blockName = event.placedBlock.getBlock().getUnlocalizedName().substring(5);
@@ -62,14 +62,14 @@ public class ManaEventHandler {
 				addBlock(newBlock);
 			}
 		}
-	}
+	}*/
 	
 	/**
 	 * If the block broken is a mana block, remove the appropriate mana from the 
 	 * player's pool.
 	 * @param event
 	 */
-	@SubscribeEvent
+	/*@SubscribeEvent
 	public void onBlockBroken(BlockEvent.BreakEvent event)
 	{
 		String blockName = event.state.getBlock().getUnlocalizedName().substring(5);
@@ -81,24 +81,22 @@ public class ManaEventHandler {
 			EntityPlayer player = (EntityPlayer) MinecraftServer.getServer().getEntityFromUuid(block.getPlayerID()); // event.getPlayer();
 			// Remove the block from the list
 			removeBlock(block);
-			/*if(blockList.isEmpty())
-			{
-				MagicraftTG.manaTimer.stop();
-			}*/
 			
 			if(player instanceof EntityPlayerMP) {
 				MCTGPlayerProperties mctg = MCTGPlayerProperties.get(player);
 				if (mctg == null)
 					return;
 				mctg.decreaseMana(block.getColour(), 1);
-				IMessage msg = new MCTGManaPacket.MCTGManaMessage(MCTGPacketHandler.MANA_UPDATE, 
-						mctg.getWhiteMana(), mctg.getBlueMana(), 
-						mctg.getBlackMana(), mctg.getRedMana(), mctg.getGreenMana(),
-						mctg.getColourlessMana());
-				MCTGPacketHandler.net.sendTo(msg, (EntityPlayerMP)player);
+				int[] currentMana = mctg.getCurrentMana();
+				IMessage msg = new ManaPacket.MCTGManaMessage(PacketHandler.MANA_UPDATE, 
+									currentMana[ManaColor.WHITE.ordinal()], currentMana[ManaColor.BLUE.ordinal()], 
+									currentMana[ManaColor.BLACK.ordinal()], currentMana[ManaColor.RED.ordinal()], 
+									currentMana[ManaColor.GREEN.ordinal()], currentMana[ManaColor.COLORLESS.ordinal()]
+    							);
+				PacketHandler.net.sendTo(msg, (EntityPlayerMP)player);
 			}
 		}
-	}
+	}*/
 
 	public void addBlock(ManaBlock b)
 	{
@@ -111,35 +109,31 @@ public class ManaEventHandler {
 	}
 	
 	
-	
-	public static void manaTick() {
-		//System.out.println("*********************************************");
-		//System.out.println("[MCTG] manaTimer has fired");
+	/**
+	 * Called from serverTick to update all players' current mana periodically.
+	 */
+	public static void manaTick() 
+	{
+		// Increase the players' mana based on their sources.
+		List<EntityPlayerMP> allPlayers = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
 		
-		
+		for(EntityPlayerMP player : allPlayers)
+		{
+			MCTGPlayerProperties mctg = MCTGPlayerProperties.get(player);
+			mctg.incrementManaFromSources();
+		}
 
+		
 		// Increase the players' mana from the blocks placed in the world.
-		for(ManaBlock block : blockList)
+		/*for(ManaBlock block : blockList)
 		{
 			EntityPlayer player = (EntityPlayer) MinecraftServer.getServer().getEntityFromUuid(block.getPlayerID()); 
 			MCTGPlayerProperties mctg = MCTGPlayerProperties.get(player); // This will be the server-side data
 			mctg.increaseMana(block.getColour(), 1);
 			
 			mctg.updateManaToClient(player);
-		}
+		}*/
 		
-		// Increase the players' mana based on their globalSources.
-		List<EntityPlayerMP> allPlayers = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
-		//System.out.println("[MCTG] There are " + allPlayers.size() + " players on the server.");
-		for(EntityPlayerMP player : allPlayers)
-		{
-			MCTGPlayerProperties mctg = MCTGPlayerProperties.get(player);
-			mctg.incrementManaFromSources();
-			//System.out.println("Player " + player.getUniqueID().toString() + "(" + System.identityHashCode(player) + ")");
-			//System.out.println("[MCTG] ### " + player.getGameProfile().getId().toString());
-			
-			mctg.updateManaToClient(player);
-		}
-		//System.out.println("*********************************************");
+		
 	}
 }

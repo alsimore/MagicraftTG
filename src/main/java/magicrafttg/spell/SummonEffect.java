@@ -22,14 +22,10 @@ public class SummonEffect implements ISpellEffect
 	private Class summoned;
 	private int power;
 	private int toughness;
-	private int[] costAmt;
-	private ManaColor[] costColor;
 	
-	public SummonEffect(ManaColor[] costColor, int[] costAmt,
-			int power, int toughness, Class summoned)
+	
+	public SummonEffect(int power, int toughness, Class summoned)
 	{
-		this.costColor = costColor;
-		this.costAmt = costAmt;
 		this.power = power;
 		this.toughness = toughness;
 		this.summoned = summoned;
@@ -37,11 +33,12 @@ public class SummonEffect implements ISpellEffect
 	
 	
 	@Override
-	public void onAdd(World world, Entity target, EntityPlayer caster) {
-		
-		if(!world.isRemote) { // If we are on the server side
+	public void onAdd(World world, Entity target, EntityPlayer caster) 
+	{
+		System.out.println("Summoning");
+		if(world.isRemote == false) { // If we are on the server side
 			
-			// Get the summoned class's constructor and create a new instance
+			// Get the summoned class' constructor and create a new instance
 			Constructor<?> construct = null;
 			Entity newEntity = null;
 			
@@ -100,43 +97,44 @@ public class SummonEffect implements ISpellEffect
 			
 			// Check the  terrain height at that position
 			newY = getTopBlock(world, new BlockPos(newX, newY, newZ));
+			
 			if(newY > 0) {
 				MCTGPlayerProperties mctg = MCTGPlayerProperties.get(caster);
 				
-				if(mctg.consumeMana(this.costColor, this.costAmt)) {
-					newEntity.setPosition(newX, newY, newZ);
-					((EntityLivingBase)newEntity).setHealth(MagicraftTG.HEALTH_PER_TOUGHNESS * this.toughness);
-					
-					((EntityLivingBase)newEntity).getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(MagicraftTG.HEALTH_PER_TOUGHNESS * this.toughness);
-					((EntityLivingBase)newEntity).setHealth(MagicraftTG.HEALTH_PER_TOUGHNESS * this.toughness);
-					//System.out.println("[MCTG] Health: " + ((EntityLivingBase)newEntity).getHealth());
-					IAttributeInstance attr = ((EntityLivingBase)newEntity).getEntityAttribute(SharedMonsterAttributes.attackDamage);
-					if(attr != null) {
-						((EntityLivingBase)newEntity).getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(MagicraftTG.DAMAGE_PER_POWER * this.power);
-					}
-					else {
-						((EntityLivingBase)newEntity).getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage);
-						((EntityLivingBase)newEntity).getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(MagicraftTG.DAMAGE_PER_POWER * this.power);
-					}
-					
-					
-					System.out.println("[MCTG] " + newEntity.toString());
-					System.out.println("[MCTG] " + newEntity.getUniqueID() + "(" + System.identityHashCode(newEntity) + ")");
-					System.out.println("[MCTG] Damage: " + ((EntityLivingBase)newEntity).getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue());
-					System.out.println("[MCTG] Health: " + ((EntityLivingBase)newEntity).getHealth());
-					System.out.println("[MCTG] Summoned by: " + caster.getUniqueID().toString() + "\n");
-					
-					if(world.spawnEntityInWorld(newEntity))
-					{
-						mctg.updateManaToClient(caster);
-						mctg.addControlledCreature(newEntity);
-						return;
-					}
-					else
-					{
-						System.out.println("[MCTG] Failed to spawn entity in world");
-					}
+				
+				newEntity.setPosition(newX, newY, newZ);
+				((EntityLivingBase)newEntity).setHealth(MagicraftTG.HEALTH_PER_TOUGHNESS * this.toughness);
+				
+				((EntityLivingBase)newEntity).getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(MagicraftTG.HEALTH_PER_TOUGHNESS * this.toughness);
+				((EntityLivingBase)newEntity).setHealth(MagicraftTG.HEALTH_PER_TOUGHNESS * this.toughness);
+				//System.out.println("[MCTG] Health: " + ((EntityLivingBase)newEntity).getHealth());
+				IAttributeInstance attr = ((EntityLivingBase)newEntity).getEntityAttribute(SharedMonsterAttributes.attackDamage);
+				if(attr != null) {
+					((EntityLivingBase)newEntity).getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(MagicraftTG.DAMAGE_PER_POWER * this.power);
 				}
+				else {
+					((EntityLivingBase)newEntity).getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage);
+					((EntityLivingBase)newEntity).getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(MagicraftTG.DAMAGE_PER_POWER * this.power);
+				}
+				
+				
+				System.out.println("[MCTG] " + newEntity.toString());
+				System.out.println("[MCTG] " + newEntity.getUniqueID() + "(" + System.identityHashCode(newEntity) + ")");
+				System.out.println("[MCTG] Damage: " + ((EntityLivingBase)newEntity).getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue());
+				System.out.println("[MCTG] Health: " + ((EntityLivingBase)newEntity).getHealth());
+				System.out.println("[MCTG] Summoned by: " + caster.getUniqueID().toString() + "\n");
+				
+				if(world.spawnEntityInWorld(newEntity))
+				{
+					mctg.updateManaToClient(caster);
+					mctg.addControlledCreature(newEntity);
+					return;
+				}
+				else
+				{
+					System.out.println("[MCTG] Failed to spawn entity in world");
+				}
+				
 			}
 			else {
 				System.out.println("[MCTG] Could not spawn entity at height " + newY);

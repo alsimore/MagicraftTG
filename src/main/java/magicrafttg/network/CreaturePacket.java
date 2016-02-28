@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import io.netty.buffer.ByteBuf;
 import magicrafttg.entity.MCTGPlayerProperties;
-import magicrafttg.network.MCTGCreaturePacket.MCTGCreatureMessage;
+import magicrafttg.network.CreaturePacket.MCTGCreatureMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -16,7 +16,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 //The params of the IMessageHandler are <REQ, REPLY>
 //This means that the first param is the packet you are receiving, and the second is the packet you are returning.
 //The returned packet can be used as a "response" from a sent packet.
-public class MCTGCreaturePacket implements IMessageHandler<MCTGCreatureMessage, IMessage> {
+public class CreaturePacket implements IMessageHandler<MCTGCreatureMessage, IMessage> {
 	
 	@Override
 	public IMessage onMessage(final MCTGCreatureMessage msg, MessageContext ctx) {
@@ -53,21 +53,21 @@ public class MCTGCreaturePacket implements IMessageHandler<MCTGCreatureMessage, 
 	private void clientReceivedMessage(MCTGCreatureMessage msg)
 	{
 		Minecraft mc = Minecraft.getMinecraft();
-		if(msg.type == MCTGPacketHandler.ADD_CREATURE)
+		if(msg.type == PacketHandler.ADD_CREATURE)
 		{
 			// update player data
 			//System.out.println("Add creature for " + mc.thePlayer + "\n" + mc.thePlayer.getUniqueID());
 			MCTGPlayerProperties player = MCTGPlayerProperties.get(mc.thePlayer);
 			player.addCreatureByUUID(msg.id);
 		}
-		else if(msg.type == MCTGPacketHandler.REMOVE_CREATURE)
+		else if(msg.type == PacketHandler.REMOVE_CREATURE)
 		{
 			//System.out.println("Remove creature received: " + msg.id);
 			//System.out.println("or " + msg.index);
 			MCTGPlayerProperties player = MCTGPlayerProperties.get(mc.thePlayer);
 			player.removeCreatureByUUID(msg.id);
 		}
-		else if(msg.type == MCTGPacketHandler.ADD_CREATURE_INT)
+		else if(msg.type == PacketHandler.ADD_CREATURE_INT)
 		{
 			// update player data
 			//System.out.println("Client add " + msg.index);
@@ -75,7 +75,7 @@ public class MCTGCreaturePacket implements IMessageHandler<MCTGCreatureMessage, 
 			MCTGPlayerProperties player = MCTGPlayerProperties.get(mc.thePlayer);
 			player.addCreatureById(msg.index);
 		}
-		else if(msg.type == MCTGPacketHandler.REMOVE_CREATURE_INT)
+		else if(msg.type == PacketHandler.REMOVE_CREATURE_INT)
 		{
 			//System.out.println("Remove creature received: " + msg.id);
 			//System.out.println("or " + msg.index);
@@ -87,7 +87,7 @@ public class MCTGCreaturePacket implements IMessageHandler<MCTGCreatureMessage, 
 	//@SideOnly(Side.SERVER)
 	private void serverReceivedMessage(MCTGCreatureMessage msg, MCTGPlayerProperties mctg)
 	{
-		if(msg.type == MCTGPacketHandler.SELECT_CREATURE)
+		if(msg.type == PacketHandler.SELECT_CREATURE)
 		{
 			mctg.setSelectedCreature(msg.index);
 		}
@@ -125,7 +125,7 @@ public class MCTGCreaturePacket implements IMessageHandler<MCTGCreatureMessage, 
 		public void fromBytes(ByteBuf buf) {
 			this.type = buf.readChar();
 			//System.out.println("[MCTG] Packet type " + this.type);
-			if(this.type == MCTGPacketHandler.SELECT_CREATURE)
+			if(this.type == PacketHandler.SELECT_CREATURE)
 			{
 				this.index = buf.readInt();
 			}
@@ -143,7 +143,7 @@ public class MCTGCreaturePacket implements IMessageHandler<MCTGCreatureMessage, 
 		@Override
 		public void toBytes(ByteBuf buf) {
 			buf.writeChar(type);
-			if(type == MCTGPacketHandler.SELECT_CREATURE)
+			if(type == PacketHandler.SELECT_CREATURE)
 			{
 				buf.writeInt(index);
 			}

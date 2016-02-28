@@ -6,7 +6,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
-public class MCTGGuiHandler implements IGuiHandler {
+public class GuiHandler implements IGuiHandler {
 
 	public static final int MANA_SOURCE_GUI = 0;
 	public static final int MANA_GUI_COUNTDOWN = 60;

@@ -9,10 +9,11 @@ import java.util.UUID;
 import magicrafttg.event.FMLCommonClientHandler;
 import magicrafttg.mana.ManaColor;
 import magicrafttg.mana.ManaSource;
-import magicrafttg.network.MCTGCreaturePacket;
-import magicrafttg.network.MCTGGuiHandler;
-import magicrafttg.network.MCTGManaPacket;
-import magicrafttg.network.MCTGPacketHandler;
+import magicrafttg.network.CreaturePacket;
+import magicrafttg.network.GuiHandler;
+import magicrafttg.network.MCTGNetworkManager;
+import magicrafttg.network.ManaPacket;
+import magicrafttg.network.PacketHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
@@ -44,7 +45,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	 * The amount of mana the player currently has:
 	 * white, blue, black, red, green, colourless.
 	 */
-	private int currentMana[] = new int[6];
+	private int currentMana[];
 	
 	/**
 	 * A list of ManaSources that the player selected when they logged on.
@@ -74,19 +75,14 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		//System.out.println("Game profile " + player.getGameProfile().getId().toString());
 		//System.out.println("ID " + player.getEntityId());
 		this.player = new WeakReference<EntityPlayer>(player);
-		this.setWhiteMana(0);	
-		this.setBlueMana(0);
-		this.setBlackMana(0);
-		this.setRedMana(0);
-		this.setGreenMana(0);
-		this.setColourlessMana(0);
+		this.currentMana = new int[6];
 		
 		
 		manaSources = new ArrayList<ManaSource>();
 
 		controlledCreatures = new ArrayList<WeakReference<Entity>>();
 		
-		manaGuiCountdown = MCTGGuiHandler.MANA_GUI_COUNTDOWN;
+		manaGuiCountdown = GuiHandler.MANA_GUI_COUNTDOWN;
 	}
 	
 	/**
@@ -105,6 +101,12 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	public static final MCTGPlayerProperties get(EntityPlayer player)
 	{
 		return (MCTGPlayerProperties) player.getExtendedProperties(EXT_PROP_NAME);
+	}
+	
+	
+	public int[] getCurrentMana()
+	{
+		return this.currentMana;
 	}
 	
 	
@@ -169,18 +171,18 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	 * Consumes the amounts and colours of mana specified. Checks whether the player has
 	 * sufficient mana available. If any colour is too low then no mana (of any colour) will
 	 * be consumed.
-	 * @param colours
+	 * @param colors
 	 * @param amounts
 	 * @return true if the mana was consumed, false otherwise.
 	 */
-	public boolean consumeMana(ManaColor[] colours, int[] amounts)
+	public boolean consumeMana(ManaColor[] colors, int[] amounts)
 	{
 		boolean sufficient = true;
-		int totalColoured = 0;
-		int totalColourless = 0;
-		int colourless_i = -1;
+		int totalColored = 0;
+		int totalColorless = 0;
+		int colorless_i = -1;
 		
-		if(colours.length != amounts.length) {
+		if(colors.length != amounts.length) {
 			System.out.println("[MCTG] consumeMana: amounts and colours arrays differ in length");
 			return false;
 		}
@@ -193,32 +195,32 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		}
 		
 		// Record the amount of coloured and colourless mana required.
-		for(int i = 0; i < colours.length; ++i) {
-			int colourIndex = colours[i].ordinal();
+		for(int i = 0; i < colors.length; ++i) {
+			int colourIndex = colors[i].ordinal();
 			
-			if(colours[i] == ManaColor.COLORLESS)
+			if(colors[i] == ManaColor.COLORLESS)
 			{
-				totalColourless += amounts[i];
-				colourless_i = i;
+				totalColorless += amounts[i];
+				colorless_i = i;
 			}
 			else
 			{
 				if( (newMana[colourIndex] -= amounts[i]) < 0)
 					return false; // Insufficient colour mana, can't be helped.
-				totalColoured += amounts[i];
+				totalColored += amounts[i];
 			}
 		}
-		// At this point we have not encountered any *colour* with insufficient amount.
-		// If we have enough colourless then consume that.
-		if(newMana[ManaColor.COLORLESS.ordinal()] >= totalColourless)
+		// At this point we have not encountered any *color* with insufficient amount.
+		// If we have enough colorless then consume that.
+		if(newMana[ManaColor.COLORLESS.ordinal()] >= totalColorless)
 		{
-			for(int i = 0; i < colours.length; ++i) 
+			for(int i = 0; i < colors.length; ++i) 
 			{
-				if(!decreaseMana(colours[i], amounts[i])) 
+				if(!decreaseMana(colors[i], amounts[i])) 
 				{
 					// Shouldn't fail as we already checked.
 					System.out.println("[MCTG] consumeMana: decreaseMana failed: "
-							+ colours[i].toString() + " " + amounts[i]);
+							+ colors[i].toString() + " " + amounts[i]);
 					return false;
 				}
 			}
@@ -226,10 +228,10 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		}
 		else
 		{
-			while (totalColourless > 0)
+			while (totalColorless > 0)
 			{
-				// If we don't have enough colourless directly then consume the colour of
-				// which we have the most. Keep spending until we no longer need any colourless.
+				// If we don't have enough colorless directly then consume the color of
+				// which we have the most. Keep spending until we no longer need any colorless.
 				ManaColor mostColour = ManaColor.COLORLESS;
 				int mostAmount = -1;
 				for (ManaColor col : ManaColor.getColourArray())
@@ -244,83 +246,41 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 				if(mostAmount < 1)
 				{
 					System.out.println("[MCTG] consumeMana: insufficient to cover colourless mana (" 
-							+ totalColourless + ")");
+							+ totalColorless + ")");
 					return false;
 				}
-				else if(mostAmount >= totalColourless)
+				else if(mostAmount >= totalColorless)
 				{
-					newMana[ mostColour.ordinal() ] -= totalColourless;
-					totalColourless -= totalColourless;
+					newMana[ mostColour.ordinal() ] -= totalColorless;
+					totalColorless -= totalColorless;
 				}
-				else if(mostAmount < totalColourless)
+				else if(mostAmount < totalColorless)
 				{
 					newMana[ mostColour.ordinal() ] -= mostAmount;
-					totalColourless -= mostAmount;
+					totalColorless -= mostAmount;
 				}
 			}
 			
 			// Set the new mana amounts.
-			updateMana(newMana);
+			setCurrentMana(newMana);
 		}
 		return true;
 	}
 	
-	/**
-	 * Determines whether the player has sufficient mana of the specified colours and amounts.
-	 * @param colours
-	 * @param amounts
-	 * @return
-	 */
-	private boolean hasSufficientMana(ManaColor[] colours, int[] amounts) {
-		boolean sufficient = true;
-		int totalColoured = 0;
-		int totalColourless = 0;
-		int colourless_i = -1;
-		
-		if(colours.length != amounts.length) {
-			System.out.println("[MCTG] hasSufficientMana: amounts and colours arrays differ in length");
-			return false;
-		}
-		
-		// Record the amount of coloured and colourless mana required.
-		for(int i = 0; i < colours.length; ++i) {
-			int colourIndex = colours[i].ordinal();
-			
-			if(colours[i] == ManaColor.COLORLESS)
-			{
-				totalColourless += amounts[i];
-				colourless_i = i;
-			}
-			else
-			{
-				if(this.currentMana[colourIndex] < amounts[i])
-					return false; // Insufficient colour mana, can't be helped.
-				totalColoured += amounts[i];
-			}
-		}
-		
-		// At this point we have not encountered any *colour* with insufficient amount.
-		// If we have enough colourless then consume that.
-		if(this.currentMana[ManaColor.COLORLESS.ordinal()] >= totalColourless)
-		{
-			return true;
-		}
-		else
-		{
-			// If we don't have enough colourless directly then consume the colour of
-			// which we have the most.
-			ManaColor mostColour;
-			int mostAmount = -1;
-			for (ManaColor col : ManaColor.getColourArray())
-			{
-				
-			}
-		}
-		return sufficient;
+	public void setCurrentMana(int[] amounts)
+	{
+		this.currentMana[ManaColor.WHITE.ordinal()] = amounts[ManaColor.WHITE.ordinal()];
+		this.currentMana[ManaColor.BLUE.ordinal()] = amounts[ManaColor.BLUE.ordinal()];
+		this.currentMana[ManaColor.BLACK.ordinal()] = amounts[ManaColor.BLACK.ordinal()];
+		this.currentMana[ManaColor.RED.ordinal()] = amounts[ManaColor.RED.ordinal()];
+		this.currentMana[ManaColor.GREEN.ordinal()] = amounts[ManaColor.GREEN.ordinal()];
+		this.currentMana[ManaColor.COLORLESS.ordinal()] = amounts[ManaColor.COLORLESS.ordinal()];
 	}
 	
+	
+	
 	/**
-	 * Increase the player's mana based on the globalSources they have.
+	 * Increase the player's mana based on the sources they have.
 	 */
 	public void incrementManaFromSources()
 	{
@@ -328,22 +288,23 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		{
 			increaseMana(source.getColour(), 1);
 		}
+		
+		updateManaServerToClient();
 	}
 	
 	/**
-	 * Increase the given mana colour by the specified amount.
-	 * @param colour
+	 * Increase the given mana color by the specified amount.
+	 * @param color
 	 * @param amount
 	 */
-	public void increaseMana(ManaColor colour, int amount)
+	public void increaseMana(ManaColor color, int amount)
 	{
 		if(amount < 1)
 			return;
 		
-		switch(colour)
+		switch(color)
 		{
 		case WHITE:
-			
 			this.currentMana[ManaColor.WHITE.ordinal()] += amount;
 			break;
 		case BLUE:
@@ -366,16 +327,16 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	/**
 	 * Decrease the given mana colour by the specified amount. Checks to ensure that the
 	 * player has sufficient mana. If insufficient then NO mana is deducted (all or nothing).
-	 * @param colour
+	 * @param color
 	 * @param amount
 	 * @return
 	 */
-	public boolean decreaseMana(ManaColor colour, int amount)
+	public boolean decreaseMana(ManaColor color, int amount)
 	{
-		if(amount < 1 || colour == null)
+		if(amount < 1 || color == null)
 			return false;
 		
-		switch(colour)
+		switch(color)
 		{
 		case WHITE:
 			if(amount <= this.currentMana[ManaColor.WHITE.ordinal()]) {
@@ -422,20 +383,9 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		}
 	}
 	
-	public int[] getManaAmounts() {
-		return currentMana;
-	}
 	
-	public void updateMana(int[] amounts)
-	{
-		this.currentMana[ManaColor.WHITE.ordinal()] = amounts[ManaColor.WHITE.ordinal()];
-		this.currentMana[ManaColor.BLUE.ordinal()] = amounts[ManaColor.BLUE.ordinal()];
-		this.currentMana[ManaColor.BLACK.ordinal()] = amounts[ManaColor.BLACK.ordinal()];
-		this.currentMana[ManaColor.RED.ordinal()] = amounts[ManaColor.RED.ordinal()];
-		this.currentMana[ManaColor.GREEN.ordinal()] = amounts[ManaColor.GREEN.ordinal()];
-		this.currentMana[ManaColor.COLORLESS.ordinal()] = amounts[ManaColor.COLORLESS.ordinal()];
-	}
 	
+	/*
 	public void updateMana(int white, int blue, int black, int red, int green, int colourless)
 	{
 		this.currentMana[ManaColor.WHITE.ordinal()] = white;
@@ -444,50 +394,24 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		this.currentMana[ManaColor.RED.ordinal()] = red;
 		this.currentMana[ManaColor.GREEN.ordinal()] = green;
 		this.currentMana[ManaColor.COLORLESS.ordinal()] = colourless;
-	}
+	}*/
 	
-	/**
-	 * Send the updated mana amounts to the client instance of EntityPlayer.
-	 * I thought of making it @SideOnly(Side.SERVER) but this caused a
-	 * NoSuchMethodException even though it seems to run on the server-side code.
-	 * @param player
-	 */
-	public void updateManaToClient(EntityPlayer player) {
-		
-		IMessage msg = new MCTGManaPacket.MCTGManaMessage(MCTGPacketHandler.MANA_UPDATE, 
-				this.getWhiteMana(), this.getBlueMana(), 
-				this.getBlackMana(), this.getRedMana(), this.getGreenMana(),
-				this.getColourlessMana());
-		// See if we can use the stored player
-		//System.out.println("[MCTG] Try send to " + this.player.get().getUniqueID().toString()
-		//		 + "(" + System.identityHashCode(this.player.get()) + ")");
-		
-		MCTGPacketHandler.net.sendTo(msg, (EntityPlayerMP)this.player.get());
-		
-		//System.out.println("[MCTG] Updating mana to " + player.getUniqueID().toString()
-		//		 + "(" + System.identityHashCode(player) + ")");
-		//System.out.println("[MCTG] ### " + player.getGameProfile().getId().toString());
-		
-		/*if(player instanceof EntityPlayerMP) {
-			IMessage msg = new MCTGPacket.MCTGManaMessage(MCTGPacket.MANA_UPDATE, 
-					this.getWhiteMana(), this.getBlueMana(), 
-					this.getBlackMana(), this.getRedMana(), this.getGreenMana(),
-					this.getColourlessMana());
-			MCTGPacketHandler.net.sendTo(msg, (EntityPlayerMP)player);
-			System.out.println("[MCTG] Updating mana to " + player.getUniqueID().toString()
-					 + "(" + System.identityHashCode(player) + ")");
-			System.out.println("[MCTG] ### " + player.getGameProfile().getId().toString());
-		}*/
+	
+	private void updateManaServerToClient()
+	{
+		MCTGNetworkManager.updateManaToClient(this.player.get(), this.currentMana);
 	}
 	
 	
-	public void updateManaFromServer()
+	
+	
+	/*public void updateManaFromServer()
 	{
 		//System.out.println("Requesting mana update from server");
-		IMessage msg = new MCTGManaPacket.MCTGManaMessage(MCTGPacketHandler.MANA_SRC_REQUEST,
+		IMessage msg = new ManaPacket.MCTGManaMessage(PacketHandler.MANA_SRC_REQUEST,
 				0, 0, 0, 0, 0, 0);
-		MCTGPacketHandler.net.sendToServer(msg);
-	}
+		PacketHandler.net.sendToServer(msg);
+	}*/
 	
 	
 	public void addCreatureByUUID(UUID id)
@@ -606,23 +530,23 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	
 	public void updateCreatureToClient(char type, UUID creatureId)
 	{
-		IMessage msg = new MCTGCreaturePacket.MCTGCreatureMessage(type, creatureId);
+		IMessage msg = new CreaturePacket.MCTGCreatureMessage(type, creatureId);
 		
 		//System.out.println("[MCTG] Send creatureUpdate to " + this.player.get().getUniqueID().toString()
 		//		 + "(" + System.identityHashCode(this.player.get()) + ")");
 		//System.out.println("[MCTG] theCreature: " + creatureId.toString());
 		
-		MCTGPacketHandler.net.sendTo(msg, (EntityPlayerMP)this.player.get());
+		PacketHandler.net.sendTo(msg, (EntityPlayerMP)this.player.get());
 	}
 	
 	public void updateCreatureToClient(char type, int creatureId)
 	{
-		IMessage msg = new MCTGCreaturePacket.MCTGCreatureMessage(type, creatureId);
+		IMessage msg = new CreaturePacket.MCTGCreatureMessage(type, creatureId);
 		
 		//System.out.println("Send creatureUpdate to " + this.player.get().getUniqueID().toString());
 		//System.out.println("[MCTG] theCreature: " + creatureId);
 		
-		MCTGPacketHandler.net.sendTo(msg, (EntityPlayerMP)this.player.get());
+		PacketHandler.net.sendTo(msg, (EntityPlayerMP)this.player.get());
 	}
 	
 	
@@ -641,7 +565,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		//System.out.println(((EntityMCTGBase)creature).getControllerUUID());
 		//System.out.println("add " + creature.getDataWatcher().getWatchableObjectString(20));
 		//System.out.println(creature.getDataWatcher().getWatchableObjectString(21));
-		updateCreatureToClient(MCTGPacketHandler.ADD_CREATURE_INT, creature.getEntityId());
+		updateCreatureToClient(PacketHandler.ADD_CREATURE_INT, creature.getEntityId());
 	}
 	
 	public void removeControlledCreature(Entity creature)
@@ -669,7 +593,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		
 		//System.out.println("[MCTG] Removed - Controlled: " + controlledCreatures.size());
 		//updateCreatureToClient(MCTGPacketHandler.REMOVE_CREATURE, creature.getUniqueID());
-		updateCreatureToClient(MCTGPacketHandler.REMOVE_CREATURE_INT, creature.getEntityId());
+		updateCreatureToClient(PacketHandler.REMOVE_CREATURE_INT, creature.getEntityId());
 	}
 	
 	/**
@@ -731,8 +655,8 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 			if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
 			{
 				// Send selection to server
-				IMessage msg = new MCTGCreaturePacket.MCTGCreatureMessage(MCTGPacketHandler.SELECT_CREATURE, index);
-				MCTGPacketHandler.net.sendTo(msg, (EntityPlayerMP) this.player.get());
+				IMessage msg = new CreaturePacket.MCTGCreatureMessage(PacketHandler.SELECT_CREATURE, index);
+				PacketHandler.net.sendTo(msg, (EntityPlayerMP) this.player.get());
 			}
 		}
 		else
@@ -742,8 +666,8 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 			if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
 			{
 				// Send selection to server
-				IMessage msg = new MCTGCreaturePacket.MCTGCreatureMessage(MCTGPacketHandler.SELECT_CREATURE, index);
-				MCTGPacketHandler.net.sendToServer(msg);
+				IMessage msg = new CreaturePacket.MCTGCreatureMessage(PacketHandler.SELECT_CREATURE, index);
+				PacketHandler.net.sendToServer(msg);
 			}
 		}
 		if(selectedCreature != null)
@@ -766,56 +690,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	}
 	
 	
-	///////////////////////////////////////////////////////////
-	// Getters and setters
-
-	public int getWhiteMana() {
-		return this.currentMana[ManaColor.WHITE.ordinal()];
-	}
-
-	public void setWhiteMana(int whiteMana) {
-		this.currentMana[ManaColor.WHITE.ordinal()] = whiteMana;
-	}
-
-	public int getBlueMana() {
-		return this.currentMana[ManaColor.BLUE.ordinal()];
-	}
-
-	public void setBlueMana(int blueMana) {
-		this.currentMana[ManaColor.BLUE.ordinal()] = blueMana;
-	}
-
-	public int getBlackMana() {
-		return this.currentMana[ManaColor.BLACK.ordinal()];
-	}
-
-	public void setBlackMana(int blackMana) {
-		this.currentMana[ManaColor.BLACK.ordinal()] = blackMana;
-	}
-
-	public int getRedMana() {
-		return this.currentMana[ManaColor.RED.ordinal()];
-	}
-
-	public void setRedMana(int redMana) {
-		this.currentMana[ManaColor.RED.ordinal()] = redMana;
-	}
-
-	public int getGreenMana() {
-		return this.currentMana[ManaColor.GREEN.ordinal()];
-	}
-
-	public void setGreenMana(int greenMana) {
-		this.currentMana[ManaColor.GREEN.ordinal()] = greenMana;
-	}
-
-	public int getColourlessMana() {
-		return this.currentMana[ManaColor.COLORLESS.ordinal()];
-	}
-
-	public void setColourlessMana(int colourlessMana) {
-		this.currentMana[ManaColor.COLORLESS.ordinal()] = colourlessMana;
-	}
+	
 
 	
 	// IExtendedEntityProperties interface methods

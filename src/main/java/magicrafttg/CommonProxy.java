@@ -12,8 +12,9 @@ import magicrafttg.entity.ZZEntityMCTGZombie;
 import magicrafttg.event.FMLCommonEventHandler;
 import magicrafttg.event.ForgeEventHandler;
 import magicrafttg.items.ModItems;
-import magicrafttg.network.MCTGGuiHandler;
-import magicrafttg.network.MCTGPacketHandler;
+import magicrafttg.network.GuiHandler;
+import magicrafttg.network.PacketHandler;
+import magicrafttg.spell.event.SpellEventHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -49,14 +50,14 @@ public class CommonProxy {
     }
 
     public void init(FMLInitializationEvent e) {
-    	MCTGPacketHandler.initPackets();
-    	NetworkRegistry.INSTANCE.registerGuiHandler(MagicraftTG.instance, new MCTGGuiHandler());
+    	PacketHandler.initPackets();
+    	NetworkRegistry.INSTANCE.registerGuiHandler(MagicraftTG.instance, new GuiHandler());
     }
 
     public void postInit(FMLPostInitializationEvent e) {
     	MinecraftForge.EVENT_BUS.register(new ForgeEventHandler());
     	FMLCommonHandler.instance().bus().register(new FMLCommonEventHandler());
-    	//FMLCommonHandler.instance().bus().register(new KeyHandler(Minecraft.getMinecraft()));
+    	MinecraftForge.EVENT_BUS.register(new SpellEventHandler());
     }
     
     /*public void openManaSourceGui()
