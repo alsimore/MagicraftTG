@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import magicrafttg.ClientProxy;
-import magicrafttg.entity.MagicraftTGPlayer;
+import magicrafttg.entity.MCTGPlayerProperties;
 
 public class KeyHandler
 {
@@ -37,7 +37,7 @@ public class KeyHandler
 				{
 					if(keyBindings[i].isPressed())
 					{
-						MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
+						MCTGPlayerProperties mctg = MCTGPlayerProperties.get(player);
 						if(mctg.getSelectedIndex() == i)
 						{
 							mctg.setSelectedCreature(-1);

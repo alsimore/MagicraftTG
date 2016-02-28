@@ -5,9 +5,9 @@ public class ManaSource {
 	/**
 	 * Colour of the mana that this ManaSource provides.
 	 */
-	private ManaColour colour;
+	private ManaColor colour;
 	
-	public ManaSource(ManaColour colour)
+	public ManaSource(ManaColor colour)
 	{
 		this.colour = colour;
 	}
@@ -15,11 +15,11 @@ public class ManaSource {
 	 * Get the colour of mana provided by the source.
 	 * @return the mana colour provided
 	 */
-	public ManaColour getColour() {
+	public ManaColor getColour() {
 		return colour;
 	}
 
-	public void setColour(ManaColour colour) {
+	public void setColour(ManaColor colour) {
 		this.colour = colour;
 	}
 }

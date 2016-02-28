@@ -7,9 +7,9 @@ import org.lwjgl.opengl.GL11;
 import magicrafttg.MagicraftTG;
 import magicrafttg.client.gui.ManaSourceGui;
 import magicrafttg.entity.EntityMCTGBase;
-import magicrafttg.entity.MagicraftTGPlayer;
+import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.items.ModItems;
-import magicrafttg.mana.ManaColour;
+import magicrafttg.mana.ManaColor;
 import magicrafttg.network.MCTGGuiHandler;
 import magicrafttg.network.MCTGManaPacket;
 import magicrafttg.network.MCTGPacketHandler;
@@ -62,9 +62,9 @@ public class ForgeEventHandler {
 	@SubscribeEvent
 	public void onEntityConstructing(EntityConstructing event)
 	{
-		if (event.entity instanceof EntityPlayer && MagicraftTGPlayer.get((EntityPlayer) event.entity) == null) {
+		if (event.entity instanceof EntityPlayer && MCTGPlayerProperties.get((EntityPlayer) event.entity) == null) {
 			// This is how extended properties are registered using our convenient method from earlier
-			MagicraftTGPlayer.register((EntityPlayer) event.entity);
+			MCTGPlayerProperties.register((EntityPlayer) event.entity);
 			
 			//System.out.println("Create MCTG " + event.entity + "\n" + event.entity.getUniqueID());
 			
@@ -107,7 +107,7 @@ public class ForgeEventHandler {
 		// Request mana sources from server
 		if(event.world.isRemote == true)
 		{
-			MagicraftTGPlayer.get(player).updateManaFromServer();
+			MCTGPlayerProperties.get(player).updateManaFromServer();
 		}
 		/*if (!(event.entity instanceof EntityPlayer)) {
 			return;
@@ -216,7 +216,7 @@ public class ForgeEventHandler {
 		if(event.entity instanceof EntityPlayer)
 		{
 			System.out.println("Player has died " + event.entity);
-			MagicraftTGPlayer mctg = MagicraftTGPlayer.get((EntityPlayer)event.entity);
+			MCTGPlayerProperties mctg = MCTGPlayerProperties.get((EntityPlayer)event.entity);
 			mctg.removeAllControlled();
 		}
 	}

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.function.BiPredicate;
 
 import magicrafttg.entity.EntityMCTGBase;
-import magicrafttg.mana.ManaColour;
+import magicrafttg.mana.ManaColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,7 +19,7 @@ public class MCTGTargetedSpell extends MCTGSpellItem {
 	protected Entity target;
 	protected BiPredicate<Entity, EntityPlayer> effect;
 	
-	public MCTGTargetedSpell(String unlocalizedName, ManaColour[] colour, int[] amt, BiPredicate<Entity, EntityPlayer> effect) {
+	public MCTGTargetedSpell(String unlocalizedName, ManaColor[] colour, int[] amt, BiPredicate<Entity, EntityPlayer> effect) {
 		super(unlocalizedName, colour, amt);
 		this.effect = effect;
 	}

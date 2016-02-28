@@ -4,7 +4,7 @@ import java.util.List;
 
 import magicrafttg.MagicraftTG;
 import magicrafttg.client.gui.ManaSourceGui;
-import magicrafttg.entity.MagicraftTGPlayer;
+import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.network.MCTGGuiHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -82,7 +82,7 @@ public class FMLCommonEventHandler {
 		}
 		
 		// Handle the player's controlled creatures
-		MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
+		MCTGPlayerProperties mctg = MCTGPlayerProperties.get(player);
 		if(mctg != null) // Probably an unnecessary check
 		{
 			//mctg.removeAllControlled();

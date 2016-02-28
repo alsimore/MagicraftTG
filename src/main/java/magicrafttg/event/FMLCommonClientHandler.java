@@ -4,7 +4,7 @@ import java.util.List;
 
 import magicrafttg.MagicraftTG;
 import magicrafttg.client.gui.ManaSourceGui;
-import magicrafttg.entity.MagicraftTGPlayer;
+import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.network.MCTGGuiHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;

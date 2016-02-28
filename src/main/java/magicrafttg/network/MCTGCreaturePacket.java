@@ -3,7 +3,7 @@ package magicrafttg.network;
 import java.util.UUID;
 
 import io.netty.buffer.ByteBuf;
-import magicrafttg.entity.MagicraftTGPlayer;
+import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.network.MCTGCreaturePacket.MCTGCreatureMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -37,7 +37,7 @@ public class MCTGCreaturePacket implements IMessageHandler<MCTGCreatureMessage, 
 	    {
 	    	//System.out.println("Server message received");
 	    	EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-	    	final MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
+	    	final MCTGPlayerProperties mctg = MCTGPlayerProperties.get(player);
 	    	player.getServerForPlayer().addScheduledTask(new Runnable()
 	    	{
 	    	  public void run() {
@@ -57,14 +57,14 @@ public class MCTGCreaturePacket implements IMessageHandler<MCTGCreatureMessage, 
 		{
 			// update player data
 			//System.out.println("Add creature for " + mc.thePlayer + "\n" + mc.thePlayer.getUniqueID());
-			MagicraftTGPlayer player = MagicraftTGPlayer.get(mc.thePlayer);
+			MCTGPlayerProperties player = MCTGPlayerProperties.get(mc.thePlayer);
 			player.addCreatureByUUID(msg.id);
 		}
 		else if(msg.type == MCTGPacketHandler.REMOVE_CREATURE)
 		{
 			//System.out.println("Remove creature received: " + msg.id);
 			//System.out.println("or " + msg.index);
-			MagicraftTGPlayer player = MagicraftTGPlayer.get(mc.thePlayer);
+			MCTGPlayerProperties player = MCTGPlayerProperties.get(mc.thePlayer);
 			player.removeCreatureByUUID(msg.id);
 		}
 		else if(msg.type == MCTGPacketHandler.ADD_CREATURE_INT)
@@ -72,20 +72,20 @@ public class MCTGCreaturePacket implements IMessageHandler<MCTGCreatureMessage, 
 			// update player data
 			//System.out.println("Client add " + msg.index);
 			//System.out.println("Add creature for " + mc.thePlayer + "\n" + mc.thePlayer.getUniqueID());
-			MagicraftTGPlayer player = MagicraftTGPlayer.get(mc.thePlayer);
+			MCTGPlayerProperties player = MCTGPlayerProperties.get(mc.thePlayer);
 			player.addCreatureById(msg.index);
 		}
 		else if(msg.type == MCTGPacketHandler.REMOVE_CREATURE_INT)
 		{
 			//System.out.println("Remove creature received: " + msg.id);
 			//System.out.println("or " + msg.index);
-			MagicraftTGPlayer player = MagicraftTGPlayer.get(mc.thePlayer);
+			MCTGPlayerProperties player = MCTGPlayerProperties.get(mc.thePlayer);
 			player.removeCreatureById(msg.index);
 		}
 	}
 	
 	//@SideOnly(Side.SERVER)
-	private void serverReceivedMessage(MCTGCreatureMessage msg, MagicraftTGPlayer mctg)
+	private void serverReceivedMessage(MCTGCreatureMessage msg, MCTGPlayerProperties mctg)
 	{
 		if(msg.type == MCTGPacketHandler.SELECT_CREATURE)
 		{

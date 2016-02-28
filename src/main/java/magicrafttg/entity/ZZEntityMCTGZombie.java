@@ -143,7 +143,7 @@ public class ZZEntityMCTGZombie extends EntityZombie implements IMCTGEntity {
 		Entity controllingPlayer = MinecraftServer.getServer().getEntityFromUuid(this.controller);
 		if(controllingPlayer instanceof EntityPlayer)
 		{
-			MagicraftTGPlayer mctg = MagicraftTGPlayer.get((EntityPlayer)controllingPlayer);
+			MCTGPlayerProperties mctg = MCTGPlayerProperties.get((EntityPlayer)controllingPlayer);
 			System.out.println("[MCTG] Creature died: " + this.toString());
 			System.out.println("[MCTG] Suffered " + cause.toString());
 			mctg.removeControlledCreature(this);

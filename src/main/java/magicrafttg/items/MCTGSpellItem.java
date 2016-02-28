@@ -1,6 +1,6 @@
 package magicrafttg.items;
 
-import magicrafttg.mana.ManaColour;
+import magicrafttg.mana.ManaColor;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -11,10 +11,10 @@ import net.minecraft.world.World;
 
 public abstract class MCTGSpellItem extends Item {
 
-	protected ManaColour[] costColour;
+	protected ManaColor[] costColour;
 	protected int[] costAmt;
 	
-	public MCTGSpellItem(String unlocalizedName, ManaColour[] colour, int[] amt) {
+	public MCTGSpellItem(String unlocalizedName, ManaColor[] colour, int[] amt) {
 		super();
 
 		this.setUnlocalizedName(unlocalizedName);

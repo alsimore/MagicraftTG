@@ -10,8 +10,8 @@ import javax.swing.event.EventListenerList;
 
 import magicrafttg.MagicraftTG;
 import magicrafttg.blocks.ManaBlock;
-import magicrafttg.entity.MagicraftTGPlayer;
-import magicrafttg.mana.ManaColour;
+import magicrafttg.entity.MCTGPlayerProperties;
+import magicrafttg.mana.ManaColor;
 import magicrafttg.network.MCTGManaPacket;
 import magicrafttg.network.MCTGPacketHandler;
 import net.minecraft.client.Minecraft;
@@ -53,7 +53,7 @@ public class ManaEventHandler {
 				ManaBlock newBlock = (ManaBlock) event.placedBlock.getBlock();
 				newBlock.setPropertiesFromEvent(event);
 				
-				MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player); // This will be the server-side data
+				MCTGPlayerProperties mctg = MCTGPlayerProperties.get(player); // This will be the server-side data
 				mctg.increaseMana(newBlock.getColour(), 1);
 				
 				mctg.updateManaToClient(player);
@@ -87,7 +87,7 @@ public class ManaEventHandler {
 			}*/
 			
 			if(player instanceof EntityPlayerMP) {
-				MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
+				MCTGPlayerProperties mctg = MCTGPlayerProperties.get(player);
 				if (mctg == null)
 					return;
 				mctg.decreaseMana(block.getColour(), 1);
@@ -122,7 +122,7 @@ public class ManaEventHandler {
 		for(ManaBlock block : blockList)
 		{
 			EntityPlayer player = (EntityPlayer) MinecraftServer.getServer().getEntityFromUuid(block.getPlayerID()); 
-			MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player); // This will be the server-side data
+			MCTGPlayerProperties mctg = MCTGPlayerProperties.get(player); // This will be the server-side data
 			mctg.increaseMana(block.getColour(), 1);
 			
 			mctg.updateManaToClient(player);
@@ -133,7 +133,7 @@ public class ManaEventHandler {
 		//System.out.println("[MCTG] There are " + allPlayers.size() + " players on the server.");
 		for(EntityPlayerMP player : allPlayers)
 		{
-			MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
+			MCTGPlayerProperties mctg = MCTGPlayerProperties.get(player);
 			mctg.incrementManaFromSources();
 			//System.out.println("Player " + player.getUniqueID().toString() + "(" + System.identityHashCode(player) + ")");
 			//System.out.println("[MCTG] ### " + player.getGameProfile().getId().toString());

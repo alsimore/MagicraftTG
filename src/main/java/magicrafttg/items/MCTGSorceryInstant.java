@@ -1,7 +1,7 @@
 package magicrafttg.items;
 
-import magicrafttg.entity.MagicraftTGPlayer;
-import magicrafttg.mana.ManaColour;
+import magicrafttg.entity.MCTGPlayerProperties;
+import magicrafttg.mana.ManaColor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.item.ItemStack;
@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 
 public class MCTGSorceryInstant extends MCTGSpellItem {
 
-	public MCTGSorceryInstant(String unlocalizedName, ManaColour[] colour, int[] amt) {
+	public MCTGSorceryInstant(String unlocalizedName, ManaColor[] colour, int[] amt) {
 		super(unlocalizedName, colour, amt);
 	}
 
@@ -32,7 +32,7 @@ public class MCTGSorceryInstant extends MCTGSpellItem {
 	        fireball.accelerationY = look.yCoord;
 	        fireball.accelerationZ = look.zCoord;
 	        
-	        MagicraftTGPlayer mctg = MagicraftTGPlayer.get(playerIn);
+	        MCTGPlayerProperties mctg = MCTGPlayerProperties.get(playerIn);
 			if(mctg.consumeMana(this.costColour, this.costAmt)) {
 				worldIn.spawnEntityInWorld(fireball);
 				mctg.updateManaToClient(playerIn);

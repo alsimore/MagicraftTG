@@ -1,6 +1,6 @@
 package magicrafttg.client.render.hud;
 
-import magicrafttg.entity.MagicraftTGPlayer;
+import magicrafttg.entity.MCTGPlayerProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
@@ -22,7 +22,7 @@ public class HUDRenderer {
     {
     	if(event.type == RenderGameOverlayEvent.ElementType.TEXT)
     	{
-    		MagicraftTGPlayer player = MagicraftTGPlayer.get(mc.thePlayer);
+    		MCTGPlayerProperties player = MCTGPlayerProperties.get(mc.thePlayer);
     		mc.fontRendererObj.drawStringWithShadow(getBiomeString(), 1, 200, 0xffffff);
     		String currentMana = String.format(
     				"White: %2d    Blue: %2d    Black: %2d    Red: %2d    Green: %2d    Colourless: %2d",
@@ -45,7 +45,7 @@ public class HUDRenderer {
     	return mc.theWorld.getBiomeGenForCoords(new BlockPos(xCoord, 64, zCoord)).biomeName;
     }
     
-    private void renderControlledCreatures(MagicraftTGPlayer player)
+    private void renderControlledCreatures(MCTGPlayerProperties player)
     {
     	int startY = 12;
     	//System.out.println("Rendering controlled creatures");

@@ -3,7 +3,7 @@ package magicrafttg.network;
 import java.util.UUID;
 
 import io.netty.buffer.ByteBuf;
-import magicrafttg.entity.MagicraftTGPlayer;
+import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.network.MCTGManaPacket.MCTGManaMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,7 +38,7 @@ public class MCTGManaPacket implements IMessageHandler<MCTGManaMessage, IMessage
 	    {
 	    	//System.out.println("Server message received");
 	    	final EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-	    	final MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
+	    	final MCTGPlayerProperties mctg = MCTGPlayerProperties.get(player);
 	    	player.getServerForPlayer().addScheduledTask(new Runnable()
 	    	{
 	    	  public void run() {
@@ -57,7 +57,7 @@ public class MCTGManaPacket implements IMessageHandler<MCTGManaMessage, IMessage
 		{
 			// update player data
 			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-			MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
+			MCTGPlayerProperties mctg = MCTGPlayerProperties.get(player);
 			//System.out.println("[MCTG] Client message received by " + player.getUniqueID().toString()
 			//		 + "(" + System.identityHashCode(player) + ")");
 			//System.out.println("[MCTG] ### " + player.getGameProfile().getId().toString() + "\n");
@@ -72,12 +72,12 @@ public class MCTGManaPacket implements IMessageHandler<MCTGManaMessage, IMessage
 			System.out.println(msg.r);
 			System.out.println(msg.g);
 			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-			MagicraftTGPlayer mctg = MagicraftTGPlayer.get(player);
+			MCTGPlayerProperties mctg = MCTGPlayerProperties.get(player);
 			mctg.setGlobalManaSources(msg.w, msg.u, msg.b, msg.r, msg.g);
 		}
 	}
 	
-	private void serverReceivedMessage(MCTGManaMessage msg, MagicraftTGPlayer mctg, EntityPlayer player)
+	private void serverReceivedMessage(MCTGManaMessage msg, MCTGPlayerProperties mctg, EntityPlayer player)
 	{
 		if(msg.type == MCTGPacketHandler.MANA_GLOBAL_SOURCE_SET)
 		{
@@ -85,7 +85,7 @@ public class MCTGManaPacket implements IMessageHandler<MCTGManaMessage, IMessage
 		}
 		else if(msg.type == MCTGPacketHandler.MANA_SRC_REQUEST)
 		{
-			MagicraftTGPlayer serverMctg = MagicraftTGPlayer.get(player);
+			MCTGPlayerProperties serverMctg = MCTGPlayerProperties.get(player);
 			System.out.println("Server player " + player);
 			int[] sources = serverMctg.getGlobalSourceNumbers();
 			for(int s : sources)

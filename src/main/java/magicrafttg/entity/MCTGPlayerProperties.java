@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import magicrafttg.event.FMLCommonClientHandler;
-import magicrafttg.mana.ManaColour;
+import magicrafttg.mana.ManaColor;
 import magicrafttg.mana.ManaSource;
 import magicrafttg.network.MCTGCreaturePacket;
 import magicrafttg.network.MCTGGuiHandler;
@@ -34,9 +34,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * @author Adam
  *
  */
-public class MagicraftTGPlayer implements IExtendedEntityProperties {
+public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	
-	public final static String EXT_PROP_NAME = "MagicraftTGPlayer";
+	public final static String EXT_PROP_NAME = "MCTGPlayerProperties";
 	
 	private final WeakReference<EntityPlayer> player;
 	
@@ -44,13 +44,13 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	 * The amount of mana the player currently has:
 	 * white, blue, black, red, green, colourless.
 	 */
-	private int mana[] = new int[6];
+	private int currentMana[] = new int[6];
 	
 	/**
 	 * A list of ManaSources that the player selected when they logged on.
 	 * In order: white, blue, black, red, green
 	 */
-	private ArrayList<ManaSource> globalSources;
+	private ArrayList<ManaSource> manaSources;
 	
 	/**
 	 * A list of the creatures that this player currently controls.
@@ -68,7 +68,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	
 	
 	
-	public MagicraftTGPlayer(EntityPlayer player)
+	public MCTGPlayerProperties(EntityPlayer player)
 	{
 		//System.out.println("Creating MagicraftTGPlayer for " + player.getUniqueID().toString() );
 		//System.out.println("Game profile " + player.getGameProfile().getId().toString());
@@ -82,7 +82,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		this.setColourlessMana(0);
 		
 		
-		globalSources = new ArrayList<ManaSource>();
+		manaSources = new ArrayList<ManaSource>();
 
 		controlledCreatures = new ArrayList<WeakReference<Entity>>();
 		
@@ -95,16 +95,22 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	 */
 	public static final void register(EntityPlayer player)
 	{
-		player.registerExtendedProperties(MagicraftTGPlayer.EXT_PROP_NAME, new MagicraftTGPlayer(player));
+		player.registerExtendedProperties(MCTGPlayerProperties.EXT_PROP_NAME, new MCTGPlayerProperties(player));
 	}
 	
 	/**
 	 * Returns MagicraftTGPlayer properties for player.
 	 * This method is for convenience only; it will make your code look nicer.
 	 */
-	public static final MagicraftTGPlayer get(EntityPlayer player)
+	public static final MCTGPlayerProperties get(EntityPlayer player)
 	{
-		return (MagicraftTGPlayer) player.getExtendedProperties(EXT_PROP_NAME);
+		return (MCTGPlayerProperties) player.getExtendedProperties(EXT_PROP_NAME);
+	}
+	
+	
+	public void addSource(ManaColor color)
+	{
+		manaSources.add(new ManaSource(color));
 	}
 	
 	/**
@@ -117,30 +123,30 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	 */
 	public void setGlobalManaSources(int w, int u, int b, int r, int g)
 	{
-		globalSources.clear();
+		manaSources.clear();
 		for(int i = 0; i < w; ++i)
 		{
-			globalSources.add(new ManaSource(ManaColour.WHITE));
+			manaSources.add(new ManaSource(ManaColor.WHITE));
 			//System.out.println("Added WHITE");
 		}
 		for(int i = 0; i < u; ++i)
 		{
-			globalSources.add(new ManaSource(ManaColour.BLUE));
+			manaSources.add(new ManaSource(ManaColor.BLUE));
 			//System.out.println("Added BLUE");
 		}
 		for(int i = 0; i < b; ++i)
 		{
-			globalSources.add(new ManaSource(ManaColour.BLACK));
+			manaSources.add(new ManaSource(ManaColor.BLACK));
 			//System.out.println("Added BLACK");
 		}
 		for(int i = 0; i < r; ++i)
 		{
-			globalSources.add(new ManaSource(ManaColour.RED));
+			manaSources.add(new ManaSource(ManaColor.RED));
 			//System.out.println("Added RED");
 		}
 		for(int i = 0; i < g; ++i)
 		{
-			globalSources.add(new ManaSource(ManaColour.GREEN));
+			manaSources.add(new ManaSource(ManaColor.GREEN));
 			//System.out.println("Added GREEN");
 		}
 		//System.out.println("Client sources set: " + w + " "
@@ -151,7 +157,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	{
 		int sources[] = new int[5];
 		
-		for (ManaSource src : globalSources)
+		for (ManaSource src : manaSources)
 		{
 			sources[src.getColour().ordinal()]++;
 		}
@@ -167,7 +173,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	 * @param amounts
 	 * @return true if the mana was consumed, false otherwise.
 	 */
-	public boolean consumeMana(ManaColour[] colours, int[] amounts)
+	public boolean consumeMana(ManaColor[] colours, int[] amounts)
 	{
 		boolean sufficient = true;
 		int totalColoured = 0;
@@ -183,14 +189,14 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		int newMana[] = new int[6];
 		for (int i = 0; i < 6; ++i)
 		{
-			newMana[i] = this.mana[i];
+			newMana[i] = this.currentMana[i];
 		}
 		
 		// Record the amount of coloured and colourless mana required.
 		for(int i = 0; i < colours.length; ++i) {
 			int colourIndex = colours[i].ordinal();
 			
-			if(colours[i] == ManaColour.COLOURLESS)
+			if(colours[i] == ManaColor.COLORLESS)
 			{
 				totalColourless += amounts[i];
 				colourless_i = i;
@@ -204,7 +210,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		}
 		// At this point we have not encountered any *colour* with insufficient amount.
 		// If we have enough colourless then consume that.
-		if(newMana[ManaColour.COLOURLESS.ordinal()] >= totalColourless)
+		if(newMana[ManaColor.COLORLESS.ordinal()] >= totalColourless)
 		{
 			for(int i = 0; i < colours.length; ++i) 
 			{
@@ -224,9 +230,9 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 			{
 				// If we don't have enough colourless directly then consume the colour of
 				// which we have the most. Keep spending until we no longer need any colourless.
-				ManaColour mostColour = ManaColour.COLOURLESS;
+				ManaColor mostColour = ManaColor.COLORLESS;
 				int mostAmount = -1;
-				for (ManaColour col : ManaColour.getColourArray())
+				for (ManaColor col : ManaColor.getColourArray())
 				{
 					if(newMana[ col.ordinal() ] > mostAmount)
 					{
@@ -265,7 +271,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	 * @param amounts
 	 * @return
 	 */
-	private boolean hasSufficientMana(ManaColour[] colours, int[] amounts) {
+	private boolean hasSufficientMana(ManaColor[] colours, int[] amounts) {
 		boolean sufficient = true;
 		int totalColoured = 0;
 		int totalColourless = 0;
@@ -280,14 +286,14 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		for(int i = 0; i < colours.length; ++i) {
 			int colourIndex = colours[i].ordinal();
 			
-			if(colours[i] == ManaColour.COLOURLESS)
+			if(colours[i] == ManaColor.COLORLESS)
 			{
 				totalColourless += amounts[i];
 				colourless_i = i;
 			}
 			else
 			{
-				if(this.mana[colourIndex] < amounts[i])
+				if(this.currentMana[colourIndex] < amounts[i])
 					return false; // Insufficient colour mana, can't be helped.
 				totalColoured += amounts[i];
 			}
@@ -295,7 +301,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		
 		// At this point we have not encountered any *colour* with insufficient amount.
 		// If we have enough colourless then consume that.
-		if(this.mana[ManaColour.COLOURLESS.ordinal()] >= totalColourless)
+		if(this.currentMana[ManaColor.COLORLESS.ordinal()] >= totalColourless)
 		{
 			return true;
 		}
@@ -303,9 +309,9 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		{
 			// If we don't have enough colourless directly then consume the colour of
 			// which we have the most.
-			ManaColour mostColour;
+			ManaColor mostColour;
 			int mostAmount = -1;
-			for (ManaColour col : ManaColour.getColourArray())
+			for (ManaColor col : ManaColor.getColourArray())
 			{
 				
 			}
@@ -318,7 +324,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	 */
 	public void incrementManaFromSources()
 	{
-		for (ManaSource source : globalSources)
+		for (ManaSource source : manaSources)
 		{
 			increaseMana(source.getColour(), 1);
 		}
@@ -329,7 +335,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	 * @param colour
 	 * @param amount
 	 */
-	public void increaseMana(ManaColour colour, int amount)
+	public void increaseMana(ManaColor colour, int amount)
 	{
 		if(amount < 1)
 			return;
@@ -338,22 +344,22 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		{
 		case WHITE:
 			
-			this.mana[ManaColour.WHITE.ordinal()] += amount;
+			this.currentMana[ManaColor.WHITE.ordinal()] += amount;
 			break;
 		case BLUE:
-			this.mana[ManaColour.BLUE.ordinal()] += amount;
+			this.currentMana[ManaColor.BLUE.ordinal()] += amount;
 			break;
 		case BLACK:
-			this.mana[ManaColour.BLACK.ordinal()] += amount;
+			this.currentMana[ManaColor.BLACK.ordinal()] += amount;
 			break;
 		case RED:
-			this.mana[ManaColour.RED.ordinal()] += amount;
+			this.currentMana[ManaColor.RED.ordinal()] += amount;
 			break;
 		case GREEN:
-			this.mana[ManaColour.GREEN.ordinal()] += amount;
+			this.currentMana[ManaColor.GREEN.ordinal()] += amount;
 			break;
 		default:
-			this.mana[ManaColour.COLOURLESS.ordinal()] += amount;
+			this.currentMana[ManaColor.COLORLESS.ordinal()] += amount;
 		}
 	}
 	
@@ -364,7 +370,7 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	 * @param amount
 	 * @return
 	 */
-	public boolean decreaseMana(ManaColour colour, int amount)
+	public boolean decreaseMana(ManaColor colour, int amount)
 	{
 		if(amount < 1 || colour == null)
 			return false;
@@ -372,43 +378,43 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		switch(colour)
 		{
 		case WHITE:
-			if(amount <= this.mana[ManaColour.WHITE.ordinal()]) {
-				this.mana[ManaColour.WHITE.ordinal()] -= amount;
+			if(amount <= this.currentMana[ManaColor.WHITE.ordinal()]) {
+				this.currentMana[ManaColor.WHITE.ordinal()] -= amount;
 				return true;
 			}
 			else
 				return false;
 		case BLUE:
-			if(amount <= this.mana[ManaColour.BLUE.ordinal()]) {
-				this.mana[ManaColour.BLUE.ordinal()] -= amount;
+			if(amount <= this.currentMana[ManaColor.BLUE.ordinal()]) {
+				this.currentMana[ManaColor.BLUE.ordinal()] -= amount;
 				return true;
 			}
 			else
 				return false;
 		case BLACK:
-			if(amount <= this.mana[ManaColour.BLACK.ordinal()]) {
-				this.mana[ManaColour.BLACK.ordinal()] -= amount;
+			if(amount <= this.currentMana[ManaColor.BLACK.ordinal()]) {
+				this.currentMana[ManaColor.BLACK.ordinal()] -= amount;
 				return true;
 			}
 			else
 				return false;
 		case RED:
-			if(amount <= this.mana[ManaColour.RED.ordinal()]) {
-				this.mana[ManaColour.RED.ordinal()] -= amount;
+			if(amount <= this.currentMana[ManaColor.RED.ordinal()]) {
+				this.currentMana[ManaColor.RED.ordinal()] -= amount;
 				return true;
 			}
 			else
 				return false;
 		case GREEN:
-			if(amount <= this.mana[ManaColour.GREEN.ordinal()]) {
-				this.mana[ManaColour.GREEN.ordinal()] -= amount;
+			if(amount <= this.currentMana[ManaColor.GREEN.ordinal()]) {
+				this.currentMana[ManaColor.GREEN.ordinal()] -= amount;
 				return true;
 			}
 			else
 				return false;
 		default:
-			if(amount <= this.mana[ManaColour.COLOURLESS.ordinal()]) {
-				this.mana[ManaColour.COLOURLESS.ordinal()] -= amount;
+			if(amount <= this.currentMana[ManaColor.COLORLESS.ordinal()]) {
+				this.currentMana[ManaColor.COLORLESS.ordinal()] -= amount;
 				return true;
 			}
 			else
@@ -417,27 +423,27 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	}
 	
 	public int[] getManaAmounts() {
-		return mana;
+		return currentMana;
 	}
 	
 	public void updateMana(int[] amounts)
 	{
-		this.mana[ManaColour.WHITE.ordinal()] = amounts[ManaColour.WHITE.ordinal()];
-		this.mana[ManaColour.BLUE.ordinal()] = amounts[ManaColour.BLUE.ordinal()];
-		this.mana[ManaColour.BLACK.ordinal()] = amounts[ManaColour.BLACK.ordinal()];
-		this.mana[ManaColour.RED.ordinal()] = amounts[ManaColour.RED.ordinal()];
-		this.mana[ManaColour.GREEN.ordinal()] = amounts[ManaColour.GREEN.ordinal()];
-		this.mana[ManaColour.COLOURLESS.ordinal()] = amounts[ManaColour.COLOURLESS.ordinal()];
+		this.currentMana[ManaColor.WHITE.ordinal()] = amounts[ManaColor.WHITE.ordinal()];
+		this.currentMana[ManaColor.BLUE.ordinal()] = amounts[ManaColor.BLUE.ordinal()];
+		this.currentMana[ManaColor.BLACK.ordinal()] = amounts[ManaColor.BLACK.ordinal()];
+		this.currentMana[ManaColor.RED.ordinal()] = amounts[ManaColor.RED.ordinal()];
+		this.currentMana[ManaColor.GREEN.ordinal()] = amounts[ManaColor.GREEN.ordinal()];
+		this.currentMana[ManaColor.COLORLESS.ordinal()] = amounts[ManaColor.COLORLESS.ordinal()];
 	}
 	
 	public void updateMana(int white, int blue, int black, int red, int green, int colourless)
 	{
-		this.mana[ManaColour.WHITE.ordinal()] = white;
-		this.mana[ManaColour.BLUE.ordinal()] = blue;
-		this.mana[ManaColour.BLACK.ordinal()] = black;
-		this.mana[ManaColour.RED.ordinal()] = red;
-		this.mana[ManaColour.GREEN.ordinal()] = green;
-		this.mana[ManaColour.COLOURLESS.ordinal()] = colourless;
+		this.currentMana[ManaColor.WHITE.ordinal()] = white;
+		this.currentMana[ManaColor.BLUE.ordinal()] = blue;
+		this.currentMana[ManaColor.BLACK.ordinal()] = black;
+		this.currentMana[ManaColor.RED.ordinal()] = red;
+		this.currentMana[ManaColor.GREEN.ordinal()] = green;
+		this.currentMana[ManaColor.COLORLESS.ordinal()] = colourless;
 	}
 	
 	/**
@@ -764,51 +770,51 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 	// Getters and setters
 
 	public int getWhiteMana() {
-		return this.mana[ManaColour.WHITE.ordinal()];
+		return this.currentMana[ManaColor.WHITE.ordinal()];
 	}
 
 	public void setWhiteMana(int whiteMana) {
-		this.mana[ManaColour.WHITE.ordinal()] = whiteMana;
+		this.currentMana[ManaColor.WHITE.ordinal()] = whiteMana;
 	}
 
 	public int getBlueMana() {
-		return this.mana[ManaColour.BLUE.ordinal()];
+		return this.currentMana[ManaColor.BLUE.ordinal()];
 	}
 
 	public void setBlueMana(int blueMana) {
-		this.mana[ManaColour.BLUE.ordinal()] = blueMana;
+		this.currentMana[ManaColor.BLUE.ordinal()] = blueMana;
 	}
 
 	public int getBlackMana() {
-		return this.mana[ManaColour.BLACK.ordinal()];
+		return this.currentMana[ManaColor.BLACK.ordinal()];
 	}
 
 	public void setBlackMana(int blackMana) {
-		this.mana[ManaColour.BLACK.ordinal()] = blackMana;
+		this.currentMana[ManaColor.BLACK.ordinal()] = blackMana;
 	}
 
 	public int getRedMana() {
-		return this.mana[ManaColour.RED.ordinal()];
+		return this.currentMana[ManaColor.RED.ordinal()];
 	}
 
 	public void setRedMana(int redMana) {
-		this.mana[ManaColour.RED.ordinal()] = redMana;
+		this.currentMana[ManaColor.RED.ordinal()] = redMana;
 	}
 
 	public int getGreenMana() {
-		return this.mana[ManaColour.GREEN.ordinal()];
+		return this.currentMana[ManaColor.GREEN.ordinal()];
 	}
 
 	public void setGreenMana(int greenMana) {
-		this.mana[ManaColour.GREEN.ordinal()] = greenMana;
+		this.currentMana[ManaColor.GREEN.ordinal()] = greenMana;
 	}
 
 	public int getColourlessMana() {
-		return this.mana[ManaColour.COLOURLESS.ordinal()];
+		return this.currentMana[ManaColor.COLORLESS.ordinal()];
 	}
 
 	public void setColourlessMana(int colourlessMana) {
-		this.mana[ManaColour.COLOURLESS.ordinal()] = colourlessMana;
+		this.currentMana[ManaColor.COLORLESS.ordinal()] = colourlessMana;
 	}
 
 	
@@ -821,17 +827,17 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		NBTTagCompound properties = new NBTTagCompound();
 		int sources[] = new int[5];
 		
-		for(ManaSource src : this.globalSources)
+		for(ManaSource src : this.manaSources)
 		{
 			sources[src.getColour().ordinal()]++;
 		}
 		
 		// Save variables to the new tag
-		properties.setInteger("SourceWhite", sources[ManaColour.WHITE.ordinal()]);
-		properties.setInteger("SourceBlue", sources[ManaColour.BLUE.ordinal()]);
-		properties.setInteger("SourceBlack", sources[ManaColour.BLACK.ordinal()]);
-		properties.setInteger("SourceRed", sources[ManaColour.RED.ordinal()]);
-		properties.setInteger("SourceGreen", sources[ManaColour.GREEN.ordinal()]);
+		properties.setInteger("SourceWhite", sources[ManaColor.WHITE.ordinal()]);
+		properties.setInteger("SourceBlue", sources[ManaColor.BLUE.ordinal()]);
+		properties.setInteger("SourceBlack", sources[ManaColor.BLACK.ordinal()]);
+		properties.setInteger("SourceRed", sources[ManaColor.RED.ordinal()]);
+		properties.setInteger("SourceGreen", sources[ManaColor.GREEN.ordinal()]);
 		
 		
 		// Now add our custom tag to the player's tag with a unique name (our property's name)
@@ -855,26 +861,26 @@ public class MagicraftTGPlayer implements IExtendedEntityProperties {
 		int sources[] = new int[5];
 		
 		// Get our data from the custom tag compound
-		sources[ManaColour.WHITE.ordinal()] = properties.getInteger("SourceWhite");
+		sources[ManaColor.WHITE.ordinal()] = properties.getInteger("SourceWhite");
 		//System.out.println(sources[0]);
-		sources[ManaColour.BLUE.ordinal()] = properties.getInteger("SourceBlue");
+		sources[ManaColor.BLUE.ordinal()] = properties.getInteger("SourceBlue");
 		//System.out.println(sources[1]);
-		sources[ManaColour.BLACK.ordinal()] = properties.getInteger("SourceBlack");
+		sources[ManaColor.BLACK.ordinal()] = properties.getInteger("SourceBlack");
 		//System.out.println(sources[2]);
-		sources[ManaColour.RED.ordinal()] = properties.getInteger("SourceRed");
+		sources[ManaColor.RED.ordinal()] = properties.getInteger("SourceRed");
 		//System.out.println(sources[3]);
-		sources[ManaColour.GREEN.ordinal()] = properties.getInteger("SourceGreen");
+		sources[ManaColor.GREEN.ordinal()] = properties.getInteger("SourceGreen");
 		//System.out.println(sources[4]);
 		
-		this.globalSources.clear();
+		this.manaSources.clear();
 		
 		for(int s = 0; s < sources.length; ++s)
 		{
 			//System.out.println("Processing " + s + "(" + sources[s] + ")");
 			for(int i = 0; i < sources[s]; ++i)
 			{
-				ManaColour colour = ManaColour.colourFromIndex(s);
-				this.globalSources.add(new ManaSource(colour));
+				ManaColor colour = ManaColor.colourFromIndex(s);
+				this.manaSources.add(new ManaSource(colour));
 				//System.out.println("s = " + s);
 				System.out.println("Added " + colour.toString());
 				//System.out.println("after, s = " + s);

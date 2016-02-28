@@ -5,7 +5,7 @@ import java.util.UUID;
 import com.google.common.base.Predicate;
 
 import magicrafttg.entity.IMCTGEntity;
-import magicrafttg.entity.MagicraftTGPlayer;
+import magicrafttg.entity.MCTGPlayerProperties;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
@@ -133,7 +133,7 @@ public class EntityMCTGAIAttackEnemy extends EntityAINearestAttackableTarget {
 			// See if the player is an MagicraftTGPlayer
 			try
 			{
-				MagicraftTGPlayer castedTarget = MagicraftTGPlayer.get((EntityPlayer)potentialTarget);
+				MCTGPlayerProperties castedTarget = MCTGPlayerProperties.get((EntityPlayer)potentialTarget);
 			}
 			catch (Exception e)
 			{

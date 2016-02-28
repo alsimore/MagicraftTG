@@ -1,4 +1,4 @@
-package magicrafttg.items;
+package magicrafttg.spell;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -13,62 +13,56 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
-public class MCTGCreatureSummon extends MCTGSpellItem {
-
+public class SummonEffect implements ISpellEffect
+{
+	private Class summoned;
 	private int power;
 	private int toughness;
-	private Class summoned;
-	private int armour;
+	private int[] costAmt;
+	private ManaColor[] costColor;
 	
-	
-	public MCTGCreatureSummon(String unlocalizedName, ManaColor[] costColour, int[] costAmt,
-			int power, int toughness, int armour, Class summoned) {
-		super(unlocalizedName, costColour, costAmt);
+	public SummonEffect(ManaColor[] costColor, int[] costAmt,
+			int power, int toughness, Class summoned)
+	{
+		this.costColor = costColor;
+		this.costAmt = costAmt;
 		this.power = power;
 		this.toughness = toughness;
-		this.armour = armour;
 		this.summoned = summoned;
 	}
-
+	
+	
 	@Override
-	/**
-	 * Add the summoned entity into the world. Only done on the server side.
-	 */
-	protected boolean cast(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) {
-		if(!worldIn.isRemote) { // If we are on the server side
+	public void onAdd(World world, Entity target, EntityPlayer caster) {
+		
+		if(!world.isRemote) { // If we are on the server side
 			
 			// Get the summoned class's constructor and create a new instance
 			Constructor<?> construct = null;
 			Entity newEntity = null;
-			//System.out.println("Name " + this.summoned.getName());
+			
+			// Try finding the MCTG constructor
 			try {
-				if (this.summoned.getName().contains("MCTG")) {
-					construct = this.summoned.getConstructor(World.class, EntityPlayer.class, int.class, int.class);
-				//} else if (this.summoned.getName().contains("MCTG")) {
-				//	construct = this.summoned.getConstructor(World.class, EntityPlayer.class);
-				} else {
-					//construct = this.summoned.getConstructor(World.class);
-					System.out.println("Not a Magicraft entity: " + this.summoned.getName());
-				}
+				construct = this.summoned.getConstructor(World.class, EntityPlayer.class, int.class, int.class);
 			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
+				System.out.println("Not a Magicraft entity: " + this.summoned.getName());
 				e.printStackTrace();
 			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
+			
+			// Try constructing a new instance
 			try {
 				if(construct != null) {
 					if (this.summoned.getName().contains("MCTG")) {
-						newEntity = (Entity) construct.newInstance(worldIn, playerIn, this.power, this.toughness);
-					//} else if (this.summoned.getName().contains("MCTG")) {
-					//	newEntity = (Entity) construct.newInstance(worldIn, playerIn);
+						newEntity = (Entity) construct.newInstance(world, caster, this.power, this.toughness);
 					} else {
-						newEntity = (Entity) construct.newInstance(worldIn);
+						newEntity = (Entity) construct.newInstance(world);
 					}
 				}
 			} catch (InstantiationException e) {
@@ -85,29 +79,31 @@ public class MCTGCreatureSummon extends MCTGSpellItem {
 				e.printStackTrace();
 			}
 			
+			
+			
 			if(newEntity == null) {
 				System.out.println("[MCTG] newEntity == null");
-				return false;
+				return;
 			}
 			
 			// South is 0 degrees (+Z direction), West is 90 degrees (-X direction), 
 			// East is -90 degrees (+X direction). Therefore 45 degrees is +Z and -X displacement
-			float angle = MathHelper.wrapAngleTo180_float(playerIn.rotationYaw);
+			float angle = MathHelper.wrapAngleTo180_float(caster.rotationYaw);
 			
 			double xDisplace = -(3.0 * Math.sin(angle*Math.PI/180.0));
 			double zDisplace = 3.0 * Math.cos(angle*Math.PI/180.0);
 			double newX, newZ, newY;
 			
-			newX = playerIn.posX + xDisplace;
-			newZ = playerIn.posZ + zDisplace;
-			newY = playerIn.posY;
+			newX = caster.posX + xDisplace;
+			newZ = caster.posZ + zDisplace;
+			newY = caster.posY;
 			
 			// Check the  terrain height at that position
-			newY = getTopBlock(worldIn, new BlockPos(newX, newY, newZ));
+			newY = getTopBlock(world, new BlockPos(newX, newY, newZ));
 			if(newY > 0) {
-				MCTGPlayerProperties mctg = MCTGPlayerProperties.get(playerIn);
+				MCTGPlayerProperties mctg = MCTGPlayerProperties.get(caster);
 				
-				if(mctg.consumeMana(this.costColour, this.costAmt)) {
+				if(mctg.consumeMana(this.costColor, this.costAmt)) {
 					newEntity.setPosition(newX, newY, newZ);
 					((EntityLivingBase)newEntity).setHealth(MagicraftTG.HEALTH_PER_TOUGHNESS * this.toughness);
 					
@@ -124,17 +120,17 @@ public class MCTGCreatureSummon extends MCTGSpellItem {
 					}
 					
 					
-					/*System.out.println("[MCTG] " + newEntity.toString());
+					System.out.println("[MCTG] " + newEntity.toString());
 					System.out.println("[MCTG] " + newEntity.getUniqueID() + "(" + System.identityHashCode(newEntity) + ")");
 					System.out.println("[MCTG] Damage: " + ((EntityLivingBase)newEntity).getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue());
-					System.out.println("[MCTG] Health: " + ((EntityLivingBase)newEntity).getHealth());*/
-					System.out.println("[MCTG] Summoned by: " + playerIn.getUniqueID().toString() + "\n");
+					System.out.println("[MCTG] Health: " + ((EntityLivingBase)newEntity).getHealth());
+					System.out.println("[MCTG] Summoned by: " + caster.getUniqueID().toString() + "\n");
 					
-					if(worldIn.spawnEntityInWorld(newEntity))
+					if(world.spawnEntityInWorld(newEntity))
 					{
-						mctg.updateManaToClient(playerIn);
+						mctg.updateManaToClient(caster);
 						mctg.addControlledCreature(newEntity);
-						return true;
+						return;
 					}
 					else
 					{
@@ -146,27 +142,48 @@ public class MCTGCreatureSummon extends MCTGSpellItem {
 				System.out.println("[MCTG] Could not spawn entity at height " + newY);
 			}
 		}
-		return false;
+	}
+
+	@Override
+	public void onRemove(World world, Entity target, EntityPlayer caster) {
+		// Do nothing
+	}
+
+	@Override
+	public void onTrigger(World world, Entity target, EntityPlayer caster) {
+		// Do nothing
 	}
 	
 	
-}
-/*
-protected void applyEntityAttributes()
-{
-    super.applyEntityAttributes();
-    this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.30000001192092896D);
+	
+	/**
+	 * Find the Y coord of the top block at given X/Z location.
+	 * From http://www.minecraftforge.net/forum/index.php?topic=25687.0
+	 * @param world
+	 * @param pos
+	 * @return
+	 */
+	protected int getTopBlock(World world, BlockPos pos) {
+		
+		while(world.getBlockState(pos).getBlock().isBlockSolid(world, pos, EnumFacing.DOWN))
+		{
+			pos.add(0, 1, 0);
+		}
+		
+		return pos.getY();
+		/*int y = -1, j;
+		
+		// Ensure block starts from the top of the world
+		pos = pos.add(0, 255, 0);
 
-    if (this.isTamed())
-    {
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(20.0D);
-    }
-    else
-    {
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(8.0D);
-    }
+		for (j = 255; j >= 10; j--) {
+			if (world.getBlockState(pos).getBlock().isBlockSolid(world, pos, EnumFacing.DOWN)) {
+				return j + 1;
+			}
+			
+			pos = pos.add(0, -1, 0);
+		}
+		return y;*/
+	}
 
-    this.getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage);
-    this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(2.0D);
 }
-*/

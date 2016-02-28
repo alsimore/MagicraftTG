@@ -1,19 +1,34 @@
 package magicrafttg.items;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+import magicrafttg.MagicraftTG;
 import magicrafttg.entity.EntityMCTGBase;
 import magicrafttg.entity.EntityMCTGDireWolf;
 import magicrafttg.entity.EntityMCTGSkeleton;
 import magicrafttg.entity.EntityMCTGTroll;
 import magicrafttg.entity.EntityMCTGZombie;
+import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.entity.ZZEntityMCTGZombie;
-import magicrafttg.mana.ManaColour;
+import magicrafttg.mana.ManaColor;
+import magicrafttg.spell.BasicLand;
+import magicrafttg.spell.ISpellEffect;
+import magicrafttg.spell.Spell;
+import magicrafttg.spell.SummonEffect;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public final class ModItems {
@@ -30,6 +45,7 @@ public final class ModItems {
 	public static Item manaPicker;
 	public static Item mindControl;
 	
+	public static Item swamp;
 	
 
 	public static void createItems() {
@@ -55,46 +71,56 @@ public final class ModItems {
 				}
 			}
 		};
-				
-		//-------------------------------------------------------------------------------
-		// Item registry
-		//GameRegistry.registerItem(summonItem = 
-		//		new MCTGCreatureSummon("summon_item", new ManaColour[] {ManaColour.WHITE}, 
-		//				new int[] {1}, 1, 1, 0, EntityVillager.class), "summon_item");
+		//-------------------------------------------------------------------------------		
 		
 		GameRegistry.registerItem(summonZombie = 
-				new MCTGCreatureSummon("zombie", new ManaColour[] {ManaColour.BLACK},
-						new int[] {1}, 1, 1, 0, EntityMCTGZombie.class), "zombie");
+				new Spell(
+						"zombie",
+						ManaColor.BLACK,
+						new SummonEffect(
+								new ManaColor[] {ManaColor.BLACK},
+								new int[] {1}, 
+								1, 
+								1, 
+								EntityMCTGZombie.class
+						)
+				), 
+				"zombie"
+		);
+		
+		/*GameRegistry.registerItem(summonZombie = 
+				new MCTGCreatureSummon("zombie", new ManaColor[] {ManaColor.BLACK},
+						new int[] {1}, 1, 1, 0, EntityMCTGZombie.class), "zombie");*/
 		
 		GameRegistry.registerItem(summonVillager = 
-				new MCTGCreatureSummon("villager", new ManaColour[] {ManaColour.WHITE}, 
+				new MCTGCreatureSummon("villager", new ManaColor[] {ManaColor.WHITE}, 
 						new int[] {1}, 1, 1, 0, EntityVillager.class), "villager");
 		
 		GameRegistry.registerItem(summonSkeleton = 
-				new MCTGCreatureSummon("skeleton", new ManaColour[] {ManaColour.BLACK, ManaColour.COLOURLESS},
+				new MCTGCreatureSummon("skeleton", new ManaColor[] {ManaColor.BLACK, ManaColor.COLORLESS},
 						new int[] {1,1}, 1, 2, 0, EntityMCTGSkeleton.class), "skeleton");
 		
 		GameRegistry.registerItem(summonSkeletonArmrd = 
-				new MCTGCreatureSummon("skeleton_armrd", new ManaColour[] {ManaColour.BLACK, ManaColour.COLOURLESS},
+				new MCTGCreatureSummon("skeleton_armrd", new ManaColor[] {ManaColor.BLACK, ManaColor.COLORLESS},
 						new int[] {1,2}, 2, 2, 0, EntityMCTGSkeleton.class), "skeleton_armrd");
 		
 		GameRegistry.registerItem(summonDireWolf = 
-				new MCTGCreatureSummon("dire_wolf", new ManaColour[] {ManaColour.BLACK},
+				new MCTGCreatureSummon("dire_wolf", new ManaColor[] {ManaColor.BLACK},
 						new int[] {2}, 2, 1, 0, EntityMCTGDireWolf.class), "dire_wolf");
 		
 		GameRegistry.registerItem(summonTroll = 
-				new MCTGCreatureSummon("troll", new ManaColour[] {ManaColour.RED,ManaColour.COLOURLESS},
+				new MCTGCreatureSummon("troll", new ManaColor[] {ManaColor.RED,ManaColor.COLORLESS},
 						new int[] {2,2}, 3, 3, 0, EntityMCTGTroll.class), "troll");
 		
 		GameRegistry.registerItem(fireball = 
-				new MCTGSorceryInstant("fireball", new ManaColour[] {ManaColour.RED},
+				new MCTGSorceryInstant("fireball", new ManaColor[] {ManaColor.RED},
 						new int[] {1}), "fireball");
 		
 		
 		GameRegistry.registerItem(mindControl =
 				new MCTGTargetedSpell(
 						"mind_control", // name
-						new ManaColour[] {ManaColour.COLOURLESS, ManaColour.BLUE}, // required colours 
+						new ManaColor[] {ManaColor.COLORLESS, ManaColor.BLUE}, // required colours 
 						new int[] {3,2}, // cost
 						predMindControl), // effect
 				"mind_control");
@@ -102,9 +128,8 @@ public final class ModItems {
 		
 		GameRegistry.registerItem(manaPicker = new MCTGManaItem("mana_picker"), "mana_picker");
 		
-		/*GameRegistry.registerItem(summonZombie2 = 
-				new MCTGCreatureSummon("mctg_zombie2", new ManaColour[] {ManaColour.BLACK},
-						new int[] {1}, 1, 1, 0, EntityMCTGZombie.class), "mctg_zombie2");*/
+		
+		GameRegistry.registerItem(swamp = new BasicLand("swamp", ManaColor.BLACK, null), "swamp");
 		
     }
 	

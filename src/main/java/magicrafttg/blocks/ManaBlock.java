@@ -6,7 +6,7 @@ import java.util.Timer;
 import java.util.UUID;
 
 import magicrafttg.MagicraftTG;
-import magicrafttg.mana.ManaColour;
+import magicrafttg.mana.ManaColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.event.world.BlockEvent;
@@ -23,7 +23,7 @@ public class ManaBlock extends BasicBlock {
 	/**
 	 * Colour of the mana that this ManaBlock provides. Based on the biome in which it was placed.
 	 */
-	private ManaColour colour;
+	private ManaColor colour;
 	
 	public ManaBlock(UUID id, String name) {
 		super("mana_block");
@@ -59,29 +59,29 @@ public class ManaBlock extends BasicBlock {
 	 * @param biome
 	 * @return
 	 */
-	private ManaColour getManaColourFromBiomeName(String biome) {
+	private ManaColor getManaColourFromBiomeName(String biome) {
 		
 		// Hill, Extreme, and "M" versions of other biomes provide red mana
     	if(biome.toLowerCase().contains("hills") || biome.toLowerCase().contains("extreme") ||
     			biome.endsWith(" M")) {
-    		 return ManaColour.RED;
+    		 return ManaColor.RED;
     	}
     	else if(biome.toLowerCase().contains("plains") || biome.toLowerCase().contains("savanna")) {
-			return ManaColour.WHITE;
+			return ManaColor.WHITE;
 		}
 		else if(biome.toLowerCase().contains("forest") || biome.toLowerCase().contains("jungle")) {
-			return ManaColour.GREEN;
+			return ManaColor.GREEN;
 		}
 		else if(biome.toLowerCase().contains("island") || biome.toLowerCase().contains("beach")) {
-			return ManaColour.BLUE;
+			return ManaColor.BLUE;
 		}
     	// River probably isn't appropriate for black but I can't think of many other
     	// black sources
 		else if(biome.toLowerCase().contains("swamp") || biome.toLowerCase().contains("river")) {
-			return ManaColour.BLACK;
+			return ManaColor.BLACK;
 		}
 		else {
-			return ManaColour.COLOURLESS;
+			return ManaColor.COLORLESS;
 		}
 	}
 	
@@ -110,11 +110,11 @@ public class ManaBlock extends BasicBlock {
 	 * Get the colour of mana provided by the block (based on the biome in which it is placed).
 	 * @return the mana colour provided
 	 */
-	public ManaColour getColour() {
+	public ManaColor getColour() {
 		return colour;
 	}
 
-	public void setColour(ManaColour colour) {
+	public void setColour(ManaColor colour) {
 		this.colour = colour;
 	}
 }

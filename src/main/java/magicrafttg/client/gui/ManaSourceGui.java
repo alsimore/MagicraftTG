@@ -3,8 +3,8 @@ package magicrafttg.client.gui;
 import java.io.IOException;
 import java.util.UUID;
 
-import magicrafttg.entity.MagicraftTGPlayer;
-import magicrafttg.mana.ManaColour;
+import magicrafttg.entity.MCTGPlayerProperties;
+import magicrafttg.mana.ManaColor;
 import magicrafttg.network.MCTGManaPacket;
 import magicrafttg.network.MCTGPacketHandler;
 import net.minecraft.client.Minecraft;
@@ -87,7 +87,7 @@ public class ManaSourceGui extends GuiScreen {
 	private void displayAmounts()
 	{
 		
-		MagicraftTGPlayer mctg = MagicraftTGPlayer.get(Minecraft.getMinecraft().thePlayer);
+		MCTGPlayerProperties mctg = MCTGPlayerProperties.get(Minecraft.getMinecraft().thePlayer);
 		//mctg.updateManaFromServer();
 		int[] sources = mctg.getGlobalSourceNumbers();
 		
@@ -135,7 +135,7 @@ public class ManaSourceGui extends GuiScreen {
 					this.chosen[0], this.chosen[1], this.chosen[2], this.chosen[3], this.chosen[4], 0);
 	        MCTGPacketHandler.net.sendToServer(msg);
 	        
-	        MagicraftTGPlayer mctg = MagicraftTGPlayer.get(Minecraft.getMinecraft().thePlayer);
+	        MCTGPlayerProperties mctg = MCTGPlayerProperties.get(Minecraft.getMinecraft().thePlayer);
 	        mctg.setGlobalManaSources(this.chosen[0], this.chosen[1], this.chosen[2], this.chosen[3], this.chosen[4]);
 	        
 	        this.mc.displayGuiScreen(null);
@@ -146,7 +146,7 @@ public class ManaSourceGui extends GuiScreen {
 		{
 			if (button == this.blackPlus) 
 			{
-				int ind = ManaColour.BLACK.ordinal();
+				int ind = ManaColor.BLACK.ordinal();
 				if(this.totalChosen < 5)
 				{
 			        this.chosen[ind] += 1;
@@ -156,7 +156,7 @@ public class ManaSourceGui extends GuiScreen {
 		    }
 			else if (button == this.blackMinus) 
 			{
-				int ind = ManaColour.BLACK.ordinal();
+				int ind = ManaColor.BLACK.ordinal();
 		        this.chosen[ind] -= 1;
 		        if(this.chosen[ind] < 0)
 		        {
@@ -168,7 +168,7 @@ public class ManaSourceGui extends GuiScreen {
 		    }
 			else if (button == this.whitePlus) 
 			{
-				int ind = ManaColour.WHITE.ordinal();
+				int ind = ManaColor.WHITE.ordinal();
 				if(this.totalChosen < 5)
 				{
 			        this.chosen[ind] += 1;
@@ -178,7 +178,7 @@ public class ManaSourceGui extends GuiScreen {
 		    }
 			else if (button == this.whiteMinus) 
 			{
-				int ind = ManaColour.WHITE.ordinal();
+				int ind = ManaColor.WHITE.ordinal();
 		        this.chosen[ind] -= 1;
 		        if(this.chosen[ind] < 0)
 		        {
@@ -190,7 +190,7 @@ public class ManaSourceGui extends GuiScreen {
 		    }
 			else if (button == this.redPlus) 
 			{
-				int ind = ManaColour.RED.ordinal();
+				int ind = ManaColor.RED.ordinal();
 				if(this.totalChosen < 5)
 				{
 			        this.chosen[ind] += 1;
@@ -200,7 +200,7 @@ public class ManaSourceGui extends GuiScreen {
 		    }
 			else if (button == this.redMinus) 
 			{
-				int ind = ManaColour.RED.ordinal();
+				int ind = ManaColor.RED.ordinal();
 		        this.chosen[ind] -= 1;
 		        if(this.chosen[ind] < 0)
 		        {
@@ -212,7 +212,7 @@ public class ManaSourceGui extends GuiScreen {
 		    }
 			else if (button == this.bluePlus) 
 			{
-				int ind = ManaColour.BLUE.ordinal();
+				int ind = ManaColor.BLUE.ordinal();
 				if(this.totalChosen < 5)
 				{
 			        this.chosen[ind] += 1;
@@ -222,7 +222,7 @@ public class ManaSourceGui extends GuiScreen {
 		    }
 			else if (button == this.blueMinus) 
 			{
-				int ind = ManaColour.BLUE.ordinal();
+				int ind = ManaColor.BLUE.ordinal();
 		        this.chosen[ind] -= 1;
 		        if(this.chosen[ind] < 0)
 		        {
@@ -234,7 +234,7 @@ public class ManaSourceGui extends GuiScreen {
 		    }
 			else if (button == this.greenPlus) 
 			{
-				int ind = ManaColour.GREEN.ordinal();
+				int ind = ManaColor.GREEN.ordinal();
 				if(this.totalChosen < 5)
 				{
 			        this.chosen[ind] += 1;
@@ -244,7 +244,7 @@ public class ManaSourceGui extends GuiScreen {
 		    }
 			else if (button == this.greenMinus) 
 			{
-				int ind = ManaColour.GREEN.ordinal();
+				int ind = ManaColor.GREEN.ordinal();
 		        this.chosen[ind] -= 1;
 		        if(this.chosen[ind] < 0)
 		        {

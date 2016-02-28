@@ -11,8 +11,10 @@ public class ItemRenderRegister {
 	public static String modid = MagicraftTG.MODID;
 
 	public static void reg(Item item) {
+		String unlocName = item.getUnlocalizedName();
+		String sub = unlocName.substring(5);
 	    Minecraft.getMinecraft().getRenderItem().getItemModelMesher()
-	    .register(item, 0, new ModelResourceLocation(modid + ":" + item.getUnlocalizedName().substring(5), "inventory"));
+	    .register(item, 0, new ModelResourceLocation(modid + ":" + sub, "inventory"));
 	}
 	
 	public static void registerItemRenderer() {
@@ -23,5 +25,6 @@ public class ItemRenderRegister {
 		reg(ModItems.summonDireWolf);
 		reg(ModItems.fireball);
 		reg(ModItems.mindControl);
+		reg(ModItems.swamp);
     }
 }
