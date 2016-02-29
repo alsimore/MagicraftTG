@@ -10,10 +10,10 @@ import javax.swing.event.EventListenerList;
 
 import magicrafttg.MagicraftTG;
 import magicrafttg.blocks.ManaBlock;
-import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.mana.ManaColor;
 import magicrafttg.network.ManaPacket;
 import magicrafttg.network.PacketHandler;
+import magicrafttg.player.MCTGPlayerProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -114,6 +114,7 @@ public class ManaEventHandler {
 	 */
 	public static void manaTick() 
 	{
+		System.out.println("ManaEventHandler.manaTick");
 		// Increase the players' mana based on their sources.
 		List<EntityPlayerMP> allPlayers = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
 		

@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import magicrafttg.entity.ai.EntityMCTGAIAttackEnemy;
 import magicrafttg.entity.ai.EntityMCTGAIFollowController;
+import magicrafttg.player.MCTGPlayerProperties;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;

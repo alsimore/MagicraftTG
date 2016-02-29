@@ -1,7 +1,7 @@
 package magicrafttg.client.render.hud;
 
-import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.mana.ManaColor;
+import magicrafttg.player.MCTGPlayerProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;

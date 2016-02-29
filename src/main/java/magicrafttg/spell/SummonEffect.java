@@ -4,8 +4,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import magicrafttg.MagicraftTG;
-import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.mana.ManaColor;
+import magicrafttg.player.MCTGPlayerProperties;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -126,7 +126,7 @@ public class SummonEffect implements ISpellEffect
 				
 				if(world.spawnEntityInWorld(newEntity))
 				{
-					mctg.updateManaToClient(caster);
+					//mctg.updateManaToClient(caster);
 					mctg.addControlledCreature(newEntity);
 					return;
 				}

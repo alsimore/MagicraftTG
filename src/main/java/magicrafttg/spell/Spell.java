@@ -2,8 +2,8 @@ package magicrafttg.spell;
 
 import java.util.List;
 
-import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.mana.ManaColor;
+import magicrafttg.player.MCTGPlayerProperties;
 import magicrafttg.spell.event.SpellEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -42,6 +42,7 @@ public class Spell extends Card
 	@Override
 	protected boolean cast(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) 
 	{
+		System.out.println("Spell.cast");
 		MCTGPlayerProperties mctg = MCTGPlayerProperties.get(playerIn);
 		
 		// Does the player have the mana to cast the spell?

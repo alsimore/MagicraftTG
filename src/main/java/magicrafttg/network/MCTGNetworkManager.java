@@ -1,7 +1,8 @@
 package magicrafttg.network;
 
-import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.mana.ManaColor;
+import magicrafttg.player.MCTGPlayerProperties;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -49,15 +50,63 @@ public class MCTGNetworkManager
 	}
 
 
+	
 	/**
-	 * Notify the client of the current mana as recorded on the server.
+	 * Send from the server to the client the current mana source numbers for the specified player.
+	 * @param player
+	 * @param sources
+	 */
+	public static void sendToClientManaSources(EntityPlayer player, int[] sources)
+	{
+		System.out.println("MCTGNetworkManager.sendToClientManaSources");
+		IMessage msg = new ManaPacket.MCTGManaMessage(PacketHandler.MANA_GLOBAL_SOURCE_SET, 
+				sources[0], sources[1], sources[2], sources[3], sources[4], sources[5]);
+		PacketHandler.net.sendTo(msg, (EntityPlayerMP) player);
+	}
+	
+	/**
+	 * Update the mana source numbers as received from the server.
+	 */
+	public static void receiveFromServerManaSources(int w, int u, int b, int r, int g)
+	{
+		System.out.println("MCTGNetworkManager.receiveFromServerManaSources");
+		MCTGPlayerProperties mctg = MCTGPlayerProperties.get(Minecraft.getMinecraft().thePlayer);
+		if(mctg != null)
+		{
+			mctg.setGlobalManaSources(w, u, b, r, g);
+		}
+	}
+
+	/**
+	 * Send the current mana recorded on the server to the client instance of EntityPlayer. 
+	 * Called after a spell is cast.
+	 * @param entityPlayer
+	 * @param currentMana
+	 */
+	public static void sendToClientCurrentMana(EntityPlayer player, int[] currentMana) 
+	{
+		System.out.println("MCTGNetworkManager.sendToClientCurrentMana");
+		IMessage msg = new ManaPacket.MCTGManaMessage(PacketHandler.MANA_UPDATE, 
+				currentMana[ManaColor.WHITE.ordinal()], 
+				currentMana[ManaColor.BLUE.ordinal()], 
+				currentMana[ManaColor.BLACK.ordinal()], 
+				currentMana[ManaColor.RED.ordinal()],
+				currentMana[ManaColor.GREEN.ordinal()], 
+				currentMana[ManaColor.COLORLESS.ordinal()]
+			);
+
+		PacketHandler.net.sendTo(msg, (EntityPlayerMP)player);
+	}
+
+	/**
+	 * Update the current mana recorded in the client to match what is recorded on the server.
 	 * @param thePlayer
 	 * @param manaAmounts 
 	 */
-	public static void updateManaServerToClient(EntityPlayer player, int[] manaAmounts) 
+	public static void receiveFromServerCurrentMana(int[] manaAmounts) 
 	{
-		MCTGPlayerProperties prop = MCTGPlayerProperties.get(player);
+		System.out.println("MCTGNetworkManager.receiveFromServerCurrentMana");
+		MCTGPlayerProperties prop = MCTGPlayerProperties.get(Minecraft.getMinecraft().thePlayer);
 		prop.setCurrentMana(manaAmounts);
 	}
-	
 }

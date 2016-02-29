@@ -5,7 +5,7 @@ import java.util.UUID;
 import com.google.common.base.Predicate;
 
 import magicrafttg.entity.IMCTGEntity;
-import magicrafttg.entity.MCTGPlayerProperties;
+import magicrafttg.player.MCTGPlayerProperties;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;

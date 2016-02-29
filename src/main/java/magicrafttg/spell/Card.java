@@ -48,6 +48,7 @@ public abstract class Card extends Item
 	@Override
     public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn)
     {
+		System.out.println("Card.onRightClick");
 		if (!worldIn.isRemote) 
 		{
 			boolean result = cast(itemStackIn, worldIn, playerIn);

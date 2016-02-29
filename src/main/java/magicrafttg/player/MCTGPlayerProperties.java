@@ -1,4 +1,4 @@
-package magicrafttg.entity;
+package magicrafttg.player;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import magicrafttg.entity.EntityMCTGBase;
+import magicrafttg.entity.EntityMCTGDireWolf;
+import magicrafttg.entity.EntityMCTGZombie;
 import magicrafttg.event.FMLCommonClientHandler;
 import magicrafttg.mana.ManaColor;
 import magicrafttg.mana.ManaSource;
@@ -49,9 +52,10 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	
 	/**
 	 * A list of ManaSources that the player selected when they logged on.
-	 * In order: white, blue, black, red, green
+	 * In order: white, blue, black, red, green, colorless
 	 */
-	private ArrayList<ManaSource> manaSources;
+	//private ArrayList<ManaSource> manaSources;
+	private int[] manaSources;
 	
 	/**
 	 * A list of the creatures that this player currently controls.
@@ -78,7 +82,8 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		this.currentMana = new int[6];
 		
 		
-		manaSources = new ArrayList<ManaSource>();
+		manaSources = new int[6]; //new ArrayList<ManaSource>();
+		//System.out.println(manaSources.length);
 
 		controlledCreatures = new ArrayList<WeakReference<Entity>>();
 		
@@ -112,8 +117,13 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	
 	public void addSource(ManaColor color)
 	{
-		manaSources.add(new ManaSource(color));
+		System.out.println("MCTGPlayerProperties.addSource");
+		//manaSources.add(new ManaSource(color));
+		manaSources[color.ordinal()]++;
+		// Happens on the server side so update client
+		MCTGNetworkManager.sendToClientManaSources(this.player.get(), manaSources);
 	}
+	
 	
 	/**
 	 * Set the player's global sources selected when they enter.
@@ -124,6 +134,17 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	 * @param g green
 	 */
 	public void setGlobalManaSources(int w, int u, int b, int r, int g)
+	{
+		System.out.println("MCTGPlayerProperties.setGlobalManaSources");
+		manaSources[0] = w;
+		manaSources[1] = u;
+		manaSources[2] = b;
+		manaSources[3] = r;
+		manaSources[4] = g;
+		System.out.println(manaSources[0] + " " + manaSources[1] + " " + manaSources[2]
+				+ " " + manaSources[3] + " " + manaSources[4]);
+	}
+	/*public void setGlobalManaSources(int w, int u, int b, int r, int g)
 	{
 		manaSources.clear();
 		for(int i = 0; i < w; ++i)
@@ -153,18 +174,20 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		}
 		//System.out.println("Client sources set: " + w + " "
 		//		+ u + " " + b + " " + r + " " + g + " ");
-	}
+	}*/
+	
+	
 	
 	public int[] getGlobalSourceNumbers()
 	{
-		int sources[] = new int[5];
+		/*int sources[] = new int[5];
 		
 		for (ManaSource src : manaSources)
 		{
 			sources[src.getColour().ordinal()]++;
-		}
+		}*/
 		
-		return sources;
+		return manaSources;
 	}
 
 	/**
@@ -182,6 +205,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		int totalColorless = 0;
 		int colorless_i = -1;
 		
+		System.out.println("MCTGPlayerProperties.consumeMana");
 		if(colors.length != amounts.length) {
 			System.out.println("[MCTG] consumeMana: amounts and colours arrays differ in length");
 			return false;
@@ -210,6 +234,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 				totalColored += amounts[i];
 			}
 		}
+		
 		// At this point we have not encountered any *color* with insufficient amount.
 		// If we have enough colorless then consume that.
 		if(newMana[ManaColor.COLORLESS.ordinal()] >= totalColorless)
@@ -224,7 +249,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 					return false;
 				}
 			}
-			return true;
+			//return true;
 		}
 		else
 		{
@@ -260,15 +285,19 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 					totalColorless -= mostAmount;
 				}
 			}
-			
-			// Set the new mana amounts.
-			setCurrentMana(newMana);
 		}
+		// Set the new mana amounts.
+		System.out.println("Got to setCurrentMana");
+		setCurrentMana(newMana);
+		// Update the client of current mana
+		MCTGNetworkManager.sendToClientCurrentMana(this.player.get(), currentMana);
+		
 		return true;
 	}
 	
 	public void setCurrentMana(int[] amounts)
 	{
+		System.out.println("MCTGPlayerProperties.setCurrentMana");
 		this.currentMana[ManaColor.WHITE.ordinal()] = amounts[ManaColor.WHITE.ordinal()];
 		this.currentMana[ManaColor.BLUE.ordinal()] = amounts[ManaColor.BLUE.ordinal()];
 		this.currentMana[ManaColor.BLACK.ordinal()] = amounts[ManaColor.BLACK.ordinal()];
@@ -284,12 +313,15 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	 */
 	public void incrementManaFromSources()
 	{
-		for (ManaSource source : manaSources)
+		System.out.println("MCTGPlayerProperties.incrementManaFromSources");
+		for(int color = 0; color < 6; ++color) // Six colors if you include colorless
 		{
-			increaseMana(source.getColour(), 1);
+			int num = manaSources[color];
+			increaseMana(ManaColor.colourFromIndex(color), num);
 		}
 		
-		updateManaServerToClient();
+		//updateManaServerToClient();
+		MCTGNetworkManager.sendToClientCurrentMana(this.player.get(), currentMana);
 	}
 	
 	/**
@@ -403,15 +435,18 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	}
 	
 	
+	public void updateManaToClient(EntityPlayer player)
+	{
+		MCTGNetworkManager.updateManaToClient(player, this.currentMana);
+	}
 	
-	
-	/*public void updateManaFromServer()
+	public void updateManaFromServer()
 	{
 		//System.out.println("Requesting mana update from server");
 		IMessage msg = new ManaPacket.MCTGManaMessage(PacketHandler.MANA_SRC_REQUEST,
 				0, 0, 0, 0, 0, 0);
 		PacketHandler.net.sendToServer(msg);
-	}*/
+	}
 	
 	
 	public void addCreatureByUUID(UUID id)
@@ -700,12 +735,12 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		
 		// We need to create a new tag compound that will save everything for our Extended Properties
 		NBTTagCompound properties = new NBTTagCompound();
-		int sources[] = new int[5];
+		int sources[] = manaSources; //new int[5];
 		
-		for(ManaSource src : this.manaSources)
+		/*for(ManaSource src : this.manaSources)
 		{
 			sources[src.getColour().ordinal()]++;
-		}
+		}*/
 		
 		// Save variables to the new tag
 		properties.setInteger("SourceWhite", sources[ManaColor.WHITE.ordinal()]);
@@ -736,18 +771,18 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		int sources[] = new int[5];
 		
 		// Get our data from the custom tag compound
-		sources[ManaColor.WHITE.ordinal()] = properties.getInteger("SourceWhite");
+		manaSources[ManaColor.WHITE.ordinal()] = properties.getInteger("SourceWhite");
 		//System.out.println(sources[0]);
-		sources[ManaColor.BLUE.ordinal()] = properties.getInteger("SourceBlue");
+		manaSources[ManaColor.BLUE.ordinal()] = properties.getInteger("SourceBlue");
 		//System.out.println(sources[1]);
-		sources[ManaColor.BLACK.ordinal()] = properties.getInteger("SourceBlack");
+		manaSources[ManaColor.BLACK.ordinal()] = properties.getInteger("SourceBlack");
 		//System.out.println(sources[2]);
-		sources[ManaColor.RED.ordinal()] = properties.getInteger("SourceRed");
+		manaSources[ManaColor.RED.ordinal()] = properties.getInteger("SourceRed");
 		//System.out.println(sources[3]);
-		sources[ManaColor.GREEN.ordinal()] = properties.getInteger("SourceGreen");
+		manaSources[ManaColor.GREEN.ordinal()] = properties.getInteger("SourceGreen");
 		//System.out.println(sources[4]);
 		
-		this.manaSources.clear();
+		/*this.manaSources.clear();
 		
 		for(int s = 0; s < sources.length; ++s)
 		{
@@ -760,8 +795,9 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 				System.out.println("Added " + colour.toString());
 				//System.out.println("after, s = " + s);
 			}
-			
-		}
+		}*/
+		
+		//this.manaSources = sources;
 		
 		//sources = getGlobalSourceNumbers();
 		//System.out.println("Send to player " + this.player.get());

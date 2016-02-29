@@ -3,10 +3,10 @@ package magicrafttg.client.gui;
 import java.io.IOException;
 import java.util.UUID;
 
-import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.mana.ManaColor;
 import magicrafttg.network.ManaPacket;
 import magicrafttg.network.PacketHandler;
+import magicrafttg.player.MCTGPlayerProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;

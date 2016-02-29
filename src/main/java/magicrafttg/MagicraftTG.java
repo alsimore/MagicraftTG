@@ -24,7 +24,7 @@ public class MagicraftTG {
     public static final float HEALTH_PER_TOUGHNESS = 10.0f;
     
     public static final int MANA_TICK_DELAY_INITIAL = 400;
-    public static final int MANA_TICK_DELAY_REGULAR = 300;
+    public static final int MANA_TICK_DELAY_REGULAR = 400;
     
     
     @SidedProxy(clientSide="magicrafttg.ClientProxy", 

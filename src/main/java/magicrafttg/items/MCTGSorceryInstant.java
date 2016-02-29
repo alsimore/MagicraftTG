@@ -1,7 +1,7 @@
 package magicrafttg.items;
 
-import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.mana.ManaColor;
+import magicrafttg.player.MCTGPlayerProperties;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.item.ItemStack;

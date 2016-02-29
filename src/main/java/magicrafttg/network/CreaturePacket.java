@@ -3,8 +3,8 @@ package magicrafttg.network;
 import java.util.UUID;
 
 import io.netty.buffer.ByteBuf;
-import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.network.CreaturePacket.MCTGCreatureMessage;
+import magicrafttg.player.MCTGPlayerProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import magicrafttg.ClientProxy;
-import magicrafttg.entity.MCTGPlayerProperties;
+import magicrafttg.player.MCTGPlayerProperties;
 
 public class KeyHandler
 {

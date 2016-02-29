@@ -1,7 +1,7 @@
 package magicrafttg.spell;
 
-import magicrafttg.entity.MCTGPlayerProperties;
 import magicrafttg.mana.ManaColor;
+import magicrafttg.player.MCTGPlayerProperties;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -22,6 +22,7 @@ public class BasicLand extends Card
 	@Override
 	protected boolean cast(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) 
 	{
+		System.out.println("BasicLand.cast");
 		// Haven't used the spell effect as basic lands are simple.
 		MCTGPlayerProperties prop = MCTGPlayerProperties.get(playerIn);
 		prop.addSource(this.color);

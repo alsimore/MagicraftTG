@@ -7,6 +7,7 @@ import com.google.common.base.Predicate;
 import magicrafttg.MagicraftTG;
 import magicrafttg.entity.ai.EntityMCTGAIAttackEnemy;
 import magicrafttg.entity.ai.EntityMCTGAIFollowController;
+import magicrafttg.player.MCTGPlayerProperties;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
