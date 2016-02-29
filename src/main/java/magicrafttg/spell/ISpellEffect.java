@@ -39,4 +39,12 @@ public interface ISpellEffect
 	 * @param caster
 	 */
 	public void onTrigger(World world, Entity target, EntityPlayer caster);
+	
+	/**
+	 * Called when the spell is cast. Should return true if the spell has a one-time effect
+	 * (e.g. summoning a creature or casting a fireball). If it returns true then onAdd is called and 
+	 * the SpellEffect is not added to the target.
+	 * @return
+	 */
+	public boolean isOneTime();
 }

@@ -15,14 +15,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 
 @SideOnly(Side.CLIENT)
-public class RenderMCTGDireWolf extends RenderLiving {
+public class RenderMCTGDireWolf extends RenderMCTGBase {
 	
 	private static final String modid = MagicraftTG.MODID;
 	private static final ResourceLocation direWolfTextures = new ResourceLocation(modid + ":textures/entity/dire-wolf.png");
-	private static final RenderManager manager = Minecraft.getMinecraft().getRenderManager();
+	//private static final RenderManager manager = Minecraft.getMinecraft().getRenderManager();
 
 	public RenderMCTGDireWolf(ModelBase model, float shadowise) {
-		super(manager, model, shadowise);
+		super(model, shadowise);
 		// TODO Auto-generated constructor stub
 	}
 	

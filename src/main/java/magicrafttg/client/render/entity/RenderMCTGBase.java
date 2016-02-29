@@ -1,5 +1,6 @@
 package magicrafttg.client.render.entity;
 
+import java.util.List;
 import java.util.UUID;
 
 import magicrafttg.MagicraftTG;
@@ -19,6 +20,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -49,7 +51,11 @@ public class RenderMCTGBase extends RenderLiving {
         Minecraft mc = Minecraft.getMinecraft();
         World worldIn = mc.theWorld;
         EntityPlayer playerIn = mc.thePlayer;
-        Entity target = MCTGTargetedSpell.getMouseOverExtended(worldIn, playerIn, 6.0f).entityHit;
+        //Entity target = MCTGTargetedSpell.getMouseOverExtended(worldIn, playerIn, 6.0f).entityHit;
+        Entity target = Minecraft.getMinecraft().objectMouseOver.entityHit;
+        //Entity target = this.getMouseOverExtended(worldIn, playerIn, 6.0f).entityHit;
+        //System.out.println("mouseover " + target);
+        //System.out.println("render entity " + entity);
         if(entity instanceof EntityMCTGBase && entity.equals(target))
         {
         	int colour = 0;
@@ -144,5 +150,95 @@ public class RenderMCTGBase extends RenderLiving {
     }
     
     
-    
+ // Copied from Jabelar's Minecraft Forge Tutorials
+ 	// http://jabelarminecraft.blogspot.com.au/p/minecraft-modding-extending-reach-of.html
+ 	public static MovingObjectPosition getMouseOverExtended(World worldIn, EntityPlayer playerIn, float dist)
+ 	{
+ 	    //Minecraft mc = FMLClientHandler.instance().getClient();
+ 	    //Entity theRenderViewEntity = mc.getRenderViewEntity();
+ 		Entity theRenderViewEntity = playerIn;
+ 	    AxisAlignedBB theViewBoundingBox = new AxisAlignedBB(
+ 	            theRenderViewEntity.posX-0.5D,
+ 	            theRenderViewEntity.posY-0.0D,
+ 	            theRenderViewEntity.posZ-0.5D,
+ 	            theRenderViewEntity.posX+0.5D,
+ 	            theRenderViewEntity.posY+1.5D,
+ 	            theRenderViewEntity.posZ+0.5D
+ 	            );
+ 	    MovingObjectPosition returnMOP = null;
+ 	    //if (mc.theWorld != null)
+ 	    if (worldIn != null)
+ 	    {
+ 	        double var2 = dist;
+ 	        returnMOP = playerIn.rayTrace(var2, 0);
+ 	        // returnMOP = theRenderViewEntity.rayTrace(var2, 0);
+ 	        double calcdist = var2;
+ 	        //Vec3 pos = theRenderViewEntity.getPositionEyes(0);
+ 	        Vec3 pos = playerIn.getPositionEyes(0);
+ 	        var2 = calcdist;
+ 	        if (returnMOP != null)
+ 	        {
+ 	            calcdist = returnMOP.hitVec.distanceTo(pos);
+ 	        }
+ 	         
+ 	        Vec3 lookvec = theRenderViewEntity.getLook(0);
+ 	        Vec3 var8 = pos.addVector(lookvec.xCoord * var2, 
+ 	              lookvec.yCoord * var2, 
+ 	              lookvec.zCoord * var2);
+ 	        Entity pointedEntity = null;
+ 	        float var9 = 1.0F;
+ 	        @SuppressWarnings("unchecked")
+ 	        //List<Entity> list = mc.theWorld.getEntitiesWithinAABBExcludingEntity(
+ 	        List<Entity> list = worldIn.getEntitiesWithinAABBExcludingEntity(
+ 	              theRenderViewEntity, 
+ 	              theViewBoundingBox.addCoord(
+ 	                    lookvec.xCoord * var2, 
+ 	                    lookvec.yCoord * var2, 
+ 	                    lookvec.zCoord * var2).expand(var9, var9, var9));
+ 	        double d = calcdist;
+ 	        //System.out.println("List size " + list.size());
+ 	            
+ 	        for (Entity entity : list)
+ 	        {
+ 	            if (entity.canBeCollidedWith())
+ 	            {
+ 	                float bordersize = entity.getCollisionBorderSize();
+ 	                AxisAlignedBB aabb = new AxisAlignedBB(
+ 	                      entity.posX-entity.width/2, 
+ 	                      entity.posY, 
+ 	                      entity.posZ-entity.width/2, 
+ 	                      entity.posX+entity.width/2, 
+ 	                      entity.posY+entity.height, 
+ 	                      entity.posZ+entity.width/2);
+ 	                aabb.expand(bordersize, bordersize, bordersize);
+ 	                MovingObjectPosition mop0 = aabb.calculateIntercept(pos, var8);
+ 	                    
+ 	                if (aabb.isVecInside(pos))
+ 	                {
+ 	                    if (0.0D < d || d == 0.0D)
+ 	                    {
+ 	                        pointedEntity = entity;
+ 	                        d = 0.0D;
+ 	                    }
+ 	                } else if (mop0 != null)
+ 	                {
+ 	                    double d1 = pos.distanceTo(mop0.hitVec);
+ 	                        
+ 	                    if (d1 < d || d == 0.0D)
+ 	                    {
+ 	                        pointedEntity = entity;
+ 	                        d = d1;
+ 	                    }
+ 	                }
+ 	            }
+ 	        }
+ 	           
+ 	        if (pointedEntity != null && (d < calcdist || returnMOP == null))
+ 	        {
+ 	             returnMOP = new MovingObjectPosition(pointedEntity);
+ 	        }
+ 	    }
+ 	    return returnMOP;
+ 	}
+ 	
 }

@@ -70,17 +70,20 @@ public class CreaturePacket implements IMessageHandler<MCTGCreatureMessage, IMes
 		else if(msg.type == PacketHandler.ADD_CREATURE_INT)
 		{
 			// update player data
-			//System.out.println("Client add " + msg.index);
+			System.out.println("CreaturePacket.clientMessageReceived(ADD_INT)");
 			//System.out.println("Add creature for " + mc.thePlayer + "\n" + mc.thePlayer.getUniqueID());
-			MCTGPlayerProperties player = MCTGPlayerProperties.get(mc.thePlayer);
-			player.addCreatureById(msg.index);
+			//MCTGPlayerProperties player = MCTGPlayerProperties.get(mc.thePlayer);
+			//player.addCreatureById(msg.index);
+			MCTGNetworkManager.receiveFromServerAddedCreature(msg.index);
 		}
 		else if(msg.type == PacketHandler.REMOVE_CREATURE_INT)
 		{
 			//System.out.println("Remove creature received: " + msg.id);
 			//System.out.println("or " + msg.index);
-			MCTGPlayerProperties player = MCTGPlayerProperties.get(mc.thePlayer);
-			player.removeCreatureById(msg.index);
+			System.out.println("CreaturePacket.clientMessageReceived(REMOVE_INT)");
+			//MCTGPlayerProperties player = MCTGPlayerProperties.get(mc.thePlayer);
+			//player.removeCreatureById(msg.index);
+			MCTGNetworkManager.receiveFromServerRemovedCreature(msg.index);
 		}
 	}
 	

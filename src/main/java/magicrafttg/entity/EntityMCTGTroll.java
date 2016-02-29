@@ -44,6 +44,9 @@ public class EntityMCTGTroll extends EntityMCTGBase implements IMCTGEntity {
 	{
 		super.applyEntityAttributes();
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.25D);
+		
+		this.setCustomNameTag("Troll");
+		this.setSize(1.5F, 2.5F);
 	}
 	
 	

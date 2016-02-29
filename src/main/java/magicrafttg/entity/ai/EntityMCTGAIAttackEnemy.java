@@ -148,7 +148,7 @@ public class EntityMCTGAIAttackEnemy extends EntityAINearestAttackableTarget {
 			
 			UUID target = potentialTarget.getUniqueID();
 			UUID thisController = ((IMCTGEntity)this.taskOwner).getControllerUUID();
-			System.out.println("Target: " + target + " Controller: " + thisController);
+			//System.out.println("Target: " + target + " Controller: " + thisController);
 	        return thisController == null || !thisController.equals(target);
 		}
 		return false;

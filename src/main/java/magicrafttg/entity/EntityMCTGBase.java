@@ -1,5 +1,7 @@
 package magicrafttg.entity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import com.google.common.base.Predicate;
@@ -8,6 +10,7 @@ import magicrafttg.MagicraftTG;
 import magicrafttg.entity.ai.EntityMCTGAIAttackEnemy;
 import magicrafttg.entity.ai.EntityMCTGAIFollowController;
 import magicrafttg.player.MCTGPlayerProperties;
+import magicrafttg.spell.ISpellEffect;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
@@ -41,6 +44,10 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 	private int ownerId;
 	private int controllerId;
 	
+	/**
+	 *  A list of SpellEffects currently applying to the entity.
+	 */
+	private List<ISpellEffect> effects; 
 	
 	// AI for avoiding Creeper, from EntityMob
 	protected final EntityAIBase avoidCreeper = new EntityAIAvoidEntity(this, new Predicate()
@@ -77,6 +84,8 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 		this.power = power;
 		this.toughness = toughness;
 		this.experienceValue = 0;
+		
+		this.effects = new ArrayList<ISpellEffect>();
 		
 		//this.applyEntityAttributes();
 		
@@ -136,6 +145,7 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 	@Override
 	public void onDeath(DamageSource cause)
     {
+		System.out.println("EntityMCTGBase.onDeath");
 		super.onDeath(cause);
 		
 		// Remove the creature from the cotroller's controlledCreatures list.
@@ -143,8 +153,8 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 		if(controllingPlayer instanceof EntityPlayer)
 		{
 			MCTGPlayerProperties mctg = MCTGPlayerProperties.get((EntityPlayer)controllingPlayer);
-			System.out.println("[MCTG] Creature died: " + this.toString());
-			System.out.println("[MCTG] Suffered " + cause.toString());
+			//System.out.println("[MCTG] Creature died: " + this.toString());
+			//System.out.println("[MCTG] Suffered " + cause.toString());
 			mctg.removeControlledCreature(this);
 		}
 		else if (controllingPlayer != null)
@@ -294,5 +304,16 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 		// Reset the current attack target
 		EntityAITaskEntry entry = (EntityAITaskEntry) this.targetTasks.taskEntries.get(0);
 		entry.action.resetTask();
+	}
+
+	/**
+	 * Add an ongoing SpellEffect to the Entity. Foe example, something like an enchantment.
+	 * @param world
+	 * @param target
+	 * @param caster
+	 */
+	public void addSpellEffect(ISpellEffect effect, World world, Entity target, EntityPlayer caster) 
+	{
+		this.effects.add(effect);
 	}
 }

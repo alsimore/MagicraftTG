@@ -4,6 +4,7 @@ import magicrafttg.mana.ManaColor;
 import magicrafttg.player.MCTGPlayerProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -16,14 +17,17 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
  */
 public class MCTGNetworkManager 
 {
-
+	//-------------------------------------------------------------------------------
+	// Mana methods
+	//-------------------------------------------------------------------------------
 	/**
 	 * Send the updated mana amounts to the client instance of EntityPlayer.
 	 * I thought of making it @SideOnly(Side.SERVER) but this caused a
 	 * NoSuchMethodException even though it seems to run on the server-side code.
 	 * @param player
 	 */
-	public static void updateManaToClient(EntityPlayer player, int[] manaAmounts) {
+	public static void updateManaToClient(EntityPlayer player, int[] manaAmounts) 
+	{
 		
 		IMessage msg = new ManaPacket.MCTGManaMessage(PacketHandler.MANA_UPDATE, 
 						manaAmounts[ManaColor.WHITE.ordinal()], 
@@ -108,5 +112,55 @@ public class MCTGNetworkManager
 		System.out.println("MCTGNetworkManager.receiveFromServerCurrentMana");
 		MCTGPlayerProperties prop = MCTGPlayerProperties.get(Minecraft.getMinecraft().thePlayer);
 		prop.setCurrentMana(manaAmounts);
+	}
+	
+	
+	//-------------------------------------------------------------------------------
+	// Creature methods
+	//-------------------------------------------------------------------------------
+	/**
+	 * Send information about a newly controlled creature to the client instance of EntityPlayer.
+	 * @param player
+	 * @param creature
+	 */
+	public static void sendToClientAddedCreature(EntityPlayer player, Entity creature)
+	{
+		System.out.println("MCTGNetworkManager.sendToClientAddedCreature");
+		IMessage msg = new CreaturePacket.MCTGCreatureMessage(PacketHandler.ADD_CREATURE_INT, creature.getEntityId());
+		PacketHandler.net.sendTo(msg, (EntityPlayerMP) player);
+	}
+
+	/**
+	 * Receive information from the server about a newly controlled creature.
+	 * @param id
+	 */
+	public static void receiveFromServerAddedCreature(int id) 
+	{
+		System.out.println("MCTGNetworkManager.receiveFromServerAddedCreature");
+		MCTGPlayerProperties prop = MCTGPlayerProperties.get(Minecraft.getMinecraft().thePlayer);
+		prop.addCreatureById(id);
+	}
+
+	/**
+	 * Send information to the client instance of EntityPlayer about a creature that is no longer controlled.
+	 * @param player
+	 * @param creature
+	 */
+	public static void sendToClientRemovedCreature(EntityPlayer player, Entity creature) 
+	{
+		System.out.println("MCTGNetworkManager.sendToClientRemovedCreature");
+		IMessage msg = new CreaturePacket.MCTGCreatureMessage(PacketHandler.REMOVE_CREATURE_INT, creature.getEntityId());
+		PacketHandler.net.sendTo(msg, (EntityPlayerMP) player);
+	}
+
+	/**
+	 * Receive information from the server a creature to be removed from the client instance
+	 * of controlledCreatures.
+	 * @param id
+	 */
+	public static void receiveFromServerRemovedCreature(int id) {
+		System.out.println("MCTGNetworkManager.receiveFromServerRemovedCreature");
+		MCTGPlayerProperties prop = MCTGPlayerProperties.get(Minecraft.getMinecraft().thePlayer);
+		prop.removeCreatureById(id);
 	}
 }

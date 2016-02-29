@@ -449,6 +449,12 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	}
 	
 	
+	
+	
+	
+	
+	
+	
 	public void addCreatureByUUID(UUID id)
 	{
 		//Entity creature = MinecraftServer.getServer().getEntityFromUuid(id);
@@ -465,20 +471,8 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		//}
 	}
 	
-	public void addCreatureById(int id)
-	{
-		Entity creature = findByIdClient(id);
-		//System.out.println("addclient " + ((EntityMCTGBase)creature).getOwnerUUID());
-		//System.out.println(((EntityMCTGBase)creature).getControllerUUID());
-		//System.out.println("add client " + creature.getDataWatcher().getWatchableObjectString(20));
-		//System.out.println(creature.getDataWatcher().getWatchableObjectString(21));
-		//System.out.println("[MCTG] Add creature " + id + "(" + System.identityHashCode(creature) + ")");
-		//System.out.println("Add creature for " + this.player.get() + "\n" + this.player.get().getUniqueID());
-		controlledCreatures.add(new WeakReference<Entity>(creature));
-	}
-	
 	/**
-	 * Find an entity on the client side as MinecraftServer.getEntityFromUuid(UUID) doesn't 
+	 * Find an Entity on the client side as MinecraftServer.getEntityFromUuid(UUID) doesn't 
 	 * seem to work on the client side.
 	 * @param id
 	 * @return
@@ -507,6 +501,54 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	}
 	
 	
+	
+	
+	
+	
+	
+	/**
+	 * Add a creature to controlledCreatures by global ID. Performed on the client side.
+	 * @param id
+	 */
+	public void addCreatureById(int id)
+	{
+		System.out.println("MCTGPlayerProperties.addCreatureById");
+		Entity creature = findByIdClient(id);
+		//System.out.println("addclient " + ((EntityMCTGBase)creature).getOwnerUUID());
+		//System.out.println(((EntityMCTGBase)creature).getControllerUUID());
+		//System.out.println("add client " + creature.getDataWatcher().getWatchableObjectString(20));
+		//System.out.println(creature.getDataWatcher().getWatchableObjectString(21));
+		//System.out.println("[MCTG] Add creature " + id + "(" + System.identityHashCode(creature) + ")");
+		//System.out.println("Add creature for " + this.player.get() + "\n" + this.player.get().getUniqueID());
+		controlledCreatures.add(new WeakReference<Entity>(creature));
+	}
+	
+	/**
+	 * Remove a creature from controlledCreatures by global ID. Performed on the client side.
+	 * @param id
+	 */
+	public void removeCreatureById(int id)
+	{
+		System.out.println("MCTGPlayerProperties.removeCeatureById");
+		Entity creature = findByIdClient(id);
+		
+		for (Iterator<WeakReference<Entity>> iterator = controlledCreatures.iterator();
+		         iterator.hasNext(); )
+	    {
+	        WeakReference<Entity> weakRef = iterator.next();
+	        if (weakRef.get() == creature)
+	        {
+	            iterator.remove();
+	            //System.out.println("Removed creature " + id);
+	        }
+	    }
+	}
+	
+	/**
+	 * Find an Entity on the client side through the loadedEntityList.
+	 * @param id
+	 * @return
+	 */
 	Entity findByIdClient(int id)
 	{
 		List entities = Minecraft.getMinecraft().theWorld.getLoadedEntityList();
@@ -517,10 +559,10 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 			int entId = ((Entity) e).getEntityId(); 
 			
 			//if(e instanceof EntityMCTGDireWolf)
-			if(e instanceof EntityMCTGZombie)
-			{
+			//if(e instanceof EntityMCTGZombie)
+			//{
 				//System.out.println(entId);
-			}
+			//}
 			
 			if(id == entId)
 			{
@@ -530,6 +572,15 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		
 		return null;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public void removeCreatureByUUID(UUID id)
 	{
@@ -547,21 +598,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	    }
 	}
 	
-	public void removeCreatureById(int id)
-	{
-		Entity creature = findByIdClient(id);
-		
-		for (Iterator<WeakReference<Entity>> iterator = controlledCreatures.iterator();
-		         iterator.hasNext(); )
-	    {
-	        WeakReference<Entity> weakRef = iterator.next();
-	        if (weakRef.get() == creature)
-	        {
-	            iterator.remove();
-	            //System.out.println("Removed creature " + id);
-	        }
-	    }
-	}
+	
 	
 	public void updateCreatureToClient(char type, UUID creatureId)
 	{
@@ -587,6 +624,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	
 	public void addControlledCreature(Entity creature)
 	{
+		System.out.println("MCTGPlayerProperties.addControlledCreature");
 		// Only called from the server thread
 		controlledCreatures.add(new WeakReference<Entity>(creature));
 		//System.out.println("[MCTG] Added - Controlled: " + controlledCreatures.size());
@@ -600,13 +638,14 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		//System.out.println(((EntityMCTGBase)creature).getControllerUUID());
 		//System.out.println("add " + creature.getDataWatcher().getWatchableObjectString(20));
 		//System.out.println(creature.getDataWatcher().getWatchableObjectString(21));
-		updateCreatureToClient(PacketHandler.ADD_CREATURE_INT, creature.getEntityId());
+		//updateCreatureToClient(PacketHandler.ADD_CREATURE_INT, creature.getEntityId());
+		MCTGNetworkManager.sendToClientAddedCreature(this.player.get(), creature);
 	}
 	
 	public void removeControlledCreature(Entity creature)
 	{
 		// Only called from the server thread
-		
+		System.out.println("MCTGPlayerProperties.removeControlledCreature");
 		// From Stack Overflow: 
 		// http://stackoverflow.com/questions/6296051/how-to-remove-a-weakreference-from-a-list
 		for (Iterator<WeakReference<Entity>> iterator = controlledCreatures.iterator();
@@ -628,7 +667,8 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		
 		//System.out.println("[MCTG] Removed - Controlled: " + controlledCreatures.size());
 		//updateCreatureToClient(MCTGPacketHandler.REMOVE_CREATURE, creature.getUniqueID());
-		updateCreatureToClient(PacketHandler.REMOVE_CREATURE_INT, creature.getEntityId());
+		//updateCreatureToClient(PacketHandler.REMOVE_CREATURE_INT, creature.getEntityId());
+		MCTGNetworkManager.sendToClientRemovedCreature(this.player.get(), creature);
 	}
 	
 	/**

@@ -35,7 +35,7 @@ public class SummonEffect implements ISpellEffect
 	@Override
 	public void onAdd(World world, Entity target, EntityPlayer caster) 
 	{
-		System.out.println("Summoning");
+		System.out.println("SummonEffect.onAdd");
 		if(world.isRemote == false) { // If we are on the server side
 			
 			// Get the summoned class' constructor and create a new instance
@@ -118,11 +118,11 @@ public class SummonEffect implements ISpellEffect
 				}
 				
 				
-				System.out.println("[MCTG] " + newEntity.toString());
+				/*System.out.println("[MCTG] " + newEntity.toString());
 				System.out.println("[MCTG] " + newEntity.getUniqueID() + "(" + System.identityHashCode(newEntity) + ")");
 				System.out.println("[MCTG] Damage: " + ((EntityLivingBase)newEntity).getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue());
 				System.out.println("[MCTG] Health: " + ((EntityLivingBase)newEntity).getHealth());
-				System.out.println("[MCTG] Summoned by: " + caster.getUniqueID().toString() + "\n");
+				System.out.println("[MCTG] Summoned by: " + caster.getUniqueID().toString() + "\n");*/
 				
 				if(world.spawnEntityInWorld(newEntity))
 				{
@@ -182,6 +182,13 @@ public class SummonEffect implements ISpellEffect
 			pos = pos.add(0, -1, 0);
 		}
 		return y;*/
+	}
+
+
+	@Override
+	public boolean isOneTime() 
+	{
+		return true;
 	}
 
 }

@@ -24,6 +24,9 @@ public class EntityMCTGDireWolf extends EntityMCTGBase {
 	public void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
+		
+		this.setCustomNameTag("Dire Wolf");
+		this.setSize(1.0F, 1.0F);
 	}
 	
 }
