@@ -1,9 +1,13 @@
 package magicrafttg.client.render.hud;
 
+import magicrafttg.MagicraftTG;
+import magicrafttg.entity.EntityMCTGBase;
 import magicrafttg.mana.ManaColor;
 import magicrafttg.player.MCTGPlayerProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -25,12 +29,16 @@ public class HUDRenderer {
     	{
     		MCTGPlayerProperties player = MCTGPlayerProperties.get(mc.thePlayer);
     		int[] currentMana = player.getCurrentMana();
+    		int[] sources = player.getGlobalSourceNumbers();
     		mc.fontRendererObj.drawStringWithShadow(getBiomeString(), 1, 200, 0xffffff);
     		String str = String.format(
-    					"White: %2d    Blue: %2d    Black: %2d    Red: %2d    Green: %2d    Colourless: %2d",
-    					currentMana[ManaColor.WHITE.ordinal()], currentMana[ManaColor.BLUE.ordinal()], 
-    					currentMana[ManaColor.BLACK.ordinal()], currentMana[ManaColor.RED.ordinal()], 
-    					currentMana[ManaColor.GREEN.ordinal()], currentMana[ManaColor.COLORLESS.ordinal()]
+    					"White: %d(%d)  Blue: %d(%d)  Black: %d(%d)  Red: %d(%d)  Green: %d(%d)  Colourless: %d(%d)",
+    					currentMana[ManaColor.WHITE.ordinal()], sources[ManaColor.WHITE.ordinal()], 
+    					currentMana[ManaColor.BLUE.ordinal()], sources[ManaColor.BLUE.ordinal()], 
+    					currentMana[ManaColor.BLACK.ordinal()], sources[ManaColor.BLACK.ordinal()], 
+    					currentMana[ManaColor.RED.ordinal()], sources[ManaColor.RED.ordinal()], 
+    					currentMana[ManaColor.GREEN.ordinal()], sources[ManaColor.GREEN.ordinal()], 
+    					currentMana[ManaColor.COLORLESS.ordinal()], sources[ManaColor.COLORLESS.ordinal()]
     				);
     		
     		mc.fontRendererObj.drawStringWithShadow(str, 1, 208, 0xffffff);
@@ -61,10 +69,22 @@ public class HUDRenderer {
     		//System.out.println("Creature " + i + ": " + player.getControlledEntity(i));
     		Entity creature = player.getControlledEntity(i);
     		Entity selected = player.getSelectedCreature();
-    		if(creature.equals(selected))
-    			mc.fontRendererObj.drawStringWithShadow((i+1) + ": " + creature.getName(), 1, startY, 0xff0000);
-    		else
-    			mc.fontRendererObj.drawStringWithShadow((i+1) + ": " + creature.getName(), 1, startY, 0xffffff); 
+    		if (creature instanceof EntityMCTGBase)
+    		{
+    			int power = ((EntityMCTGBase) creature).getPower();
+    			int toughness = ((EntityMCTGBase) creature).getToughness();
+    			
+    			//System.out.println(((EntityMCTGBase)creature).getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue());
+    			String str = (i+1) + ": " + creature.getName() + "  " + 
+    					//((EntityMCTGBase)creature).getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue() +
+    					power + "/" + toughness + " (" + ((EntityLivingBase)creature).getHealth() + ")";
+    			
+    			if(creature.equals(selected))
+        			mc.fontRendererObj.drawStringWithShadow(str, 1, startY, 0xff0000);
+        		else
+        			mc.fontRendererObj.drawStringWithShadow(str, 1, startY, 0xffffff); 
+    		}
+    		
     	}
     }
 }

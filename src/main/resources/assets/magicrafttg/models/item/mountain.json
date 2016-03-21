@@ -1,0 +1,6 @@
+{
+    "parent":"magicrafttg:item/red_spell",
+    "textures": {
+        "layer0":"magicrafttg:items/mountain"
+    }
+}

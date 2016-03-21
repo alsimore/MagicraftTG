@@ -52,11 +52,11 @@ public abstract class Card extends Item
 		if (!worldIn.isRemote) 
 		{
 			boolean result = cast(itemStackIn, worldIn, playerIn);
-			if(!result)
+			/*if(!result)
 			{
 				IChatComponent message = new ChatComponentText("Cast failed");
 				playerIn.addChatMessage(message);
-			}
+			}*/
 		}
 		itemStackIn.stackSize -= 1;
         return itemStackIn;

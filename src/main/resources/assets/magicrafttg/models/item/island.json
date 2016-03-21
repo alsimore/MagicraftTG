@@ -1,0 +1,6 @@
+{
+    "parent":"magicrafttg:item/blue_spell",
+    "textures": {
+        "layer0":"magicrafttg:items/island"
+    }
+}

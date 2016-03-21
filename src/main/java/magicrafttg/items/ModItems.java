@@ -48,6 +48,10 @@ public final class ModItems {
 	public static Item mindControl;
 	
 	public static Item swamp;
+	public static Item plains;
+	public static Item island;
+	public static Item mountain;
+	public static Item forest;
 	
 
 	public static void createItems() {
@@ -103,6 +107,12 @@ public final class ModItems {
 			public void onTrigger(World world, Entity target, EntityPlayer caster) {
 				// Do nothing
 			}
+
+			@Override
+			public boolean isOneTime() {
+				// TODO Auto-generated method stub
+				return false;
+			}
 		};
 		//-------------------------------------------------------------------------------
 		final ISpellEffect fireballEffect = new ISpellEffect() {
@@ -134,6 +144,12 @@ public final class ModItems {
 			@Override
 			public void onTrigger(World world, Entity target, EntityPlayer caster) {
 				// Do nothing
+			}
+
+			@Override
+			public boolean isOneTime() {
+				// TODO Auto-generated method stub
+				return true;
 			}
 		};
 		
@@ -237,7 +253,10 @@ public final class ModItems {
 		
 		
 		GameRegistry.registerItem(swamp = new BasicLand("swamp", ManaColor.BLACK, null), "swamp");
-		
+		GameRegistry.registerItem(plains = new BasicLand("plains", ManaColor.WHITE, null), "plains");
+		GameRegistry.registerItem(island = new BasicLand("island", ManaColor.BLUE, null), "island");
+		GameRegistry.registerItem(mountain = new BasicLand("mountain", ManaColor.RED, null), "mountain");
+		GameRegistry.registerItem(forest = new BasicLand("forest", ManaColor.GREEN, null), "forest");
     }
 	
 	

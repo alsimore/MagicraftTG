@@ -103,7 +103,7 @@ public class SummonEffect implements ISpellEffect
 				
 				
 				newEntity.setPosition(newX, newY, newZ);
-				((EntityLivingBase)newEntity).setHealth(MagicraftTG.HEALTH_PER_TOUGHNESS * this.toughness);
+				/*((EntityLivingBase)newEntity).setHealth(MagicraftTG.HEALTH_PER_TOUGHNESS * this.toughness);
 				
 				((EntityLivingBase)newEntity).getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(MagicraftTG.HEALTH_PER_TOUGHNESS * this.toughness);
 				((EntityLivingBase)newEntity).setHealth(MagicraftTG.HEALTH_PER_TOUGHNESS * this.toughness);
@@ -115,17 +115,18 @@ public class SummonEffect implements ISpellEffect
 				else {
 					((EntityLivingBase)newEntity).getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage);
 					((EntityLivingBase)newEntity).getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(MagicraftTG.DAMAGE_PER_POWER * this.power);
-				}
+				}*/
 				
 				
 				/*System.out.println("[MCTG] " + newEntity.toString());
-				System.out.println("[MCTG] " + newEntity.getUniqueID() + "(" + System.identityHashCode(newEntity) + ")");
+				System.out.println("[MCTG] " + newEntity.getUniqueID() + "(" + System.identityHashCode(newEntity) + ")");*/
 				System.out.println("[MCTG] Damage: " + ((EntityLivingBase)newEntity).getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue());
 				System.out.println("[MCTG] Health: " + ((EntityLivingBase)newEntity).getHealth());
-				System.out.println("[MCTG] Summoned by: " + caster.getUniqueID().toString() + "\n");*/
+				System.out.println("[MCTG] Summoned by: " + caster.getUniqueID().toString() + "\n");
 				
 				if(world.spawnEntityInWorld(newEntity))
 				{
+					System.out.println("Spawning");
 					//mctg.updateManaToClient(caster);
 					mctg.addControlledCreature(newEntity);
 					return;

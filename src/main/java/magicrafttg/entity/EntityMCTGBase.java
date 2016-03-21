@@ -69,6 +69,7 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 	public EntityMCTGBase (World world, EntityPlayer owner, int power, int toughness) 
 	{
 		super(world);
+		System.out.println("Constructor full");
 		if(owner != null)
 		{
 			this.owner = owner.getUniqueID();
@@ -110,25 +111,53 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
         if(this.controller != null)
         	this.getDataWatcher().addObject(21, this.controller.toString()); // controller UUID as string
         */
+        
+        // The objects are added to the dataWatcher in the onEntityConstructing event
+        // id 20 = owner UUID
+        // id 21 = controller UUID
+        // id 22 = owner ID (int)
+        // id 23 = controller ID (int)
+        // id 24 = power
+        // id 25 = toughness
         if(this.owner != null && this.ownerId >= 0)
         {
-        	this.getDataWatcher().updateObject(20, this.owner.toString()); // owner UUID as string
+        	this.getDataWatcher().updateObject(MagicraftTG.DW_OWNER_UUID_INDEX, this.owner.toString()); // owner UUID as string
+        	this.getDataWatcher().updateObject(MagicraftTG.DW_OWNER_INT_ID_INDEX, this.ownerId);
         }
         if(this.controller != null && this.controllerId >= 0)
         {
-        	this.getDataWatcher().updateObject(21, this.controller.toString()); // controller UUID as string
+        	this.getDataWatcher().updateObject(MagicraftTG.DW_CONTROLLER_UUID_INDEX, this.controller.toString()); // controller UUID as string
+        	this.getDataWatcher().updateObject(MagicraftTG.DW_CONTROLLER_INT_ID_INDEX, this.controllerId);
         }
-        	
+        
+        // Add power and toughness to the data watcher
+        if(this.power != 0)
+        {
+        	this.getDataWatcher().updateObject(MagicraftTG.DW_POWER_INDEX, this.power);
+        }
+        if(this.toughness != 0)
+        {
+        	this.getDataWatcher().updateObject(MagicraftTG.DW_TOUGHNESS_INDEX, this.toughness);
+        }	
+        
+        
+        this.getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage);
+		
+		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(MagicraftTG.HEALTH_PER_TOUGHNESS * this.toughness);
+		this.setHealth(MagicraftTG.HEALTH_PER_TOUGHNESS * this.toughness);
+		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(MagicraftTG.DAMAGE_PER_POWER * this.power);
+		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.23000000417232513D);
 	}
 	
 	// All subclasses should include this as well
 	public EntityMCTGBase(World worldIn)
     {
         this(worldIn, null, 0, 0);
+        System.out.println("Constructor world");
     }
 	
 	
-	@Override
+	/*@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
 		
@@ -139,7 +168,7 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(MagicraftTG.DAMAGE_PER_POWER * this.power);
 		
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.23000000417232513D);
-	}
+	}*/
 	
 	
 	@Override
@@ -307,7 +336,7 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 	}
 
 	/**
-	 * Add an ongoing SpellEffect to the Entity. Foe example, something like an enchantment.
+	 * Add an ongoing SpellEffect to the Entity. For example, something like an enchantment.
 	 * @param world
 	 * @param target
 	 * @param caster
@@ -315,5 +344,19 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
 	public void addSpellEffect(ISpellEffect effect, World world, Entity target, EntityPlayer caster) 
 	{
 		this.effects.add(effect);
+		effect.onAdd(world, target, caster);
+	}
+	
+	
+	public int getPower()
+	{
+		this.power = this.getDataWatcher().getWatchableObjectInt(MagicraftTG.DW_POWER_INDEX);
+		return this.power;
+	}
+	
+	public int getToughness()
+	{
+		this.toughness = this.getDataWatcher().getWatchableObjectInt(MagicraftTG.DW_TOUGHNESS_INDEX);
+		return this.toughness;
 	}
 }

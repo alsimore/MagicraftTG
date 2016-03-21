@@ -26,5 +26,9 @@ public class ItemRenderRegister {
 		reg(ModItems.fireball);
 		reg(ModItems.mindControl);
 		reg(ModItems.swamp);
+		reg(ModItems.plains);
+		reg(ModItems.island);
+		reg(ModItems.mountain);
+		reg(ModItems.forest);
     }
 }

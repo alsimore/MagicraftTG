@@ -1,0 +1,6 @@
+{
+    "parent":"magicrafttg:item/green_spell",
+    "textures": {
+        "layer0":"magicrafttg:items/forest"
+    }
+}

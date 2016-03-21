@@ -82,10 +82,12 @@ public class ForgeEventHandler {
 		{
 			// Add datawatcher objects, owner and controller
 			DataWatcher dw = event.entity.getDataWatcher();
-			dw.addObject(20, ""); // owner UUID as string
-			dw.addObject(21, ""); // controller UUID as string
-			dw.addObject(22, -1); // owner entityId as int
-			dw.addObject(23, -1); // controller entityId as int
+			dw.addObject(MagicraftTG.DW_OWNER_UUID_INDEX, ""); // owner UUID as string
+			dw.addObject(MagicraftTG.DW_CONTROLLER_UUID_INDEX, ""); // controller UUID as string
+			dw.addObject(MagicraftTG.DW_OWNER_INT_ID_INDEX, -1); // owner entityId as int
+			dw.addObject(MagicraftTG.DW_CONTROLLER_INT_ID_INDEX, -1); // controller entityId as int
+			dw.addObject(MagicraftTG.DW_POWER_INDEX, 0);  // creature power
+			dw.addObject(MagicraftTG.DW_TOUGHNESS_INDEX, 0);  // creature toughness
 		}
 	}
 	

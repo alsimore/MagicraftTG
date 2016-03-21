@@ -26,6 +26,13 @@ public class MagicraftTG {
     public static final int MANA_TICK_DELAY_INITIAL = 400;
     public static final int MANA_TICK_DELAY_REGULAR = 400;
     
+    public static final int DW_OWNER_UUID_INDEX = 20;
+    public static final int DW_CONTROLLER_UUID_INDEX = 21;
+    public static final int DW_OWNER_INT_ID_INDEX = 22;
+    public static final int DW_CONTROLLER_INT_ID_INDEX = 23;
+    public static final int DW_POWER_INDEX = 24;
+    public static final int DW_TOUGHNESS_INDEX = 25;
+    
     
     @SidedProxy(clientSide="magicrafttg.ClientProxy", 
     		serverSide="magicrafttg.ServerProxy")

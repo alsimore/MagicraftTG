@@ -48,5 +48,11 @@ public class MindControl implements ISpellEffect
 	{
 		// Do nothing
 	}
+
+	@Override
+	public boolean isOneTime() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }

@@ -1,0 +1,6 @@
+{
+    "parent":"magicrafttg:item/white_spell",
+    "textures": {
+        "layer0":"magicrafttg:items/plains"
+    }
+}

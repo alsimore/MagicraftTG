@@ -2,6 +2,7 @@ package magicrafttg.spell;
 
 import java.util.List;
 
+import magicrafttg.MagicraftTG;
 import magicrafttg.mana.ManaColor;
 import magicrafttg.player.MCTGPlayerProperties;
 import magicrafttg.spell.event.SpellEvent;
@@ -9,7 +10,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.StatCollector;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -56,6 +61,14 @@ public class Spell extends Card
 			
 			return true;
 		}
+		
+		//String unlocName = MagicraftTG.MODID + ":" + this.getUnlocalizedName() + ".name";
+		String unlocName = this.getUnlocalizedName().substring(5);
+		String str = String.format(EnumChatFormatting.RED + 
+				"Failed to cast %s: insufficient mana.", StatCollector.translateToLocal(unlocName));
+		IChatComponent msg = new ChatComponentText(str);
+		playerIn.addChatMessage(msg);
+				
 		return false;
 	}
 

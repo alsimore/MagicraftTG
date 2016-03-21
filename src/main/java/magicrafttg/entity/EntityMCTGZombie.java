@@ -1,5 +1,8 @@
 package magicrafttg.entity;
 
+import magicrafttg.player.MCTGPlayerProperties;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
