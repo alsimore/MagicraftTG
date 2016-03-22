@@ -11,6 +11,7 @@ import magicrafttg.entity.EntityMCTGDireWolf;
 import magicrafttg.entity.EntityMCTGSkeleton;
 import magicrafttg.entity.EntityMCTGTroll;
 import magicrafttg.entity.EntityMCTGZombie;
+import magicrafttg.entity.EntityWizard;
 import magicrafttg.entity.ZZEntityMCTGZombie;
 import magicrafttg.mana.ManaColor;
 import magicrafttg.player.MCTGPlayerProperties;
@@ -18,6 +19,7 @@ import magicrafttg.spell.BasicLand;
 import magicrafttg.spell.ISpellEffect;
 import magicrafttg.spell.Spell;
 import magicrafttg.spell.SummonEffect;
+import magicrafttg.spell.spells.MindControl;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -46,6 +48,7 @@ public final class ModItems {
 	public static Item summonZombie2;
 	public static Item manaPicker;
 	public static Item mindControl;
+	public static Item valorInAkros;
 	
 	public static Item swamp;
 	public static Item plains;
@@ -176,7 +179,15 @@ public final class ModItems {
 		
 		
 		
-		
+		GameRegistry.registerItem(summonItem = 
+				new MCTGCreatureSummon(
+						"wizard",
+						new ManaColor[] {ManaColor.BLACK},
+						new int[] {1}, 
+						0, 0, 0,
+						EntityWizard.class),
+				"wizard"
+		);
 		
 		
 		
@@ -257,7 +268,8 @@ public final class ModItems {
 						"mind_control",
 						new ManaColor[] {ManaColor.COLORLESS, ManaColor.BLUE}, 
 						new int[] {3,2},
-						mindControlEffect,
+						//mindControlEffect,
+						new MindControl(),
 						true
 						),
 				"mind_control"

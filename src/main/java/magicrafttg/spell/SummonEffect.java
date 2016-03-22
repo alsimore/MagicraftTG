@@ -56,11 +56,11 @@ public class SummonEffect implements ISpellEffect
 			// Try constructing a new instance
 			try {
 				if(construct != null) {
-					if (this.summoned.getName().contains("MCTG")) {
+					//if (this.summoned.getName().contains("MCTG")) {
 						newEntity = (Entity) construct.newInstance(world, caster, this.power, this.toughness);
-					} else {
-						newEntity = (Entity) construct.newInstance(world);
-					}
+					//} else {
+					//	newEntity = (Entity) construct.newInstance(world);
+					//}
 				}
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block

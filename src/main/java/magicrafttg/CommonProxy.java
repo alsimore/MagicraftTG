@@ -7,6 +7,7 @@ import magicrafttg.entity.EntityMCTGSkeleton;
 import magicrafttg.entity.EntityMCTGSkeletonArmoured;
 import magicrafttg.entity.EntityMCTGTroll;
 import magicrafttg.entity.EntityMCTGZombie;
+import magicrafttg.entity.EntityWizard;
 import magicrafttg.entity.ZZEntityMCTGTroll2;
 import magicrafttg.entity.ZZEntityMCTGZombie;
 import magicrafttg.event.FMLCommonEventHandler;
@@ -46,6 +47,9 @@ public class CommonProxy {
     	EntityRegistry.registerModEntity(EntityMCTGZombie.class, "Zombie", 
     			modEntityID++, MagicraftTG.instance, 80, 3, false);
     	EntityRegistry.registerModEntity(EntityMCTGSkeleton.class, "Skeleton", 
+    			modEntityID++, MagicraftTG.instance, 80, 3, false);
+    	
+    	EntityRegistry.registerModEntity(EntityWizard.class, "Wizard", 
     			modEntityID++, MagicraftTG.instance, 80, 3, false);
     }
 

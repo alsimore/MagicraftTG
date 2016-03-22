@@ -30,7 +30,8 @@ public class HUDRenderer {
     		MCTGPlayerProperties player = MCTGPlayerProperties.get(mc.thePlayer);
     		int[] currentMana = player.getCurrentMana();
     		int[] sources = player.getGlobalSourceNumbers();
-    		mc.fontRendererObj.drawStringWithShadow(getBiomeString(), 1, 200, 0xffffff);
+    		
+    		//mc.fontRendererObj.drawStringWithShadow(getBiomeString(), 1, 200, 0xffffff);
     		String str = String.format(
     					"White: %d(%d)  Blue: %d(%d)  Black: %d(%d)  Red: %d(%d)  Green: %d(%d)  Colourless: %d(%d)",
     					currentMana[ManaColor.WHITE.ordinal()], sources[ManaColor.WHITE.ordinal()], 
@@ -41,9 +42,10 @@ public class HUDRenderer {
     					currentMana[ManaColor.COLORLESS.ordinal()], sources[ManaColor.COLORLESS.ordinal()]
     				);
     		
-    		mc.fontRendererObj.drawStringWithShadow(str, 1, 208, 0xffffff);
+    		mc.fontRendererObj.drawStringWithShadow(str, 1, 12, 0xffffff);
     		
-    		mc.fontRendererObj.drawStringWithShadow(mc.thePlayer.getName(), 1, 1, 0xffffff);
+    		mc.fontRendererObj.drawStringWithShadow(mc.thePlayer.getName() + " - " + getBiomeString(), 
+    				1, 1, 0xffffff);
     		
     		renderControlledCreatures(player);
     	}
@@ -59,7 +61,7 @@ public class HUDRenderer {
     
     private void renderControlledCreatures(MCTGPlayerProperties player)
     {
-    	int startY = 12;
+    	int startY = 24;
     	//System.out.println("Rendering controlled creatures");
     	mc.fontRendererObj.drawStringWithShadow("Controlled: " + player.numControlledCreatures(), 
     			1, startY, 0xffffff);

@@ -24,6 +24,14 @@ public class Spell extends Card
 	protected int[] costAmt;
 	protected ManaColor[] costColor;
 	protected boolean hasTarget;
+	/**
+	 * Type of the spell, e.g. Creature, Instant etc.
+	 */
+	protected int type;
+	/**
+	 * Subtype where required, e.g. creature type (Human, Goblin etc.)
+	 */
+	protected String subtype;
 	
 	/**
 	 * Constructor for generic Spell.

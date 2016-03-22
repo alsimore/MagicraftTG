@@ -17,6 +17,7 @@ import magicrafttg.network.GuiHandler;
 import magicrafttg.network.MCTGNetworkManager;
 import magicrafttg.network.ManaPacket;
 import magicrafttg.network.PacketHandler;
+import magicrafttg.spell.ISpellEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
@@ -61,7 +62,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	/**
 	 * A list of the creatures that this player currently controls.
 	 */
-	private ArrayList<WeakReference<Entity>> controlledCreatures;
+	private List<WeakReference<Entity>> controlledCreatures;
 	
 	/**
 	 * The creature that the player has currently selected. Not necessarily 
@@ -70,6 +71,10 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	private WeakReference<Entity> selectedCreature;
 	private int selectedIndex = -1;
 	
+	/**
+	 * A list of SpellEffects currently applying to the player.
+	 */
+	private List<ISpellEffect> effects;
 	public int manaGuiCountdown;
 	
 	
@@ -87,6 +92,8 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		//System.out.println(manaSources.length);
 
 		controlledCreatures = new ArrayList<WeakReference<Entity>>();
+		
+		effects = new ArrayList<ISpellEffect>();
 		
 		manaGuiCountdown = GuiHandler.MANA_GUI_COUNTDOWN;
 	}

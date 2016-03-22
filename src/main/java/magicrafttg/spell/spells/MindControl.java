@@ -57,8 +57,8 @@ public class MindControl implements ISpellEffect
 	}
 
 	@Override
-	public boolean isOneTime() {
-		// TODO Auto-generated method stub
+	public boolean isOneTime() 
+	{
 		return false;
 	}
 

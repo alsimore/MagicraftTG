@@ -8,18 +8,21 @@ import magicrafttg.client.model.ModelMCTGDireWolf;
 import magicrafttg.client.model.ModelMCTGSkeleton;
 import magicrafttg.client.model.ModelMCTGTroll;
 import magicrafttg.client.model.ModelMCTGZombie;
+import magicrafttg.client.model.ModelWizard;
 import magicrafttg.client.render.blocks.BlockRenderRegister;
 import magicrafttg.client.render.entity.EntityRenderRegister;
 import magicrafttg.client.render.entity.RenderMCTGDireWolf;
 import magicrafttg.client.render.entity.RenderMCTGSkeleton;
 import magicrafttg.client.render.entity.RenderMCTGTroll;
 import magicrafttg.client.render.entity.RenderMCTGZombie;
+import magicrafttg.client.render.entity.RenderWizard;
 import magicrafttg.client.render.hud.HUDRenderer;
 import magicrafttg.client.render.items.ItemRenderRegister;
 import magicrafttg.entity.EntityMCTGDireWolf;
 import magicrafttg.entity.EntityMCTGSkeleton;
 import magicrafttg.entity.EntityMCTGTroll;
 import magicrafttg.entity.EntityMCTGZombie;
+import magicrafttg.entity.EntityWizard;
 import magicrafttg.event.FMLCommonClientHandler;
 import magicrafttg.event.FMLCommonEventHandler;
 import magicrafttg.event.ForgeEventHandler;
@@ -80,6 +83,9 @@ public class ClientProxy extends CommonProxy {
       	      new RenderMCTGZombie(new ModelMCTGZombie(), 0.5F));
         RenderingRegistry.registerEntityRenderingHandler(EntityMCTGSkeleton.class, 
         	      new RenderMCTGSkeleton(new ModelMCTGSkeleton(), 0.5F));
+        
+        RenderingRegistry.registerEntityRenderingHandler(EntityWizard.class, 
+      	      new RenderWizard(new ModelWizard(), 0.5F));
         
         
         // Register key bindings
