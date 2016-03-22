@@ -95,6 +95,9 @@ public final class ModItems {
 					((EntityMCTGBase)target).setControllerEntity(caster);
 					System.out.println("After cast " + ((EntityMCTGBase)target).getControllerUUID());
 					((EntityMCTGBase)target).updateDataWatcher();
+					
+					MCTGPlayerProperties props = MCTGPlayerProperties.get(caster);
+					props.addControlledCreature(target);
 				}
 			}
 

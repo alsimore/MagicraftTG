@@ -632,7 +632,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		//System.out.println("[MCTG] " + creature.toString());
 		//System.out.println("[MCTG] " + creature.getUniqueID() + "(" + System.identityHashCode(creature) + ")\n");
 		
-		Entity test = MinecraftServer.getServer().getEntityFromUuid(creature.getUniqueID());
+		//Entity test = MinecraftServer.getServer().getEntityFromUuid(creature.getUniqueID());
 		//System.out.println("Before send client: " + creature.getUniqueID() + " returns");
 		//System.out.println(test);
 		//System.out.println("add " + ((EntityMCTGBase)creature).getOwnerUUID());

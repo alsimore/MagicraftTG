@@ -262,15 +262,24 @@ public class EntityMCTGBase extends EntityCreature implements IMCTGEntity{
     	// Cannot be leashed
     }
     
-    
+    /**
+     * Update the DataWatcher with the data stored on the server-side instance.
+     */
     public void updateDataWatcher()
     {
-    	//System.out.println("Update DW");
     	DataWatcher dw = this.getDataWatcher();
+    	
     	String uuidStr = this.owner == null ? "" : this.owner.toString();
-    	dw.updateObject(20, uuidStr);
+    	dw.updateObject(MagicraftTG.DW_OWNER_UUID_INDEX, uuidStr);
+    	
     	uuidStr = this.controller == null ? "" : this.controller.toString();
-    	dw.updateObject(21, uuidStr);
+    	dw.updateObject(MagicraftTG.DW_CONTROLLER_UUID_INDEX, uuidStr);
+    	
+    	dw.updateObject(MagicraftTG.DW_OWNER_INT_ID_INDEX, this.ownerId);
+    	dw.updateObject(MagicraftTG.DW_CONTROLLER_INT_ID_INDEX, this.controllerId);
+    	
+    	dw.updateObject(MagicraftTG.DW_POWER_INDEX, this.power);
+    	dw.updateObject(MagicraftTG.DW_TOUGHNESS_INDEX, this.toughness);
     }
     
     
