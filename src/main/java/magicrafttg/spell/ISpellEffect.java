@@ -47,4 +47,14 @@ public interface ISpellEffect
 	 * @return
 	 */
 	public boolean isOneTime();
+	
+	/**
+	 * Called when the spell is cast (before being posted to the event bus and before mana is consumed).
+	 * Returns true if the targeted Entity is a valid target (e.g. an enchantment that targets creatures
+	 * will return false if the target is a player). Instant effects (like fireball) and creature summons 
+	 * should always return true.
+	 * @param target
+	 * @return
+	 */
+	public boolean isValidTarget(Entity target);
 }

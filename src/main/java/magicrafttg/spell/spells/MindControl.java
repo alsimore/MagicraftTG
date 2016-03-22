@@ -1,10 +1,12 @@
 package magicrafttg.spell.spells;
 
 import magicrafttg.entity.EntityMCTGBase;
+import magicrafttg.player.MCTGPlayerProperties;
 import magicrafttg.spell.ISpellEffect;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 
 public class MindControl implements ISpellEffect
@@ -24,16 +26,21 @@ public class MindControl implements ISpellEffect
 			}
 			else
 			{
-				System.out.println("Before cast " + castTarget.getControllerUUID());
-				castTarget.setControllerEntity(caster);
-				System.out.println("After cast " + castTarget.getControllerUUID());
-				castTarget.updateDataWatcher();
+				// Set target's controller to caster
+				System.out.println("Before cast " + ((EntityMCTGBase)target).getControllerUUID());
+				((EntityMCTGBase)target).setControllerEntity(caster);
+				System.out.println("After cast " + ((EntityMCTGBase)target).getControllerUUID());
+				((EntityMCTGBase)target).updateDataWatcher();
+				
+				MCTGPlayerProperties props = MCTGPlayerProperties.get(caster);
+				props.addControlledCreature(target);
 			}
 			
 		}
 		catch(ClassCastException e)
 		{
-			caster.addChatComponentMessage(new ChatComponentText("Not a valid spell target"));
+			caster.addChatComponentMessage(new ChatComponentText(EnumChatFormatting.RED + 
+					target.getName() + " is not a valid spell target"));
 		}
 	}
 
@@ -53,6 +60,12 @@ public class MindControl implements ISpellEffect
 	public boolean isOneTime() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public boolean isValidTarget(Entity target) 
+	{
+		return target instanceof EntityMCTGBase;
 	}
 	
 }

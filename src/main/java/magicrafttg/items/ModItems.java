@@ -116,6 +116,12 @@ public final class ModItems {
 				// TODO Auto-generated method stub
 				return false;
 			}
+			
+			@Override
+			public boolean isValidTarget(Entity target) 
+			{
+				return target instanceof EntityMCTGBase;
+			}
 		};
 		//-------------------------------------------------------------------------------
 		final ISpellEffect fireballEffect = new ISpellEffect() {
@@ -152,6 +158,12 @@ public final class ModItems {
 			@Override
 			public boolean isOneTime() {
 				// TODO Auto-generated method stub
+				return true;
+			}
+			
+			@Override
+			public boolean isValidTarget(Entity target) 
+			{
 				return true;
 			}
 		};

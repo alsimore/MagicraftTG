@@ -192,4 +192,11 @@ public class SummonEffect implements ISpellEffect
 		return true;
 	}
 
+
+	@Override
+	public boolean isValidTarget(Entity target) 
+	{
+		return true;
+	}
+
 }

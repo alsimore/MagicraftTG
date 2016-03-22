@@ -50,26 +50,62 @@ public class Spell extends Card
 		System.out.println("Spell.cast");
 		MCTGPlayerProperties mctg = MCTGPlayerProperties.get(playerIn);
 		
+		String unlocName = this.getUnlocalizedName().substring(5);
+		String str = "";
+		boolean result = false;
+		
 		// Does the player have the mana to cast the spell?
-		if(mctg != null && mctg.consumeMana(this.costColor, this.costAmt)) 
+		if(mctg != null) 
 		{
 			//effect.onAdd(worldIn, null, playerIn);
 			Entity target = determineTarget(worldIn, playerIn);
+			System.out.println(target);
 			
-			System.out.println("Posting SpellEvent");
-			MinecraftForge.EVENT_BUS.post( new SpellEvent(this.effect, worldIn, target, playerIn) );
+			if(this.effect.isValidTarget(target))
+			{
+				if (mctg.consumeMana(this.costColor, this.costAmt))
+				{
+					System.out.println("Posting SpellEvent");
+					MinecraftForge.EVENT_BUS.post( new SpellEvent(this.effect, worldIn, target, playerIn) );
+					
+					str = String.format(EnumChatFormatting.GREEN + 
+							"Successfully cast %s", StatCollector.translateToLocal(unlocName));
+										
+					result = true;
+				}
+				else
+				{
+					str = String.format(EnumChatFormatting.RED + 
+							"Failed to cast %s: insufficient mana", StatCollector.translateToLocal(unlocName));
+					
+					result = false;
+				}
+			}
+			else
+			{
+				str = String.format(EnumChatFormatting.RED + 
+						"Failed to cast %s: invalid target", StatCollector.translateToLocal(unlocName));
+				
+				result = false;
+			}
 			
-			return true;
+			 
+			
+		}
+		else
+		{
+			str = String.format(EnumChatFormatting.RED + 
+					"Failed to cast %s: unknown error", StatCollector.translateToLocal(unlocName));
+			
+			result = false;
 		}
 		
-		//String unlocName = MagicraftTG.MODID + ":" + this.getUnlocalizedName() + ".name";
-		String unlocName = this.getUnlocalizedName().substring(5);
-		String str = String.format(EnumChatFormatting.RED + 
-				"Failed to cast %s: insufficient mana.", StatCollector.translateToLocal(unlocName));
+		
+		
 		IChatComponent msg = new ChatComponentText(str);
 		playerIn.addChatMessage(msg);
-				
-		return false;
+		
+		return result;
 	}
 
 	/**
