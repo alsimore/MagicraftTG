@@ -4,10 +4,13 @@ import com.google.common.base.Predicate;
 
 import magicrafttg.entity.ai.EntityMCTGAIAttackEnemy;
 import magicrafttg.entity.ai.EntityMCTGAIFollowController;
+import magicrafttg.entity.ai.EntityMCTGAIWizardAttack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAIArrowAttack;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -17,11 +20,16 @@ import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.pathfinding.PathNavigateGround;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-public class EntityWizard extends EntityCreature
+public class EntityWizard extends EntityCreature implements IRangedAttackMob
 {
+	private EntityMCTGAIWizardAttack aiArrowAttack = new EntityMCTGAIWizardAttack(this, 1.0D, 20, 60, 15.0F);
+	
 	// AI for avoiding Creeper, from EntityMob
 	protected final EntityAIBase avoidCreeper = new EntityAIAvoidEntity(this, new Predicate()
     {
@@ -41,19 +49,21 @@ public class EntityWizard extends EntityCreature
 	{
 		super(worldIn);
 		
-		((PathNavigateGround)this.getNavigator()).func_179688_b(true); // From EntityZombie, hopefully helps
+		//((PathNavigateGround)this.getNavigator()).func_179688_b(true); // From EntityZombie, hopefully helps
 		// Add custom AI tasks
 		this.tasks.addTask(0, new EntityAISwimming(this));
 		this.tasks.addTask(2, this.avoidCreeper); // Avoid creeper
 		// It seems if there's no AttackOnCollide then it won't go after the Entity at all
-		this.tasks.addTask(4, new EntityAIAttackOnCollide(this, EntityLivingBase.class, 1.0D, true));
+		//this.tasks.addTask(4, new EntityAIAttackOnCollide(this, EntityLivingBase.class, 1.0D, true));
+		this.tasks.addTask(4, this.aiArrowAttack);
 		// Add EntityMCTGAIAttackEnemy task
 		//this.targetTasks.addTask(2, new EntityMCTGAIAttackEnemy(this, EntityLivingBase.class, 1, false, true, null));
 		// Watch closest and look tasks 
 		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
         
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+        //this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+        this.targetTasks.addTask(2, new EntityMCTGAIAttackEnemy(this, EntityLivingBase.class, 1, false, true, null));
 	}
 	
 	@Override
@@ -66,4 +76,23 @@ public class EntityWizard extends EntityCreature
         this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(3.0D);
         
     }
+
+	@Override
+	public void attackEntityWithRangedAttack(EntityLivingBase target, float p_82196_2_) 
+	{
+		double d1 = 1.0D;
+        Vec3 look = this.getLook(1.0F);
+        
+		EntityFireball fireball = new EntityLightningBolt(this.worldObj, 
+				this, look.xCoord, look.yCoord, look.zCoord);
+        //fireball.explosionPower = 2;
+        fireball.posX = this.posX + look.xCoord * d1;
+        fireball.posY = this.posY + (double)(this.height / 2.0F) + 0.5D;
+        fireball.posZ = this.posZ + look.zCoord * d1;
+        fireball.accelerationX = look.xCoord;
+        fireball.accelerationY = look.yCoord;
+        fireball.accelerationZ = look.zCoord;
+        
+        this.worldObj.spawnEntityInWorld(fireball);
+	}
 }

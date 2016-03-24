@@ -4,12 +4,14 @@ import java.util.UUID;
 
 import com.google.common.base.Predicate;
 
+import magicrafttg.entity.EntityWizard;
 import magicrafttg.entity.IMCTGEntity;
 import magicrafttg.player.MCTGPlayerProperties;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.scoreboard.Team;
 
 public class EntityMCTGAIAttackEnemy extends EntityAINearestAttackableTarget {
 
@@ -102,6 +104,7 @@ public class EntityMCTGAIAttackEnemy extends EntityAINearestAttackableTarget {
 //    }
 
 	private int countdown = 25;
+	private int targetUnseenTicks;
 	@Override
 	/**
      * A method used to see if an entity is a suitable target through a number of checks. Args : entity,
@@ -151,6 +154,10 @@ public class EntityMCTGAIAttackEnemy extends EntityAINearestAttackableTarget {
 			//System.out.println("Target: " + target + " Controller: " + thisController);
 	        return thisController == null || !thisController.equals(target);
 		}
+		else if (this.taskOwner instanceof EntityWizard && potentialTarget instanceof EntityPlayer)
+		{
+			return true;
+		}
 		return false;
     }
 	
@@ -160,7 +167,65 @@ public class EntityMCTGAIAttackEnemy extends EntityAINearestAttackableTarget {
      */
     public void startExecuting()
     {
+		//System.out.println("Start executing");
         this.taskOwner.setAttackTarget(this.targetEntity);
         super.startExecuting();
     }
+	
+	@Override
+	public boolean continueExecuting()
+    {
+        EntityLivingBase entitylivingbase = this.taskOwner.getAttackTarget();
+        //System.out.println("Continue target " + entitylivingbase);
+        boolean flag1, flag2;
+
+        if (entitylivingbase == null)
+        {
+            return false;
+        }
+        else if (!entitylivingbase.isEntityAlive())
+        {
+        	return false;
+        }
+        else
+        {
+            Team team = this.taskOwner.getTeam();
+            Team team1 = entitylivingbase.getTeam();
+
+            if (team != null && team1 == team)
+            {
+            	return false;
+            }
+            else
+            {
+                double d0 = this.getTargetDistance();
+
+                if (this.taskOwner.getDistanceSqToEntity(entitylivingbase) > d0 * d0)
+                {
+                	return false;
+                }
+                else
+                {
+                    if (this.shouldCheckSight)
+                    {
+                        if (this.taskOwner.getEntitySenses().canSee(entitylivingbase))
+                        {
+                            this.targetUnseenTicks = 0;
+                        }
+                        else if (++this.targetUnseenTicks > 60)
+                        {
+                        	return false;
+                        }
+                    }
+
+                    flag1 = !(entitylivingbase instanceof EntityPlayer);
+                    flag2 = !((EntityPlayer)entitylivingbase).capabilities.disableDamage;
+                }
+            }
+        }
+        //System.out.println("cont flag1 = " + flag1 + "; flag2 = " + flag2);
+        //return flag1 || flag2;
+        return true;
+    }
+	
 }
