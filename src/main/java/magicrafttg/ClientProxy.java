@@ -11,6 +11,7 @@ import magicrafttg.client.model.ModelMCTGZombie;
 import magicrafttg.client.model.ModelWizard;
 import magicrafttg.client.render.blocks.BlockRenderRegister;
 import magicrafttg.client.render.entity.EntityRenderRegister;
+import magicrafttg.client.render.entity.RenderLightningBolt;
 import magicrafttg.client.render.entity.RenderMCTGDireWolf;
 import magicrafttg.client.render.entity.RenderMCTGSkeleton;
 import magicrafttg.client.render.entity.RenderMCTGTroll;
@@ -23,6 +24,7 @@ import magicrafttg.entity.EntityMCTGSkeleton;
 import magicrafttg.entity.EntityMCTGTroll;
 import magicrafttg.entity.EntityMCTGZombie;
 import magicrafttg.entity.EntityWizard;
+import magicrafttg.entity.projectile.EntityLightningBolt;
 import magicrafttg.event.FMLCommonClientHandler;
 import magicrafttg.event.FMLCommonEventHandler;
 import magicrafttg.event.ForgeEventHandler;
@@ -86,6 +88,9 @@ public class ClientProxy extends CommonProxy {
         
         RenderingRegistry.registerEntityRenderingHandler(EntityWizard.class, 
       	      new RenderWizard(new ModelWizard(), 0.5F));
+        
+        RenderingRegistry.registerEntityRenderingHandler(EntityLightningBolt.class, 
+        		new RenderLightningBolt(Minecraft.getMinecraft().getRenderManager(), 1.0f));
         
         
         // Register key bindings

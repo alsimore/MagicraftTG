@@ -5,6 +5,7 @@ import com.google.common.base.Predicate;
 import magicrafttg.entity.ai.EntityMCTGAIAttackEnemy;
 import magicrafttg.entity.ai.EntityMCTGAIFollowController;
 import magicrafttg.entity.ai.EntityMCTGAIWizardAttack;
+import magicrafttg.entity.projectile.EntityLightningBolt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
@@ -77,13 +78,14 @@ public class EntityWizard extends EntityCreature implements IRangedAttackMob
         
     }
 
+
 	@Override
 	public void attackEntityWithRangedAttack(EntityLivingBase target, float p_82196_2_) 
 	{
 		double d1 = 1.0D;
         Vec3 look = this.getLook(1.0F);
         
-		EntityFireball fireball = new EntityLightningBolt(this.worldObj, 
+        EntityLightningBolt fireball = new EntityLightningBolt(this.worldObj, 
 				this, look.xCoord, look.yCoord, look.zCoord);
         //fireball.explosionPower = 2;
         fireball.posX = this.posX + look.xCoord * d1;
