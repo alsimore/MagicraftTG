@@ -17,6 +17,7 @@ import magicrafttg.items.ModItems;
 import magicrafttg.network.GuiHandler;
 import magicrafttg.network.PacketHandler;
 import magicrafttg.spell.event.SpellEventHandler;
+import magicrafttg.world.gen.MyWorldGenerator;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -25,6 +26,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.LanguageRegistry;
 
 public class CommonProxy {
@@ -60,6 +62,7 @@ public class CommonProxy {
     public void init(FMLInitializationEvent e) {
     	PacketHandler.initPackets();
     	NetworkRegistry.INSTANCE.registerGuiHandler(MagicraftTG.instance, new GuiHandler());
+    	GameRegistry.registerWorldGenerator(new MyWorldGenerator(), 0);
     }
 
     public void postInit(FMLPostInitializationEvent e) {

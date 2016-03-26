@@ -90,10 +90,9 @@ public class EntityWizard extends EntityCreature implements IRangedAttackMob
         //fireball.explosionPower = 2;
         /*fireball.posX = this.posX + look.xCoord * d1;
         fireball.posY = this.posY + (double)(this.height / 2.0F) + 0.5D;
-        fireball.posZ = this.posZ + look.zCoord * d1;
-        fireball.accelerationX = look.xCoord;
-        fireball.accelerationY = look.yCoord;
-        fireball.accelerationZ = look.zCoord;*/
+        fireball.posZ = this.posZ + look.zCoord * d1;*/
+        
+        
         
         this.worldObj.spawnEntityInWorld(fireball);
 	}

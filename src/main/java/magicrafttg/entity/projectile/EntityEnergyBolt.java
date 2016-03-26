@@ -21,12 +21,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 
-public class EntityEnergyBolt extends EntitySnowball
+public class EntityEnergyBolt extends EntityThrowable
 {
-   
+
+	private float speed = 2.0f;
+	
 	public EntityEnergyBolt(World worldIn)
     {
-        super(worldIn);WorldGenMinable m;
+        super(worldIn);
         //this.setSize(1.0F, 1.0F);
     }
 
@@ -35,6 +37,12 @@ public class EntityEnergyBolt extends EntitySnowball
     public EntityEnergyBolt(World worldIn, EntityLivingBase throwerIn)
     {
     	super(worldIn, throwerIn);
+    	
+    	// Seems to move in a wrong direction normally, so fix it
+    	Vec3 look = throwerIn.getLookVec();
+    	this.motionX = look.xCoord * speed;
+    	this.motionY = look.yCoord * speed;
+    	this.motionZ = look.zCoord * speed;
     }
     
     public EntityEnergyBolt(World worldIn, double x, double y, double z)
