@@ -10,7 +10,7 @@ import magicrafttg.entity.EntityMCTGZombie;
 import magicrafttg.entity.EntityWizard;
 import magicrafttg.entity.ZZEntityMCTGTroll2;
 import magicrafttg.entity.ZZEntityMCTGZombie;
-import magicrafttg.entity.projectile.EntityLightningBolt;
+import magicrafttg.entity.projectile.EntityEnergyBolt;
 import magicrafttg.event.FMLCommonEventHandler;
 import magicrafttg.event.ForgeEventHandler;
 import magicrafttg.items.ModItems;
@@ -53,8 +53,8 @@ public class CommonProxy {
     	EntityRegistry.registerModEntity(EntityWizard.class, "Wizard", 
     			modEntityID++, MagicraftTG.instance, 80, 3, false);
     	
-    	EntityRegistry.registerModEntity(EntityLightningBolt.class, "Lightning Bolt", 
-    			modEntityID++, MagicraftTG.instance, 80, 3, false);
+    	EntityRegistry.registerModEntity(EntityEnergyBolt.class, "Lightning Bolt", 
+    			modEntityID++, MagicraftTG.instance, 64, 10, true);
     }
 
     public void init(FMLInitializationEvent e) {
