@@ -114,7 +114,7 @@ public class ManaEventHandler {
 	 */
 	public static void manaTick() 
 	{
-		System.out.println("ManaEventHandler.manaTick");
+		//System.out.println("ManaEventHandler.manaTick");
 		// Increase the players' mana based on their sources.
 		List<EntityPlayerMP> allPlayers = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
 		

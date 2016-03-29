@@ -1,63 +1,86 @@
 package magicrafttg.world.gen;
 
+import java.util.Arrays;
 import java.util.Random;
 
+import org.apache.logging.log4j.Level;
+
+import magicrafttg.MagicraftTG;
 import magicrafttg.entity.EntityWizard;
 import magicrafttg.world.gen.structure.MapGenWizTower;
+import magicrafttg.world.gen.structure.WizardTower;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IWorldGenerator;
+import net.minecraftforge.common.ForgeChunkManager;
 
 public class MyWorldGenerator implements IWorldGenerator {
 
 	int count = 0;
-	MapGenWizTower towerGen = new MapGenWizTower();
+	MapGenWizTower towerGen;
+	
 	
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
 			IChunkProvider chunkProvider) 
 	{
-		switch(world.provider.getDimensionId())
+		if (!world.isRemote)
 		{
-		case -1: 
-			break;
-		case 0: generateSurface(world, random, chunkX, chunkZ);
-		case 1: 
-			break;
+			switch(world.provider.getDimensionId())
+			{
+			case -1: 
+				break;
+			case 0: generateSurface(world, random, chunkX, chunkZ);
+			case 1: 
+				break;
+			}
 		}
 	}
 
 	private void generateSurface(World world, Random random, int chunkX, int chunkZ)
 	{
+		if (towerGen == null)
+			towerGen = new MapGenWizTower(world);
 		int x = chunkX * 16 + random.nextInt(16); // get chords of chunck
 		int z = chunkZ * 16 + random.nextInt(16); // get chords of chunck
 		int y = getTopBlock(world, new BlockPos(x, 0, z));
 		
 		BiomeGenBase biome = world.getBiomeGenForCoords(new BlockPos(x, 0, z));
-		/*x=x/16;//get exact chords
-		z=z/16;//get exact chords
-		int y = 200;
+
+		//FMLLog.log(MagicraftTG.MODID, Level.INFO, "Checking chunk %d %d, starting %d %d", chunkX, chunkZ, chunkX*16, chunkZ*16);
 		
-		//int y = world.getHeightValue(x, z); // get y chord
-		world.setBlockState(new BlockPos(x,y,z), Block.getStateById(152), 152); //set a block at that location
-		*/
-		//System.out.println("Gnerate: " + chunkX + " " + chunkZ);
-		
-		if (biome.minHeight > 0.4f && random.nextInt(5) == 0)
+		if (towerGen.canSpawnAt(chunkX, chunkZ))// && maxHeight - minHeight < 4)
 		{
 			System.out.println("Try spawn in " + chunkX + " " + chunkZ);
-			System.out.println("Exact " + chunkX * 16 + " " + chunkZ * 16);
+			Entity newEntity = new EntityWizard(world, x, y, z, 0, 0);
+			//newEntity.setPosition(x, y, z);
+			boolean res = world.spawnEntityInWorld(newEntity);
+			System.out.println(res + " - Exact " + newEntity.posX + " " + newEntity.posY + " " + newEntity.posZ);
+			
+			
 			System.out.println(biome.biomeName);
+			
 			this.count++;
-			Entity newEntity = new EntityWizard(world);
-			newEntity.setPosition(x, y, z);
-			world.spawnEntityInWorld(newEntity);
+			/*int avgHeight = chunkAverageHeight(world, chunkX, chunkZ);
+			WizardTower tower = new WizardTower();
+			
+			StructureBoundingBox bb = new StructureBoundingBox(chunkX*16, avgHeight, chunkZ*16,
+					chunkX*16+15, avgHeight+15, chunkZ*16+15);
+			System.out.println(bb);
+			tower.addComponentParts(world, random, bb);
+			*/
+			
+			//world.spawnEntityInWorld(newEntity);
 		}
+			
 	}
 	
 	
@@ -84,4 +107,32 @@ public class MyWorldGenerator implements IWorldGenerator {
 		return y;
 	}
 	
+	
+	
+	private int chunkAverageHeight(World world, int x, int z)
+	{
+		int[] heightMap = world.getChunkFromChunkCoords(x, z).getHeightMap();
+		int avgHeight = 0;
+		for(int i = 0; i < heightMap.length; ++i)
+		{
+			avgHeight += heightMap[i];
+		}
+		avgHeight /= heightMap.length;
+		
+		return avgHeight;
+	}
+	
+	private int chunkMinHeight(World world, int x, int z)
+	{
+		int[] heightMap = world.getChunkFromChunkCoords(x, z).getHeightMap();
+		Arrays.sort(heightMap);
+		return heightMap[0];
+	}
+	
+	private int chunkMaxHeight(World world, int x, int z)
+	{
+		int[] heightMap = world.getChunkFromChunkCoords(x, z).getHeightMap();
+		Arrays.sort(heightMap);
+		return heightMap[heightMap.length - 1];
+	}
 }

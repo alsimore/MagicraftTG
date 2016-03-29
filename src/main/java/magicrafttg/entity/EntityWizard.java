@@ -23,13 +23,16 @@ import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityLargeFireball;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathNavigateGround;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class EntityWizard extends EntityCreature implements IRangedAttackMob
 {
 	private EntityMCTGAIWizardAttack aiArrowAttack = new EntityMCTGAIWizardAttack(this, 1.0D, 20, 60, 15.0F);
+	private int count = 0;
 	
 	// AI for avoiding Creeper, from EntityMob
 	protected final EntityAIBase avoidCreeper = new EntityAIAvoidEntity(this, new Predicate()
@@ -65,6 +68,14 @@ public class EntityWizard extends EntityCreature implements IRangedAttackMob
         
         //this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
         this.targetTasks.addTask(2, new EntityMCTGAIAttackEnemy(this, EntityLivingBase.class, 1, false, true, null));
+        System.out.println("Created");
+        //this.enablePersistence();
+	}
+	
+	public EntityWizard(World worldIn, double x, double y, double z, float yaw, float pitch)
+	{
+		this(worldIn);
+		this.setLocationAndAngles(x, y, z, yaw, pitch);
 	}
 	
 	@Override
@@ -95,5 +106,46 @@ public class EntityWizard extends EntityCreature implements IRangedAttackMob
         
         
         this.worldObj.spawnEntityInWorld(fireball);
+	}
+	
+	
+	@Override
+	public void onUpdate()
+	{
+		super.onUpdate();
+		if (++count >= 100)
+		{
+			System.out.println("Alive " + this.posX + " " + this.posY + " " + this.posZ);
+			count = 0;
+		}
+	}
+	
+	@Override
+	public void onDeath(DamageSource dmg)
+	{
+		System.out.println("Dead");
+		super.onDeath(dmg);
+	}
+	
+	@Override
+	public void setDead()
+	{
+		System.out.println("setDead " + this.posX + " " + this.posY + " " + this.posZ);
+		super.setDead();
+	}
+	
+	@Override
+	public void writeToNBT(NBTTagCompound tagCompound)
+	{
+		System.out.println("writeToNBT " + this.posX + " " + this.posY + " " + this.posZ);
+		super.writeToNBT(tagCompound);
+	}
+	
+	@Override
+	public void readFromNBT(NBTTagCompound tagCompound)
+	{
+		
+		super.readFromNBT(tagCompound);
+		System.out.println("readFromNBT " + this.posX + " " + this.posY + " " + this.posZ);
 	}
 }

@@ -62,7 +62,7 @@ public class MCTGNetworkManager
 	 */
 	public static void sendToClientManaSources(EntityPlayer player, int[] sources)
 	{
-		System.out.println("MCTGNetworkManager.sendToClientManaSources");
+		//System.out.println("MCTGNetworkManager.sendToClientManaSources");
 		IMessage msg = new ManaPacket.MCTGManaMessage(PacketHandler.MANA_GLOBAL_SOURCE_SET, 
 				sources[0], sources[1], sources[2], sources[3], sources[4], sources[5]);
 		PacketHandler.net.sendTo(msg, (EntityPlayerMP) player);
@@ -73,7 +73,7 @@ public class MCTGNetworkManager
 	 */
 	public static void receiveFromServerManaSources(int w, int u, int b, int r, int g)
 	{
-		System.out.println("MCTGNetworkManager.receiveFromServerManaSources");
+		//System.out.println("MCTGNetworkManager.receiveFromServerManaSources");
 		MCTGPlayerProperties mctg = MCTGPlayerProperties.get(Minecraft.getMinecraft().thePlayer);
 		if(mctg != null)
 		{
@@ -89,7 +89,7 @@ public class MCTGNetworkManager
 	 */
 	public static void sendToClientCurrentMana(EntityPlayer player, int[] currentMana) 
 	{
-		System.out.println("MCTGNetworkManager.sendToClientCurrentMana");
+		//System.out.println("MCTGNetworkManager.sendToClientCurrentMana");
 		IMessage msg = new ManaPacket.MCTGManaMessage(PacketHandler.MANA_UPDATE, 
 				currentMana[ManaColor.WHITE.ordinal()], 
 				currentMana[ManaColor.BLUE.ordinal()], 
@@ -109,7 +109,7 @@ public class MCTGNetworkManager
 	 */
 	public static void receiveFromServerCurrentMana(int[] manaAmounts) 
 	{
-		System.out.println("MCTGNetworkManager.receiveFromServerCurrentMana");
+		//System.out.println("MCTGNetworkManager.receiveFromServerCurrentMana");
 		MCTGPlayerProperties prop = MCTGPlayerProperties.get(Minecraft.getMinecraft().thePlayer);
 		prop.setCurrentMana(manaAmounts);
 	}
@@ -125,7 +125,7 @@ public class MCTGNetworkManager
 	 */
 	public static void sendToClientAddedCreature(EntityPlayer player, Entity creature)
 	{
-		System.out.println("MCTGNetworkManager.sendToClientAddedCreature");
+		//System.out.println("MCTGNetworkManager.sendToClientAddedCreature");
 		IMessage msg = new CreaturePacket.MCTGCreatureMessage(PacketHandler.ADD_CREATURE_INT, creature.getEntityId());
 		PacketHandler.net.sendTo(msg, (EntityPlayerMP) player);
 	}
@@ -136,7 +136,7 @@ public class MCTGNetworkManager
 	 */
 	public static void receiveFromServerAddedCreature(int id) 
 	{
-		System.out.println("MCTGNetworkManager.receiveFromServerAddedCreature");
+		//System.out.println("MCTGNetworkManager.receiveFromServerAddedCreature");
 		MCTGPlayerProperties prop = MCTGPlayerProperties.get(Minecraft.getMinecraft().thePlayer);
 		prop.addCreatureById(id);
 	}
@@ -148,7 +148,7 @@ public class MCTGNetworkManager
 	 */
 	public static void sendToClientRemovedCreature(EntityPlayer player, Entity creature) 
 	{
-		System.out.println("MCTGNetworkManager.sendToClientRemovedCreature");
+		//System.out.println("MCTGNetworkManager.sendToClientRemovedCreature");
 		IMessage msg = new CreaturePacket.MCTGCreatureMessage(PacketHandler.REMOVE_CREATURE_INT, creature.getEntityId());
 		PacketHandler.net.sendTo(msg, (EntityPlayerMP) player);
 	}
@@ -159,7 +159,7 @@ public class MCTGNetworkManager
 	 * @param id
 	 */
 	public static void receiveFromServerRemovedCreature(int id) {
-		System.out.println("MCTGNetworkManager.receiveFromServerRemovedCreature");
+		//System.out.println("MCTGNetworkManager.receiveFromServerRemovedCreature");
 		MCTGPlayerProperties prop = MCTGPlayerProperties.get(Minecraft.getMinecraft().thePlayer);
 		prop.removeCreatureById(id);
 	}

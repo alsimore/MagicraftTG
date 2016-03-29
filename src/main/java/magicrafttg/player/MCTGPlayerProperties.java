@@ -125,7 +125,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	
 	public void addSource(ManaColor color)
 	{
-		System.out.println("MCTGPlayerProperties.addSource");
+		//System.out.println("MCTGPlayerProperties.addSource");
 		//manaSources.add(new ManaSource(color));
 		manaSources[color.ordinal()]++;
 		// Happens on the server side so update client
@@ -143,14 +143,14 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	 */
 	public void setGlobalManaSources(int w, int u, int b, int r, int g)
 	{
-		System.out.println("MCTGPlayerProperties.setGlobalManaSources");
+		//System.out.println("MCTGPlayerProperties.setGlobalManaSources");
 		manaSources[0] = w;
 		manaSources[1] = u;
 		manaSources[2] = b;
 		manaSources[3] = r;
 		manaSources[4] = g;
-		System.out.println(manaSources[0] + " " + manaSources[1] + " " + manaSources[2]
-				+ " " + manaSources[3] + " " + manaSources[4]);
+		//System.out.println(manaSources[0] + " " + manaSources[1] + " " + manaSources[2]
+		//		+ " " + manaSources[3] + " " + manaSources[4]);
 	}
 	/*public void setGlobalManaSources(int w, int u, int b, int r, int g)
 	{
@@ -213,7 +213,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 		int totalColorless = 0;
 		int colorless_i = -1;
 		
-		System.out.println("MCTGPlayerProperties.consumeMana");
+		//System.out.println("MCTGPlayerProperties.consumeMana");
 		if(colors.length != amounts.length) {
 			System.out.println("[MCTG] consumeMana: amounts and colours arrays differ in length");
 			return false;
@@ -295,7 +295,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 			}
 		}
 		// Set the new mana amounts.
-		System.out.println("Got to setCurrentMana");
+		//System.out.println("Got to setCurrentMana");
 		setCurrentMana(newMana);
 		// Update the client of current mana
 		MCTGNetworkManager.sendToClientCurrentMana(this.player.get(), currentMana);
@@ -305,7 +305,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	
 	public void setCurrentMana(int[] amounts)
 	{
-		System.out.println("MCTGPlayerProperties.setCurrentMana");
+		//System.out.println("MCTGPlayerProperties.setCurrentMana");
 		this.currentMana[ManaColor.WHITE.ordinal()] = amounts[ManaColor.WHITE.ordinal()];
 		this.currentMana[ManaColor.BLUE.ordinal()] = amounts[ManaColor.BLUE.ordinal()];
 		this.currentMana[ManaColor.BLACK.ordinal()] = amounts[ManaColor.BLACK.ordinal()];
@@ -321,7 +321,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	 */
 	public void incrementManaFromSources()
 	{
-		System.out.println("MCTGPlayerProperties.incrementManaFromSources");
+		//System.out.println("MCTGPlayerProperties.incrementManaFromSources");
 		for(int color = 0; color < 6; ++color) // Six colors if you include colorless
 		{
 			int num = manaSources[color];
@@ -520,7 +520,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	 */
 	public void addCreatureById(int id)
 	{
-		System.out.println("MCTGPlayerProperties.addCreatureById");
+		//System.out.println("MCTGPlayerProperties.addCreatureById");
 		Entity creature = findByIdClient(id);
 		//System.out.println("addclient " + ((EntityMCTGBase)creature).getOwnerUUID());
 		//System.out.println(((EntityMCTGBase)creature).getControllerUUID());
@@ -537,7 +537,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	 */
 	public void removeCreatureById(int id)
 	{
-		System.out.println("MCTGPlayerProperties.removeCeatureById");
+		//System.out.println("MCTGPlayerProperties.removeCeatureById");
 		Entity creature = findByIdClient(id);
 		
 		for (Iterator<WeakReference<Entity>> iterator = controlledCreatures.iterator();
@@ -632,7 +632,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	
 	public void addControlledCreature(Entity creature)
 	{
-		System.out.println("MCTGPlayerProperties.addControlledCreature");
+		//System.out.println("MCTGPlayerProperties.addControlledCreature");
 		// Only called from the server thread
 		controlledCreatures.add(new WeakReference<Entity>(creature));
 		//System.out.println("[MCTG] Added - Controlled: " + controlledCreatures.size());
@@ -653,7 +653,7 @@ public class MCTGPlayerProperties implements IExtendedEntityProperties {
 	public void removeControlledCreature(Entity creature)
 	{
 		// Only called from the server thread
-		System.out.println("MCTGPlayerProperties.removeControlledCreature");
+		//System.out.println("MCTGPlayerProperties.removeControlledCreature");
 		// From Stack Overflow: 
 		// http://stackoverflow.com/questions/6296051/how-to-remove-a-weakreference-from-a-list
 		for (Iterator<WeakReference<Entity>> iterator = controlledCreatures.iterator();

@@ -55,7 +55,7 @@ public class ManaPacket implements IMessageHandler<MCTGManaMessage, IMessage> {
 	{
 		if(msg.type == PacketHandler.MANA_UPDATE)
 		{
-			System.out.println("ManaPacket.clientMessageReceived(MANA_UPDATE)");
+			//System.out.println("ManaPacket.clientMessageReceived(MANA_UPDATE)");
 			int[] manaAmounts = {msg.w, msg.u, msg.b, msg.r, msg.g, msg.c};
 			MCTGNetworkManager.receiveFromServerCurrentMana(manaAmounts);
 			// update player data
@@ -77,7 +77,7 @@ public class ManaPacket implements IMessageHandler<MCTGManaMessage, IMessage> {
 			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 			MCTGPlayerProperties mctg = MCTGPlayerProperties.get(player);
 			mctg.setGlobalManaSources(msg.w, msg.u, msg.b, msg.r, msg.g);*/
-			System.out.println("ManaPacket.clientMessageReceived(SRC_SET)");
+			//System.out.println("ManaPacket.clientMessageReceived(SRC_SET)");
 			MCTGNetworkManager.receiveFromServerManaSources(msg.w, msg.u, msg.b, msg.r, msg.g);
 		}
 	}
