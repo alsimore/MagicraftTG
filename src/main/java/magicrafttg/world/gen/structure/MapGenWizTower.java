@@ -60,7 +60,9 @@ public class MapGenWizTower extends MapGenStructure
 	protected boolean canSpawnStructureAtCoords(int x, int z) {
 		// Make sure the chunk is high enough
 		float avgHeight = chunkAverageHeight(x, z);
-		if (avgHeight > 97.0f)
+		float minHeight = chunkMinHeight(x, z);
+		float maxHeight = chunkMaxHeight(x, z);
+		if (avgHeight > 97.0f && maxHeight - minHeight < 4)
 		{
 			boolean isPeak = false;
 			// Make sure that this chunk is a peak (higher than surrounding chunks)

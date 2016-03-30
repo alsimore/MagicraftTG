@@ -2,8 +2,11 @@ package magicrafttg.world.gen;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Map;
 
 import org.apache.logging.log4j.Level;
+
+import com.google.common.collect.Maps;
 
 import magicrafttg.MagicraftTG;
 import magicrafttg.entity.EntityWizard;
@@ -13,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
@@ -26,7 +30,7 @@ public class MyWorldGenerator implements IWorldGenerator {
 
 	int count = 0;
 	MapGenWizTower towerGen;
-	
+	private Map alreadyChecked = Maps.newHashMap();
 	
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
@@ -47,6 +51,16 @@ public class MyWorldGenerator implements IWorldGenerator {
 
 	private void generateSurface(World world, Random random, int chunkX, int chunkZ)
 	{
+		/*if (alreadyChecked.containsKey(Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ))))
+		{
+			return;
+		}
+		else
+		{
+			alreadyChecked.put(Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ)), null);
+		}*/
+		System.out.println(chunkX + "," + chunkZ);
+		
 		if (towerGen == null)
 			towerGen = new MapGenWizTower(world);
 		int x = chunkX * 16 + random.nextInt(16); // get chords of chunck
@@ -59,24 +73,23 @@ public class MyWorldGenerator implements IWorldGenerator {
 		
 		if (towerGen.canSpawnAt(chunkX, chunkZ))// && maxHeight - minHeight < 4)
 		{
-			System.out.println("Try spawn in " + chunkX + " " + chunkZ);
-			Entity newEntity = new EntityWizard(world, x, y, z, 0, 0);
-			//newEntity.setPosition(x, y, z);
-			boolean res = world.spawnEntityInWorld(newEntity);
-			System.out.println(res + " - Exact " + newEntity.posX + " " + newEntity.posY + " " + newEntity.posZ);
-			
-			
-			System.out.println(biome.biomeName);
 			
 			this.count++;
-			/*int avgHeight = chunkAverageHeight(world, chunkX, chunkZ);
+			int avgHeight = chunkAverageHeight(world, chunkX, chunkZ);
 			WizardTower tower = new WizardTower();
 			
+			// When getAverageGroundLevel tests it does so with a Y of 64
 			StructureBoundingBox bb = new StructureBoundingBox(chunkX*16, avgHeight, chunkZ*16,
-					chunkX*16+15, avgHeight+15, chunkZ*16+15);
+					chunkX*16+15, avgHeight+tower.getHeight(), chunkZ*16+15);
 			System.out.println(bb);
 			tower.addComponentParts(world, random, bb);
-			*/
+			
+			
+			System.out.println("Try spawn in " + chunkX + " " + chunkZ);
+			Entity newEntity = new EntityWizard(world, x, y, z, 0, 0);
+			boolean res = world.spawnEntityInWorld(newEntity);
+			System.out.println(res + " - Exact " + newEntity.posX + " " + newEntity.posY + " " + newEntity.posZ);
+			System.out.println(biome.biomeName);
 			
 			//world.spawnEntityInWorld(newEntity);
 		}

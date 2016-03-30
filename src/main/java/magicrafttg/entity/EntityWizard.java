@@ -68,8 +68,8 @@ public class EntityWizard extends EntityCreature implements IRangedAttackMob
         
         //this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
         this.targetTasks.addTask(2, new EntityMCTGAIAttackEnemy(this, EntityLivingBase.class, 1, false, true, null));
-        System.out.println("Created");
-        //this.enablePersistence();
+        //System.out.println("Created");
+        this.enablePersistence();
 	}
 	
 	public EntityWizard(World worldIn, double x, double y, double z, float yaw, float pitch)
@@ -86,7 +86,6 @@ public class EntityWizard extends EntityCreature implements IRangedAttackMob
         this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(35.0D);
         this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.23000000417232513D);
         this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(3.0D);
-        
     }
 
 
@@ -102,8 +101,6 @@ public class EntityWizard extends EntityCreature implements IRangedAttackMob
         /*fireball.posX = this.posX + look.xCoord * d1;
         fireball.posY = this.posY + (double)(this.height / 2.0F) + 0.5D;
         fireball.posZ = this.posZ + look.zCoord * d1;*/
-        
-        
         
         this.worldObj.spawnEntityInWorld(fireball);
 	}
@@ -123,21 +120,21 @@ public class EntityWizard extends EntityCreature implements IRangedAttackMob
 	@Override
 	public void onDeath(DamageSource dmg)
 	{
-		System.out.println("Dead");
+		//System.out.println("Dead");
 		super.onDeath(dmg);
 	}
 	
 	@Override
 	public void setDead()
 	{
-		System.out.println("setDead " + this.posX + " " + this.posY + " " + this.posZ);
+		//System.out.println("setDead " + this.posX + " " + this.posY + " " + this.posZ);
 		super.setDead();
 	}
 	
 	@Override
 	public void writeToNBT(NBTTagCompound tagCompound)
 	{
-		System.out.println("writeToNBT " + this.posX + " " + this.posY + " " + this.posZ);
+		//System.out.println("writeToNBT " + this.posX + " " + this.posY + " " + this.posZ);
 		super.writeToNBT(tagCompound);
 	}
 	
@@ -146,6 +143,6 @@ public class EntityWizard extends EntityCreature implements IRangedAttackMob
 	{
 		
 		super.readFromNBT(tagCompound);
-		System.out.println("readFromNBT " + this.posX + " " + this.posY + " " + this.posZ);
+		//System.out.println("readFromNBT " + this.posX + " " + this.posY + " " + this.posZ);
 	}
 }
