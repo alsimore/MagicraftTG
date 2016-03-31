@@ -62,7 +62,7 @@ public class CommonProxy {
     public void init(FMLInitializationEvent e) {
     	PacketHandler.initPackets();
     	NetworkRegistry.INSTANCE.registerGuiHandler(MagicraftTG.instance, new GuiHandler());
-    	GameRegistry.registerWorldGenerator(new MyWorldGenerator(), 0);
+    	GameRegistry.registerWorldGenerator(new MyWorldGenerator(), 100);
     }
 
     public void postInit(FMLPostInitializationEvent e) {
