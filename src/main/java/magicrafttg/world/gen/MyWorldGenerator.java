@@ -71,7 +71,7 @@ public class MyWorldGenerator implements IWorldGenerator {
 
 		//FMLLog.log(MagicraftTG.MODID, Level.INFO, "Checking chunk %d %d, starting %d %d", chunkX, chunkZ, chunkX*16, chunkZ*16);
 		
-		if (this.count < 4 && towerGen.canSpawnAt(chunkX, chunkZ))// && maxHeight - minHeight < 4)
+		if (this.count < 1 && towerGen.canSpawnAt(chunkX, chunkZ))// && maxHeight - minHeight < 4)
 		{
 			
 			this.count++;
@@ -86,7 +86,7 @@ public class MyWorldGenerator implements IWorldGenerator {
 			{
 				box.maxY += 9;
 				System.out.println("\nReturned box: " + box);
-				tower.addComponentParts(world, random, box);
+				/*tower.addComponentParts(world, random, box);
 				
 				
 				System.out.println("Try spawn in " + chunkX + " " + chunkZ);
@@ -94,7 +94,7 @@ public class MyWorldGenerator implements IWorldGenerator {
 				boolean res = world.spawnEntityInWorld(newEntity);
 				System.out.println(res + " - Exact " + newEntity.posX + " " + newEntity.posY + " " + newEntity.posZ);
 				System.out.println(biome.biomeName);
-				
+				*/
 				//world.spawnEntityInWorld(newEntity);
 			}
 		}

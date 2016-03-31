@@ -23,7 +23,7 @@ import net.minecraftforge.fml.common.FMLLog;
 public class MapGenWizTower extends MapGenStructure 
 {
 
-	public static final float MIN_HEIGHT_FOR_TOWER = 97.0f;
+	public static final float MIN_HEIGHT_FOR_TOWER = 90.0f;
 	
 	public MapGenWizTower(World world)
 	{
@@ -64,12 +64,18 @@ public class MapGenWizTower extends MapGenStructure
 	}
 
 	@Override
-	protected boolean canSpawnStructureAtCoords(int x, int z) {
+	protected boolean canSpawnStructureAtCoords(int x, int z) 
+	{
+		String biomename = worldObj.getBiomeGenForCoords(new BlockPos(x*16, 64, z*16)).biomeName;
+		//if (biomename.toLowerCase().contains("forest") || biomename.toLowerCase().contains("jungle"))
+		if (biomename.toLowerCase().contains("roofed"))
+			return false;
+		
 		// Make sure the chunk is high enough
 		float avgHeight = chunkAverageHeight(x, z);
 		float minHeight = chunkMinHeight(x, z);
 		float maxHeight = chunkMaxHeight(x, z);
-		if (avgHeight > 90.0f)// && maxHeight - minHeight < 4)
+		if (avgHeight > MIN_HEIGHT_FOR_TOWER)// && maxHeight - minHeight < 4)
 		{
 			boolean isPeak = false;
 			// Make sure that this chunk is a peak (higher than surrounding chunks)
@@ -153,47 +159,50 @@ public class MapGenWizTower extends MapGenStructure
 		int largestDim1, largestDim2, largestArea;
 		
 		Chunk chunk = this.worldObj.getChunkFromChunkCoords(chunkX, chunkZ);
-		//System.out.println("findFlatArea in chunk " + chunkX + " " + chunkZ + ": " + chunkX*16 + " " + chunkZ*16);
-		//printHeightMap(chunk);
+		System.out.println("findFlatArea in chunk " + chunkX + " " + chunkZ + ": " + chunkX*16 + " " + chunkZ*16);
+		printHeightMap(chunk);
 		
 		for (int h = chunkMaxHeight(chunkX, chunkZ); h > (int)MIN_HEIGHT_FOR_TOWER; --h)
 		{
-			for (int x = startX(chunkX); x < 16 && x >= 0; x = nextX(x, chunkX))
+			for (int x = 0; x < 16; ++x)
 			{
-				for (int z = startZ(chunkZ); z < 16 && z >= 0; z = nextZ(z, chunkZ))
+				for (int z = 0; z < 16; ++z)
 				{
-					if (chunk.getHeight(x, z) >= h)
+					BlockPos bp = new BlockPos(chunkX*16 + x, h, chunkZ*16 + z);
+					//if (chunk.getHeight(x, z) >= h)
+					if (worldObj.getTopSolidOrLiquidBlock(bp).getY() >= h)
 					{
-						Vec3i pos = new Vec3i(chunkX*16 + x, h, chunkZ*16 + z);
+						//Vec3i pos = new Vec3i(chunkX*16 + x, h, chunkZ*16 + z);
+						System.out.println("");
 						// If this block is already included in a flat area skip it
 						// n.b. func_175898_b checks if a vec3i is inside the bounding box 
 						// (could be called "containsBlock" or "withinBoundingBox")
-						if (largest != null)
-						{
-							//System.out.println("Check bounds on " + pos);
-							//System.out.println("Against " + largest);
-							if (largest.func_175898_b(pos))
-								continue;
-						}
+						//if (largest != null)
+						//{
+						//	System.out.println("Check bounds on " + pos);
+						//	System.out.println("Against " + largest);
+						//	if (largest.func_175898_b(pos))
+						//		continue;
+						//}
 						
-						//System.out.println("");
-						//System.out.println("Try find box starting " + x + " " + z + " at height " + h);
+						
+						System.out.println("Try find box starting " + x + " " + z + " at height " + h);
 						StructureBoundingBox box = expandFlatArea(chunk, x, z, h);
 						int xDim = box.getXSize();
 						int zDim = box.getZSize();
 						int area = xDim * zDim;
 						int dim1 = xDim > zDim ? xDim : zDim;
 						int dim2 = xDim + zDim - dim1;
-						//System.out.println("Box " + xDim + "x" + zDim + ": " + area + " height " + box.maxY);
-						//System.out.println("Chunk-relative " + box.minX + "," + box.minZ + " to " + box.maxX + "," + box.maxZ);
+						System.out.println("Box " + xDim + "x" + zDim + ": " + area + " height " + box.maxY);
+						System.out.println("Chunk-relative " + box.minX + "," + box.minZ + " to " + box.maxX + "," + box.maxZ);
 						
 						box.offset(chunkX*16, 0, chunkZ*16);
-						//System.out.println("Global " + box.minX + "," + box.minZ + " to " + box.maxX + "," + box.maxZ);
+						System.out.println("Global " + box.minX + "," + box.minZ + " to " + box.maxX + "," + box.maxZ);
 						
 						if (largest == null || (sbbArea(box) >= sbbArea(largest) && getSmallDim(box) > getSmallDim(largest)) )
 						{
 							largest = box;
-							//System.out.println("Largest now " + largest);
+							System.out.println("Largest now " + largest);
 						}
 						
 						if (dim1 >= minDim1 && dim2 >= minDim2)
@@ -233,7 +242,9 @@ public class MapGenWizTower extends MapGenStructure
 			{
 				for (int zz = minZ; zz <= maxZ; ++zz)
 				{
-					if (minX + xSize >= 16 || chunk.getHeight(minX + xSize, zz) < height)
+					//if (minX + xSize >= 16 || chunk.getHeight(minX + xSize, zz) < height)
+					BlockPos pos = new BlockPos((chunk.xPosition*16) + minX + xSize, 64, (chunk.zPosition*16) + zz);
+					if (minX + xSize >= 16 || worldObj.getTopSolidOrLiquidBlock(pos).getY() < height)
 					{
 						canExpandX = false;
 						break;
@@ -250,7 +261,9 @@ public class MapGenWizTower extends MapGenStructure
 			{
 				for (int xx = minX; xx <= maxX; ++xx)
 				{
-					if (minZ + zSize >= 16 || chunk.getHeight(xx, minZ + zSize) < height)
+					//if (minZ + zSize >= 16 || chunk.getHeight(xx, minZ + zSize) < height)
+					BlockPos pos = new BlockPos((chunk.xPosition*16) + xx, 64, (chunk.zPosition*16) + minZ + zSize);
+					if (minZ + zSize >= 16 || worldObj.getTopSolidOrLiquidBlock(pos).getY() < height)
 					{
 						canExpandZ = false;
 						break;
@@ -286,16 +299,28 @@ public class MapGenWizTower extends MapGenStructure
 	
 	private void printHeightMap(Chunk chunk)
 	{
-		
+		int xstart = chunk.xPosition * 16;
+		int zstart = chunk.zPosition * 16;
+		int xend = chunk.xPosition * 16 + 15;
+		int zend = chunk.zPosition * 16 + 15;
+		System.out.println(String.format("Chunk %d %d", chunk.xPosition, chunk.zPosition));
+		System.out.println(String.format("Chunk 0,0 = %d %d", xstart, zstart));
+		System.out.println(String.format("Chunk 15,15 = %d %d", xend, zend));
 		for (int x = 0; x < 16; ++x)
 		{
 			System.out.print("\n");
 			for (int z = 0; z < 16; ++z)
 			{
-				System.out.print(String.format(" %3d", chunk.getHeight(x, z)));
+				//System.out.print(String.format(" %3d", chunk.getHeight(x, z)));
+				BlockPos pos = new BlockPos(xstart + x, 64, zstart + z);
+				System.out.print(String.format(" %3d", this.worldObj.getTopSolidOrLiquidBlock(pos).getY() ));
 			}
 		}
 		System.out.print("\n");
+		BlockPos zero = this.worldObj.getTopSolidOrLiquidBlock(new BlockPos(xstart, 64, zstart));
+		BlockPos fifteen = this.worldObj.getTopSolidOrLiquidBlock(new BlockPos(xend, 64, zend));
+		System.out.println(String.format("World %d %d = %d", xstart, zstart, zero.getY()));
+		System.out.println(String.format("World %d %d = %d", xend, zend, fifteen.getY()));
 	}
 	
 	/**

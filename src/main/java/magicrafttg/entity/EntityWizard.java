@@ -112,7 +112,7 @@ public class EntityWizard extends EntityCreature implements IRangedAttackMob
 		super.onUpdate();
 		if (++count >= 100)
 		{
-			System.out.println("Alive " + this.posX + " " + this.posY + " " + this.posZ);
+			//System.out.println("Alive " + this.posX + " " + this.posY + " " + this.posZ);
 			count = 0;
 		}
 	}
