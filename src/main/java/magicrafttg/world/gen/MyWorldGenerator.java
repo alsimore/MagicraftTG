@@ -81,14 +81,14 @@ public class MyWorldGenerator implements IWorldGenerator {
 			// When getAverageGroundLevel tests it does so with a Y of 64
 			StructureBoundingBox bb = new StructureBoundingBox(chunkX*16, avgHeight, chunkZ*16,
 					chunkX*16+15, avgHeight+tower.getHeight(), chunkZ*16+15);
-			StructureBoundingBox box = towerGen.findFlatArea(chunkX, chunkZ, 4, 4);
+			StructureBoundingBox box = towerGen.findFlatArea(chunkX, chunkZ);
 			if (box != null)
 			{
-				box.maxY += 9;
+				box.maxY += WizardTower.getHeight();
 				System.out.println("\nReturned box: " + box);
-				/*tower.addComponentParts(world, random, box);
+				tower.addComponentParts(world, random, box);
 				
-				
+				/*
 				System.out.println("Try spawn in " + chunkX + " " + chunkZ);
 				Entity newEntity = new EntityWizard(world, x, y, z, 0, 0);
 				boolean res = world.spawnEntityInWorld(newEntity);

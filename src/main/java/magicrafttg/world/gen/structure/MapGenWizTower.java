@@ -150,10 +150,12 @@ public class MapGenWizTower extends MapGenStructure
 		return true;
 	}
 
-	public StructureBoundingBox findFlatArea(int chunkX, int chunkZ, int minDim1, int minDim2) 
+	public StructureBoundingBox findFlatArea(int chunkX, int chunkZ) 
 	{
 		int minX = -1, minZ = -1;
 		int maxX = -1, maxZ = -1;
+		int minDim1 = 8; 
+		int minDim2 = 8;
 		StructureBoundingBox largest = null;
 		
 		int largestDim1, largestDim2, largestArea;

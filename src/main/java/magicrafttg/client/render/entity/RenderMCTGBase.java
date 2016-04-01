@@ -52,7 +52,11 @@ public class RenderMCTGBase extends RenderLiving {
         World worldIn = mc.theWorld;
         EntityPlayer playerIn = mc.thePlayer;
         //Entity target = MCTGTargetedSpell.getMouseOverExtended(worldIn, playerIn, 6.0f).entityHit;
-        Entity target = Minecraft.getMinecraft().objectMouseOver.entityHit;
+        MovingObjectPosition mop = Minecraft.getMinecraft().objectMouseOver;
+        Entity target = null;
+        if (mop != null)
+        	target = mop.entityHit;
+        
         //Entity target = this.getMouseOverExtended(worldIn, playerIn, 6.0f).entityHit;
         //System.out.println("mouseover " + target);
         //System.out.println("render entity " + entity);
