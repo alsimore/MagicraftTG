@@ -50,48 +50,6 @@ public class EntityEnergyBolt extends EntityThrowable
     	super(worldIn, x, y, z);
     }
 
-    /*public EntityLightningBolt(World worldIn, double x, double y, double z, double accelX, double accelY, double accelZ)
-    {
-        super(worldIn);
-        this.setSize(1.0F, 1.0F);
-        this.setLocationAndAngles(x, y, z, this.rotationYaw, this.rotationPitch);
-        this.setPosition(x, y, z);
-        double d6 = (double)MathHelper.sqrt_double(accelX * accelX + accelY * accelY + accelZ * accelZ);
-        this.accelerationX = accelX / d6 * 0.1D;
-        this.accelerationY = accelY / d6 * 0.1D;
-        this.accelerationZ = accelZ / d6 * 0.1D;
-    }*/
-
-    /*public EntityLightningBolt(World worldIn, EntityLivingBase shooter, double accelX, double accelY, double accelZ)
-    {
-        super(worldIn);
-        this.shootingEntity = shooter;
-        this.setSize(1.0F, 1.0F);
-        this.setLocationAndAngles(shooter.posX, shooter.posY, shooter.posZ, shooter.rotationYaw, shooter.rotationPitch);
-        this.setPosition(this.posX, this.posY, this.posZ);
-        this.motionX = this.motionY = this.motionZ = 0.0D;
-        accelX += this.rand.nextGaussian() * 0.4D;
-        accelY += this.rand.nextGaussian() * 0.4D;
-        accelZ += this.rand.nextGaussian() * 0.4D;
-        double d3 = (double)MathHelper.sqrt_double(accelX * accelX + accelY * accelY + accelZ * accelZ);
-        this.accelerationX = accelX / d3 * 0.1D;
-        this.accelerationY = accelY / d3 * 0.1D;
-        this.accelerationZ = accelZ / d3 * 0.1D;
-        
-        //this.setHeading(accelerationX, accelerationY, accelerationZ, 1.0f, 0.0f);
-    }*/
-    
-    
-
-    /**
-     * Called to update the entity's position/logic.
-     */
-    public void onUpdate()
-    {
-        super.onUpdate();
-        //if (this.worldObj.isRemote)
-        //	System.out.println("Pitch: " + this.rotationPitch + ", Yaw: " + this.rotationYaw);
-    }
     
     @Override
     protected float getGravityVelocity() 
@@ -110,8 +68,8 @@ public class EntityEnergyBolt extends EntityThrowable
         {
             if (movingObject.entityHit != null)
             {
-                //movingObject.entityHit.attackEntityFrom(DamageSource.causeFireballDamage(this, this.shootingEntity), 6.0F);
-                //this.func_174815_a(this.shootingEntity, movingObject.entityHit);
+                movingObject.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), 6.0F);
+                this.func_174815_a(this.getThrower(), movingObject.entityHit);
             }
 
             boolean flag = this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing");

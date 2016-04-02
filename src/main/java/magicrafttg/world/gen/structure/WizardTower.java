@@ -108,6 +108,8 @@ public class WizardTower extends StructureVillagePieces.Village
 	{
 		EntityWizard wizard = new EntityWizard(world);
 		wizard.setLocationAndAngles(xPos, yPos, zPos, 0.0f, 0.0f);
+		// func_175449_a sets home position and distance
+		wizard.func_175449_a(new BlockPos(xPos, yPos, zPos), 4);
 		world.spawnEntityInWorld(wizard);
 	}
 
